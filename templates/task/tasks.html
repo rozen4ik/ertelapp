@@ -1,0 +1,40 @@
+{% extends 'task/base.html' %}
+{% block tasks %}
+    {% if task.count > 0 %}
+        <center><h1>Список задач</h1></center>
+        <div class="table-responsive">
+            <table class="table table-bordered table-sm">
+                <thead>
+                    <tr>
+                        <th scope="col">id</th>
+                        <th scope="col">Дата</th>
+                        <th scope="col">Время</th>
+                        <th scope="col">Задача</th>
+                        <th scope="col">Адрес</th>
+                        <th scope="col">Автор</th>
+                        <th scope="col">Исполнитель</th>
+                        <th scope="col">Сроки выполнения</th>
+                        <th scope="col">Статус выполнения</th>
+                        <th scope="col">Редактирование</th>
+                    </tr>
+                </thead>    
+                {% for tasks in task %}
+                <tbody>
+                    <tr>
+                        <td scope="row">{{ tasks.id }}</td>
+                        <td>{{ tasks.date_task }}</td>
+                        <td>{{ tasks.time_task }}</td>
+                        <td>{{ tasks.text_task }}</td>
+                        <td>{{ tasks.address_task }}</td>
+                        <td>{{ user.first_name }} {{ user.last_name }}</td>
+                        <td>{{ tasks.employee_task }}</td>
+                        <td>{{ tasks.line_task }}</td>
+                        <td>{{ tasks.status_task }}</td>
+                        <td><a href="edit/{{tasks.id}}">Изменить</a>|<a href="delete/{{tasks.id}}">Удалить</a></td>
+                    </tr>
+                </tbody>
+                {% endfor %}
+            </table>
+        </div>
+    {% endif %}
+{% endblock %}

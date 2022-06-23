@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Изменить запись</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+</head>
+<body class="container-fluid">
+    {% if user.is_authenticated %}
+    <form method="POST">
+        {% csrf_token %}
+        <div class="table-responsive">
+            <table class="table table-bordered table-sm">
+                <thead>
+                    <tr>
+                        <th scope="col"><label class="form-label">Дата</label></th>
+                        <th scope="col"><label class="form-label">Время</label></th>
+                        <th scope="col"><label class="form-label">Задача</label></th>
+                        <th scope="col"><label class="form-label">Адрес</label></th>
+                        <th scope="col"><label class="form-label">Кому поставленка задача</label></th>
+                        <th scope="col"><label class="form-label">Сроки выполнения</label></th>
+                        <th scope="col"><label class="form-label">Cтатус выполнения</label></th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th scope="row"><input class="form-control" type="date" name="date_task" value="{{ task.date_task }}"/></th>
+                        <th><input class="form-control" type="time" name="time_task" value="{{ task.time_task }}"/></th>
+                        <th><textarea class="form-control" name="text_task" rows="1" cols="45" value="{{ task.text_task }}"></textarea></th>
+                        <td><input class="form-control" type="text" name="address_task" value="{{ task.address_task }}"/></td>
+                        <th><select class="form-select" name="employee_task">
+                                {% for user in users %}
+                                    <option value="{{ user.first_name }} {{ user.last_name }}">{{ user.first_name }} {{ user.last_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </th>
+                        <td><input class="form-control" type="text" name="line_task" value="{{ tasks.line_task }}"/></td>
+                        <td><select class="form-select" name="status_task">
+                                <option value="Выполнено">Выполнено</option>
+                                <option value="Выполняется">Выполняется</option>
+                                <option value="Не выполнено">Не выполнено</option>
+                            </select>
+                        </td>
+                        <th><input type="submit" class="btn btn-outline-primary" value="Сохранить" ></th>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </form>
+{% else %}
+<p>Войдите в систему</p>
+<a href="{% url 'login' %}">Войти</a>
+{% endif %}
+{% block content %}
+{% endblock content %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+</body>
+</html>

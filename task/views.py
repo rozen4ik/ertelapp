@@ -31,16 +31,7 @@ def index(request):
 def create(request):
     if request.method == "POST":
         task = Task()
-        task.date_task = request.POST.get("date_task")
-        task.time_task = request.POST.get("time_task")
-        task.text_task = request.POST.get("text_task")
-        task.address_task = request.POST.get("address_task")
-        task.author_task = request.user.first_name + " " + request.user.last_name
-        task.employee_task = request.POST.get("employee_task")
-        task.line_task = request.POST.get("line_task")
-        task.status_task = request.POST.get("status_task")
-        task.user_id = request.user.id
-        task.save()
+        init_task(request, task)
     return HttpResponseRedirect("/")
 
 
@@ -51,16 +42,7 @@ def edit(request, id):
         users = User.objects.all().select_related('profile')
 
         if request.method == "POST":
-            task.date_task = request.POST.get("date_task")
-            task.time_task = request.POST.get("time_task")
-            task.text_task = request.POST.get("text_task")
-            task.address_task = request.POST.get("address_task")
-            task.author_task = request.user.first_name + " " + request.user.last_name
-            task.employee_task = request.POST.get("employee_task")
-            task.line_task = request.POST.get("line_task")
-            task.status_task = request.POST.get("status_task")
-            task.user_id = request.user.id
-            task.save()
+            init_task(request, task)
             return HttpResponseRedirect("/")
         else:
             return render(request, "task/edit.html", {"task": task, "users": users})
@@ -114,3 +96,16 @@ def export_excel(request):
     wb.save(response)
 
     return response
+
+
+def init_task(request, task):
+    task.date_task = request.POST.get("date_task")
+    task.time_task = request.POST.get("time_task")
+    task.text_task = request.POST.get("text_task")
+    task.address_task = request.POST.get("address_task")
+    task.author_task = request.user.first_name + " " + request.user.last_name
+    task.employee_task = request.POST.get("employee_task")
+    task.line_task = request.POST.get("line_task")
+    task.status_task = request.POST.get("status_task")
+    task.user_id = request.user.id
+    task.save()

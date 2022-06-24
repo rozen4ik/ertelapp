@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Задачи</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
-  </head>
 </head>
 <body class="container-fluid">
 {% if user.is_authenticated %}
@@ -51,7 +50,7 @@
         </div>
     </form>
     <hr>
-    <center><h1>Сортировка данных</h1></center>
+    <div style="text-align: center;"><h1>Сортировка данных</h1></div>
     <form method="get" action="">
         <div class="table-responsive">
             <table class="table table-bordered table-sm">
@@ -62,7 +61,7 @@
                 </thead>
                 <tbody>
                     <th scope="row">{{ form.date_task }}</th>
-                    <td>{{ form.employee_task }}</t>
+                    <td>{{ form.employee_task }}</td>
                     <td>{{ form.status_task }}</td>
                 </tbody>
             </table>

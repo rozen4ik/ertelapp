@@ -128,13 +128,13 @@ USE_TZ = True
 
 
 # Ссылки для статических файлов
-PROJECT_ROOT = os.path.join(os.path.abspath(__file__))
-STATIC_ROOT = os.path.join(PROJECT_ROOT, 'staticfiles')
+# PROJECT_ROOT = os.path.join(os.path.abspath(__file__))
+# STATIC_ROOT = os.path.join(PROJECT_ROOT, 'staticfiles')
 STATIC_URL = '/static/'
 
 
 STATICFILES_DIRS = [
-    os.path.join(PROJECT_ROOT, "static/"),
+    os.path.join(BASE_DIR, "static/"),
 ]
 
 # Для работы с API

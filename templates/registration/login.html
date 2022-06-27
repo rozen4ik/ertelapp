@@ -3,7 +3,7 @@
 <h2>Авторизация</h2>
 <form method="post">
   {% csrf_token %}
-  {{ form.as_p }}
+  {{ form.as_table }}
   <button class="btn btn-primary" type="submit">войти в систему</button>
 </form>
 {% endblock content %}

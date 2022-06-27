@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -31,6 +33,7 @@
                         <th scope="row"><input class="form-control" type="date" name="date_task" /></th>
                         <td><input class="form-control" type="time" name="time_task" /></td>
                         <td><textarea class="form-control" name="text_task" rows="1" cols="45"></textarea></td>
+                        <script src="{% static "js/autho_size_textarea.js" %}"></script>
                         <td><input class="form-control" type="text" name="address_task" /></td>
                         <td><select class="form-select" name="employee_task">
                             {% for user in users %}

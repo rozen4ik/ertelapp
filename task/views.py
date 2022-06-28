@@ -109,3 +109,4 @@ def init_task(request, task):
     task.status_task = request.POST.get("status_task")
     task.user_id = request.user.id
     task.save()
+

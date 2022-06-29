@@ -20,19 +20,16 @@ bot = telebot.TeleBot(settings.TOKEN)
 @bot.message_handler(commands=['start'])
 def start(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    btn1 = types.KeyboardButton("👋 Поздороваться")
     btn2 = types.KeyboardButton("Получить задачу")
-    markup.add(btn1, btn2)
+    markup.add(btn2)
     bot.send_message(message.chat.id,
-                     text="Привет, {0.first_name}! Я тестовый бот для твоей статьи для habr.com".format(
+                     text="Привет, {0.first_name}! Я тестовый бот для компании ERTEL".format(
                          message.from_user), reply_markup=markup)
 
 
-@bot.message_handler(content_types=['text'])
+@bot.message_handler(func=lambda message:True)
 def func(message):
-    if message.text == "👋 Поздороваться":
-        bot.send_message(message.chat.id, text="Привеет.. Спасибо что читаешь статью!)")
-    elif message.text == "Получить задачу":
+    if message.text == "Получить задачу":
         employee_task = f"{message.from_user.first_name} {message.from_user.last_name}"
         row = read_from_db(employee_task)
         len_row = len(row)

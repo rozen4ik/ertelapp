@@ -7,11 +7,12 @@ from django.http import HttpResponse
 from django.contrib.auth.models import User
 from .forms import *
 from .models import *
+from task.models import Task
 
 
 # Получение данных
 def index(request):
-    task = Task.objects.all()
+    task = Task.objects.all().order_by("-id")
     users = User.objects.all().select_related('profile')
     form = TaskFilter(request.GET)
     if form.is_valid():
@@ -109,4 +110,3 @@ def init_task(request, task):
     task.status_task = request.POST.get("status_task")
     task.user_id = request.user.id
     task.save()
-

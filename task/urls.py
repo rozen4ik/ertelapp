@@ -7,6 +7,7 @@ urlpatterns = [
     path('create/', views.create),
     path('edit/<int:id>/', views.edit),
     path('delete/<int:id>/', views.delete),
+    # path('botertel', views.botertel, name="botertel"),
     path('export_excel', views.export_excel, name="export-excel"),
 ]
 

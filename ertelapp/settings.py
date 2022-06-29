@@ -9,11 +9,13 @@ https://docs.djangoproject.com/en/4.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
-import os
+import os, django
 # import dj_database_url
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+from django.conf import settings
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -22,6 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-mnt1_sr+!j5c%*_hivw^-_=@r%3&gbunz07r0yd1jj74(p%@81'
+TOKEN = "5590862368:AAEAghHqrgaaZnoHf6A17y6BiUFhwkFksb0"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -156,3 +159,9 @@ REST_FRAMEWORK = {
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # prod_db = dj_database_url.config(conn_max_age=500)
 # DATABASES['default'].update(prod_db)
+
+
+SETTINGS = dict((key,val) for key, val in locals().items() if key.isupper())
+if not settings.configured:
+    settings.configure(**SETTINGS)
+django.setup()

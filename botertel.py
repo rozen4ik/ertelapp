@@ -1,40 +1,20 @@
 import telebot
 from telebot import types
-import sqlite3
+from ertelapp import settings
+from task.models import Task
 
 
-a_task = "Евгений Маслов"
+def read_from_db(employee_task):
+    task = Task.objects.all()
+    result = []
+    for row in task:
+        if row.employee_task == employee_task:
+            result.append(f"<u><b>№</b></u> {row.id} \n<u><b>Дата:</b></u> {row.date_task} \n<u><b>Время:</b></u> {row.time_task} \n<u><b>Кто поручил:</b></u> {row.author_task} \n<u><b>Задача:</b></u> {row.text_task} \n<u><b>Место выполнения:</b></u> {row.address_task} \n<u><b>Сроки выполнения:</b></u> {row.line_task}")
+
+    return result
 
 
-def read_from_db(author_task):
-    try:
-        sqlite_connection = sqlite3.connect("dbertel.sqlite3")
-        cursor = sqlite_connection.cursor()
-        print("Подключен к SQLite")
-
-        sqlite_select_query = """SELECT * from task_task WHERE author_task = ?"""
-        cursor.execute(sqlite_select_query, (author_task, ))
-        records = cursor.fetchall()
-        result = ""
-        for row in records:
-            result = f"№ {row[0]} \nДата: {row[1]} \nВремя: {row[2]} \nКто поручил: {row[4]} \nЗадача: {row[3]} \nМесто выполнения: {row[6]} \nСроки выполнения: {row[7]}"
-
-        cursor.close()
-
-        return result
-
-    except sqlite3.Error as error:
-        print("Ошибка при работе с SQLite", error)
-    finally:
-        if sqlite_connection:
-            sqlite_connection.close()
-            print("Соединение с SQLite закрыто")
-
-
-read_from_db(a_task)
-
-TOKEN = "5590862368:AAEAghHqrgaaZnoHf6A17y6BiUFhwkFksb0"
-bot = telebot.TeleBot(TOKEN)
+bot = telebot.TeleBot(settings.TOKEN)
 
 
 @bot.message_handler(commands=['start'])
@@ -53,8 +33,10 @@ def func(message):
     if message.text == "👋 Поздороваться":
         bot.send_message(message.chat.id, text="Привеет.. Спасибо что читаешь статью!)")
     elif message.text == "Получить задачу":
-        row = read_from_db(a_task)
-        bot.send_message(message.chat.id, text=row)
+        employee_task = f"{message.from_user.first_name} {message.from_user.last_name}"
+        row = read_from_db(employee_task)
+        len_row = len(row)
+        bot.send_message(message.chat.id, text=row[len_row-1], parse_mode="HTML")
 
 
 bot.polling(none_stop=True)

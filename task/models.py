@@ -24,6 +24,7 @@ class Task(models.Model):
 # Таблица профиля связа с таблицей User
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    chat_id = models.CharField(max_length=150)
 
 
 @receiver(post_save, sender=User)

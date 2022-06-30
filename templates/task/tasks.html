@@ -3,8 +3,13 @@
     {% if task.count > 0 %}
         <div style="text-align: center;"><h1>Список задач</h1></div>
         <div class="table-responsive">
-            <table class="table table-bordered table-sm">
+            <table id="tag" class="table table-bordered table-sm">
                 <thead>
+                    <tr>
+                        <form method="POST">
+                            <td><input type="submit" name="sun" class="btn btn-outline-primary contact-form__button" value="Отправить в телеграм" ></td>
+                        </form>
+                    </tr>
                     <tr>
                         <th scope="col">id</th>
                         <th scope="col">Дата</th>
@@ -17,6 +22,23 @@
                         <th scope="col">Статус выполнения</th>
                         <th scope="col">Редактирование</th>
                     </tr>
+                    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+                    <script>
+                        const TOKEN = "5439612252:AAGu4uOExlw007uu7vG-wTjuZYSQkEuYnW4"
+                        const CHAT_ID = "815286607"
+                        const URL_API = `https://api.telegram.org/bot${TOKEN}/sendMessage`;
+                        document.getElementById("tag").addEventListener("submit", function (e) {
+                            e.preventDefault();
+
+                            let message = "Поступила задача";
+
+                            axios.post(URL_API, {
+                                chat_id: CHAT_ID,
+                                parse_mode: "html",
+                                text: message,
+                            })
+                        })
+                    </script>
                 </thead>    
                 {% for tasks in task %}
                 <tbody>

@@ -24,8 +24,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-mnt1_sr+!j5c%*_hivw^-_=@r%3&gbunz07r0yd1jj74(p%@81'
 
-TOKEN = "5590862368:AAEAghHqrgaaZnoHf6A17y6BiUFhwkFksb0"
-BOT_URL = "https://api.telegram.org/bot%s/" % TOKEN
+TOKEN = "5439612252:AAGu4uOExlw007uu7vG-wTjuZYSQkEuYnW4"
+BOT_URL = f"https://api.telegram.org/bot{TOKEN}/getUpdates"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

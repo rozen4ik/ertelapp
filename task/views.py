@@ -1,10 +1,14 @@
 import datetime
+
+import requests
 import xlwt
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.http import HttpResponseNotFound
 from django.http import HttpResponse
 from django.contrib.auth.models import User
+
+from ertelapp import settings
 from .forms import *
 from .models import *
 from task.models import Task
@@ -33,6 +37,7 @@ def create(request):
     if request.method == "POST":
         task = Task()
         init_task(request, task)
+
     return HttpResponseRedirect("/")
 
 

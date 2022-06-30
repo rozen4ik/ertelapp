@@ -15,7 +15,6 @@ def read_from_db(employee_task):
 
 
 bot = telebot.TeleBot(settings.TOKEN)
-CHAT_ID = int
 
 
 @bot.message_handler(commands=['start'])
@@ -30,12 +29,11 @@ def start(message):
 
 
 @bot.message_handler(func=lambda call: True)
-def func(message):
+def func(id, message):
     if message.text == "Получить задачу":
         employee_task = f"{message.from_user.first_name} {message.from_user.last_name}"
         row = read_from_db(employee_task)
         len_row = len(row)
-        bot.send_message(message.chat.id, text=row[len_row-1], parse_mode="HTML")
-
+        bot.send_message(id, text=row[len_row-1], parse_mode="HTML")
 
 bot.polling(none_stop=True)

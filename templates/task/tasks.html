@@ -25,12 +25,12 @@
                     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
                     <script>
                         const TOKEN = "5439612252:AAGu4uOExlw007uu7vG-wTjuZYSQkEuYnW4"
-                        const CHAT_ID = "815286607"
+                        const CHAT_ID = "{{ tg_chat_id }}"
                         const URL_API = `https://api.telegram.org/bot${TOKEN}/sendMessage`;
                         document.getElementById("tag").addEventListener("submit", function (e) {
                             e.preventDefault();
 
-                            let message = "Поступила задача";
+                            let message = "<b>Номер задачи:</b> {{ end_task.id }}\n<b>Дата:</b> {{ end_task.date_task }}\n<b>Время:</b> {{ end_task.time_task }}\n<b>Кто поручил:</b> {{ end_task.author_task }}\n<b>Задача:</b> {{ end_task.text_task }}\n<b>Место выполнения:</b> {{ end_task.address_task }}\n<b>Сроки выполнения:</b> {{ end_task.line_task }}";
 
                             axios.post(URL_API, {
                                 chat_id: CHAT_ID,

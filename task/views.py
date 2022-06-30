@@ -18,6 +18,13 @@ from task.models import Task
 def index(request):
     task = Task.objects.all().order_by("-id")
     users = User.objects.all().select_related('profile')
+    end_task = Task.objects.all().latest("id")
+    end_task_fullname = end_task.employee_task
+    end_task_fullname = end_task_fullname.split()
+    end_task_firstname = end_task_fullname[0]
+    end_task_lastname = end_task_fullname[1]
+    tg_chat_id = User.objects.get(first_name=end_task_firstname, last_name=end_task_lastname)
+    tg_chat_id = Profile.objects.get(user_id=tg_chat_id).chat_id
     form = TaskFilter(request.GET)
     if form.is_valid():
         if form.cleaned_data["date_task"]:
@@ -29,7 +36,7 @@ def index(request):
         if form.cleaned_data["status_task"]:
             task = task.filter(status_task=form.cleaned_data["status_task"])
 
-    return render(request, "task/tasks.html", {"task": task, "users": users, "form": form})
+    return render(request, "task/tasks.html", {"task": task, "users": users, "form": form, "end_task": end_task, "tg_chat_id": tg_chat_id})
 
 
 # Добавление данных

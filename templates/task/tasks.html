@@ -1,15 +1,14 @@
 {% extends 'task/base.html' %}
+{% load static %}
 {% block tasks %}
     {% if task.count > 0 %}
         <div style="text-align: center;"><h1>Список задач</h1></div>
         <div class="table-responsive">
             <table id="tag" class="table table-bordered table-sm">
+                <form method="POST">
+                    <input type="submit" name="sun" class="btn btn-primary contact-form__button" value="Отправить в телеграм" >
+                </form>
                 <thead>
-                    <tr>
-                        <form method="POST">
-                            <td><input type="submit" name="sun" class="btn btn-outline-primary contact-form__button" value="Отправить в телеграм" ></td>
-                        </form>
-                    </tr>
                     <tr>
                         <th scope="col">id</th>
                         <th scope="col">Дата</th>
@@ -23,21 +22,10 @@
                         <th scope="col">Редактирование</th>
                     </tr>
                     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+                    <script src="{% static "js/telega.js" %}"></script>
                     <script>
-                        const TOKEN = "5439612252:AAGu4uOExlw007uu7vG-wTjuZYSQkEuYnW4"
-                        const CHAT_ID = "{{ tg_chat_id }}"
-                        const URL_API = `https://api.telegram.org/bot${TOKEN}/sendMessage`;
-                        document.getElementById("tag").addEventListener("submit", function (e) {
-                            e.preventDefault();
-
-                            let message = "<b>Номер задачи:</b> {{ end_task.id }}\n<b>Дата:</b> {{ end_task.date_task }}\n<b>Время:</b> {{ end_task.time_task }}\n<b>Кто поручил:</b> {{ end_task.author_task }}\n<b>Задача:</b> {{ end_task.text_task }}\n<b>Место выполнения:</b> {{ end_task.address_task }}\n<b>Сроки выполнения:</b> {{ end_task.line_task }}";
-
-                            axios.post(URL_API, {
-                                chat_id: CHAT_ID,
-                                parse_mode: "html",
-                                text: message,
-                            })
-                        })
+                        let message = "<b>Номер задачи:</b> {{ end_task.id }}\n<b>Дата:</b> {{ end_task.date_task }}\n<b>Время:</b> {{ end_task.time_task }}\n<b>Кто поручил:</b> {{ end_task.author_task }}\n<b>Задача:</b> {{ end_task.text_task }}\n<b>Место выполнения:</b> {{ end_task.address_task }}\n<b>Сроки выполнения:</b> {{ end_task.line_task }}";
+                        tg(`{{ tg_chat_id }}`, `{{ token }}`, message)
                     </script>
                 </thead>    
                 {% for tasks in task %}

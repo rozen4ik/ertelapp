@@ -7,6 +7,7 @@
             <table id="tag" class="table table-bordered table-sm">
                 <form method="POST">
                     <input type="submit" name="sun" class="btn btn-primary contact-form__button" value="Отправить в телеграм" >
+                    <hr>
                 </form>
                 <thead>
                     <tr>
@@ -24,7 +25,7 @@
                     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
                     <script src="{% static "js/telega.js" %}"></script>
                     <script>
-                        let message = "<b>Номер задачи:</b> {{ end_task.id }}\n<b>Дата:</b> {{ end_task.date_task }}\n<b>Время:</b> {{ end_task.time_task }}\n<b>Кто поручил:</b> {{ end_task.author_task }}\n<b>Задача:</b> {{ end_task.text_task }}\n<b>Место выполнения:</b> {{ end_task.address_task }}\n<b>Сроки выполнения:</b> {{ end_task.line_task }}";
+                        let message = "<b>Номер задачи:</b> {{ end_task.id }}\n<b>Дата:</b> {{ end_task.date_task }}\n<b>Время:</b> {{ end_task.time_task }}\n<b>Кто поручил:</b> {{ end_task.author_task }}\n<b>Статус задачи:</b> {{ end_task.status_task }}\n<b>Задача:</b> {{ end_task.text_task }}\n<b>Место выполнения:</b> {{ end_task.address_task }}\n<b>Сроки выполнения:</b> {{ end_task.line_task }}";
                         tg_task_push_employee(`{{ tg_chat_id }}`, `{{ token }}`, message)
                     </script>
                 </thead>    

@@ -1,7 +1,8 @@
-function tg(chat_id, token, message) {
+function tg_task_push_employee(chat_id, token, message) {
     const URL_API = `https://api.telegram.org/bot${token}/sendMessage`;
     const CHAT_ID = chat_id
     const MESSAGE = message
+
     document.getElementById("tag").addEventListener("submit", function (e) {
         e.preventDefault();
 

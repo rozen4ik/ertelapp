@@ -25,7 +25,7 @@
                     <script src="{% static "js/telega.js" %}"></script>
                     <script>
                         let message = "<b>Номер задачи:</b> {{ end_task.id }}\n<b>Дата:</b> {{ end_task.date_task }}\n<b>Время:</b> {{ end_task.time_task }}\n<b>Кто поручил:</b> {{ end_task.author_task }}\n<b>Задача:</b> {{ end_task.text_task }}\n<b>Место выполнения:</b> {{ end_task.address_task }}\n<b>Сроки выполнения:</b> {{ end_task.line_task }}";
-                        tg(`{{ tg_chat_id }}`, `{{ token }}`, message)
+                        tg_task_push_employee(`{{ tg_chat_id }}`, `{{ token }}`, message)
                     </script>
                 </thead>    
                 {% for tasks in task %}

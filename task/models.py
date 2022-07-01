@@ -16,8 +16,11 @@ class Task(models.Model):
     status_task = models.CharField(max_length=150)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f"{self.text_task}"
+
     class Meta:
-        verbose_name = 'Задачу'
+        verbose_name = "Задача"
         verbose_name_plural = 'Задачи'
 
 
@@ -25,6 +28,13 @@ class Task(models.Model):
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     chat_id = models.CharField(max_length=150)
+
+    def __str__(self):
+        return f"{self.user.first_name} {self.user.last_name}"
+
+    class Meta:
+        verbose_name = "Профиль"
+        verbose_name_plural = "Профили"
 
 
 @receiver(post_save, sender=User)

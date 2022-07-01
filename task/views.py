@@ -19,8 +19,7 @@ def index(request):
     task = Task.objects.all().order_by("-id")
     users = User.objects.all().select_related('profile')
     end_task = Task.objects.all().latest("id")
-    end_task_fullname = end_task.employee_task
-    end_task_fullname = end_task_fullname.split()
+    end_task_fullname = end_task.employee_task.split()
     end_task_firstname = end_task_fullname[0]
     end_task_lastname = end_task_fullname[1]
     tg_chat_id = User.objects.get(first_name=end_task_firstname, last_name=end_task_lastname)

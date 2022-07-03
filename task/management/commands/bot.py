@@ -1,4 +1,5 @@
 import telebot
+import datetime
 from telebot import types
 from django.core.management.base import BaseCommand
 from ertelapp import settings
@@ -26,7 +27,7 @@ def start_message(message):
     bot.send_message(message.chat.id, text="Привет ✌️!\nЯ бот компании ЭРТЭЛ, через меня тебе будут ставить задания.", reply_markup=markup)
 
 
-# Функционал для работы с местоположением
+# Функционал для работы с местоположением и фиксацией времени
 @bot.message_handler(content_types=['location'])
 def location_message(message):
     token_dadata = settings.TOKEN_DADATA
@@ -34,10 +35,10 @@ def location_message(message):
     result = dadata.geolocate(name="address", lat=message.location.latitude, lon=message.location.longitude, count=1)
     result = result[0]
     if message.location is not None:
-        print(result["value"])
-        bot.send_message(message.chat.id, text=f"Теперь я знаю где ты: {result['value']}")
+        dt_message = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        bot.send_message(message.chat.id, parse_mode="HTML", text=f"<b>Ваше местоположение:</b> {result['value']}\n <b>Время отправки сообщения:</b> {dt_message}")
     else:
-        bot.send_message(message.chat.id, text="Не удалось отправить ваше местонахождение")
+        bot.send_message(message.chat.id, parse_mode="HTML", text="Не удалось отправить ваше местонахождение")
 
 
 # Обработка команд подоваемых пользователем боту для изменения состояния статуса задачи

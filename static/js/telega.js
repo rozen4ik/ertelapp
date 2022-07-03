@@ -1,5 +1,5 @@
-function tg_task_push_employee(chat_id, token, message) {
-    const URL_API = `https://api.telegram.org/bot${token}/sendMessage`;
+function tg_task_push_employee(chat_id, token_tg_bot, message) {
+    const URL_API = `https://api.telegram.org/bot${token_tg_bot}/sendMessage`;
     const CHAT_ID = chat_id
     const MESSAGE = message
 
@@ -9,7 +9,7 @@ function tg_task_push_employee(chat_id, token, message) {
         axios.post(URL_API, {
             chat_id: CHAT_ID,
             parse_mode: "html",
-            text: message,
+            text: MESSAGE,
         })
     })
 }

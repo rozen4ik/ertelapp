@@ -3,8 +3,9 @@ from telebot import types
 from django.core.management.base import BaseCommand
 from ertelapp import settings
 from task.models import *
+from dadata import Dadata
 
-bot = telebot.TeleBot(settings.TOKEN)
+bot = telebot.TeleBot(settings.TOKEN_TG_BOT)
 
 
 class Command(BaseCommand):
@@ -20,12 +21,28 @@ def start_message(message):
     btn1 = types.KeyboardButton("Выполняется")
     btn2 = types.KeyboardButton("Выполнено")
     btn3 = types.KeyboardButton("Не выполнено")
-    markup.add(btn1, btn2, btn3)
+    btn4 = types.KeyboardButton("Где я нахожусь?", request_location=True)
+    markup.add(btn1, btn2, btn3, btn4)
     bot.send_message(message.chat.id, text="Привет ✌️!\nЯ бот компании ЭРТЭЛ, через меня тебе будут ставить задания.", reply_markup=markup)
 
 
+# Функционал для работы с местоположением
+@bot.message_handler(content_types=['location'])
+def location_message(message):
+    token_dadata = settings.TOKEN_DADATA
+    dadata = Dadata(token_dadata)
+    result = dadata.geolocate(name="address", lat=message.location.latitude, lon=message.location.longitude, count=1)
+    result = result[0]
+    if message.location is not None:
+        print(result["value"])
+        bot.send_message(message.chat.id, text=f"Теперь я знаю где ты: {result['value']}")
+    else:
+        bot.send_message(message.chat.id, text="Не удалось отправить ваше местонахождение")
+
+
+# Обработка команд подоваемых пользователем боту для изменения состояния статуса задачи
 @bot.message_handler(content_types=['text'])
-def func(message):
+def task_message(message):
     end_task = Task.objects.all().latest("id")
     end_task_fullname = end_task.employee_task.split()
     end_task_firstname = end_task_fullname[0]

@@ -1,13 +1,9 @@
 import datetime
-
-import requests
 import xlwt
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.http import HttpResponseNotFound
 from django.http import HttpResponse
-from django.contrib.auth.models import User
-
 from ertelapp import settings
 from .forms import *
 from .models import *
@@ -24,7 +20,7 @@ def index(request):
     end_task_lastname = end_task_fullname[1]
     tg_chat_id = User.objects.get(first_name=end_task_firstname, last_name=end_task_lastname)
     tg_chat_id = Profile.objects.get(user_id=tg_chat_id).chat_id
-    token = settings.TOKEN
+    token_tg_bot = settings.TOKEN_TG_BOT
     form = TaskFilter(request.GET)
     if form.is_valid():
         if form.cleaned_data["date_task"]:
@@ -36,7 +32,7 @@ def index(request):
         if form.cleaned_data["status_task"]:
             task = task.filter(status_task=form.cleaned_data["status_task"])
 
-    return render(request, "task/tasks.html", {"task": task, "users": users, "form": form, "end_task": end_task, "tg_chat_id": tg_chat_id, "token": token})
+    return render(request, "task/tasks.html", {"task": task, "users": users, "form": form, "end_task": end_task, "tg_chat_id": tg_chat_id, "token_tg_bot": token_tg_bot})
 
 
 # Добавление данных

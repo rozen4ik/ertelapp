@@ -6,6 +6,7 @@
         <div class="table-responsive">
             <table id="tag" class="table table-bordered table-sm">
                 <form method="POST">
+                    <a class="btn btn-primary" href="{% url 'export-excel' %}" role="button">Экспортировать в Excel</a> |
                     <input type="submit" name="sun" class="btn btn-primary contact-form__button" value="Отправить в телеграм" >
                     <hr>
                 </form>
@@ -41,7 +42,7 @@
                         <td>{{ tasks.employee_task }}</td>
                         <td>{{ tasks.line_task }}</td>
                         <td>{{ tasks.status_task }}</td>
-                        <td><a href="edit/{{tasks.id}}">Изменить</a>|<a href="delete/{{tasks.id}}">Удалить</a></td>
+                        <td><a href="/{{ tasks.id }}">Открыть</a>|<a href="edit/{{tasks.id}}">Изменить</a>|<a href="delete/{{tasks.id}}">Удалить</a></td>
                     </tr>
                 </tbody>
                 {% endfor %}

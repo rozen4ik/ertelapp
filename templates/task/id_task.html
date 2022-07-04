@@ -1,0 +1,57 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Учет рабочего времени</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+</head>
+<body class="container-fluid">
+{% if user.is_authenticated %}
+<br>
+    <p><a class="btn btn-outline-primary" href="{% url 'logout' %}" role="button">Выйти - {{ user.first_name }} {{ user.last_name }} </a> <a class="btn btn-primary" href="/" role="button">На главную</a> <a class="btn btn-primary" href="/work_task/" role="button">Перейти к контролю выполнения работ</a></p>
+    <form method="POST" action="create/" class="contact-form" id="tg">
+        {% csrf_token %}
+        <div class="table-responsive">
+            <table class="table table-bordered table-sm">
+                <thead>
+                    <tr>
+                        <th scope="col">id</th>
+                        <th scope="col">Дата</th>
+                        <th scope="col">Время</th>
+                        <th scope="col">Задача</th>
+                        <th scope="col">Адрес</th>
+                        <th scope="col">Автор</th>
+                        <th scope="col">Исполнитель</th>
+                        <th scope="col">Сроки выполнения</th>
+                        <th scope="col">Статус выполнения</th>
+                        <th scope="col">Редактирование</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td scope="row">{{ task.id }}</td>
+                        <td>{{ task.date_task }}</td>
+                        <td>{{ task.time_task }}</td>
+                        <td>{{ task.text_task }}</td>
+                        <td>{{ task.address_task }}</td>
+                        <td>{{ task.author_task }}</td>
+                        <td>{{ task.employee_task }}</td>
+                        <td>{{ task.line_task }}</td>
+                        <td>{{ task.status_task }}</td>
+                        <td><a href="edit/{{tasks.id}}">Изменить</a>|<a href="delete/{{tasks.id}}">Удалить</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+{% else %}
+        <p>Войдите в систему</p>
+        <a class="btn btn-outline-primary" href="{% url 'login' %}" role="button">Войти</a>
+{% endif %}
+{% block content %}
+{% endblock content %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+</body>
+</html>

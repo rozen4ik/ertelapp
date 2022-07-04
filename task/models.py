@@ -37,6 +37,21 @@ class Profile(models.Model):
         verbose_name_plural = "Профили"
 
 
+class WorkTask(models.Model):
+    date_work_task = models.DateField()
+    time_work_task = models.TimeField()
+    employee_work_task = models.CharField(max_length=120)
+    address_work_task = models.CharField(max_length=500)
+    task = models.ForeignKey(Task, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"Исполнитель: {self.employee_work_task} Место нахождение: {self.task}"
+
+    class Meta:
+        verbose_name = "Учёт рабочего времени"
+        verbose_name_plural = "Учёт рабочего времени"
+
+
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:

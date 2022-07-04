@@ -2,8 +2,6 @@ import telebot
 import datetime
 from telebot import types
 from django.core.management.base import BaseCommand
-
-import task.views
 from ertelapp import settings
 from task.models import *
 from dadata import Dadata
@@ -24,8 +22,10 @@ def start_message(message):
     btn1 = types.KeyboardButton("Выполняется")
     btn2 = types.KeyboardButton("Выполнено")
     btn3 = types.KeyboardButton("Не выполнено")
-    btn4 = types.KeyboardButton("Где я нахожусь?", request_location=True)
-    markup.add(btn1, btn2, btn3, btn4)
+    btn4 = types.KeyboardButton("Выехал на объект", request_location=True)
+    btn5 = types.KeyboardButton("Прибыл на объект", request_location=True)
+    btn6 = types.KeyboardButton("Убыл с объекта", request_location=True)
+    markup.add(btn1, btn2, btn3, btn4, btn5, btn6)
     bot.send_message(message.chat.id, text="Привет ✌️!\nЯ бот компании ЭРТЭЛ, через меня тебе будут ставить задания.", reply_markup=markup)
 
 
@@ -37,8 +37,18 @@ def location_message(message):
     result = dadata.geolocate(name="address", lat=message.location.latitude, lon=message.location.longitude, count=1)
     result = result[0]
     if message.location is not None:
-        dt_message = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        bot.send_message(message.chat.id, parse_mode="HTML", text=f"<b>Ваше местоположение:</b> {result['value']}\n <b>Время отправки сообщения:</b> {dt_message}")
+        user = User.objects.all().select_related("profile")
+        user = user.filter(profile__chat_id=message.chat.id)
+        end_task = Task.objects.filter(employee_task=f"{user[0].first_name} {user[0].last_name}").latest("id")
+        dt_message = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S").split()
+        work_task = WorkTask()
+        work_task.date_work_task = dt_message[0]
+        work_task.time_work_task = dt_message[1]
+        work_task.employee_work_task = f"{user[0].first_name} {user[0].last_name}"
+        work_task.address_work_task = result["value"]
+        work_task.task_id = end_task.id
+        work_task.save()
+        bot.send_message(message.chat.id, parse_mode="HTML", text=f"<b>Ваше местоположение:</b> {result['value']}\n<b>Время отправки сообщения:</b> {dt_message[0]} {dt_message[1]}")
     else:
         bot.send_message(message.chat.id, parse_mode="HTML", text="Не удалось отправить ваше местонахождение")
 
@@ -48,9 +58,7 @@ def location_message(message):
 def task_message(message):
     user = User.objects.all().select_related("profile")
     user = user.filter(profile__chat_id=message.chat.id)
-    print(f"{user[0].first_name} {user[0].last_name}")
     end_task = Task.objects.filter(employee_task=f"{user[0].first_name} {user[0].last_name}").latest("id")
-    print(f"{end_task.id}\n{end_task.date_task}\n{end_task.time_task}\n{end_task.author_task}\n{end_task.status_task}\n{end_task.text_task}\n{end_task.line_task}")
     end_task_fullname = end_task.employee_task.split()
     end_task_firstname = end_task_fullname[0]
     end_task_lastname = end_task_fullname[1]

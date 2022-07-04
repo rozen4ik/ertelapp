@@ -35,6 +35,20 @@ def index(request):
     return render(request, "task/tasks.html", {"task": task, "users": users, "form": form, "end_task": end_task, "tg_chat_id": tg_chat_id, "token_tg_bot": token_tg_bot})
 
 
+# Вывод задачи по id
+def index_detail(request, id):
+    try:
+        task = Task.objects.get(id=id)
+        return render(request, "task/id_task.html", {"task": task})
+    except Task.DoesNotExist:
+        return HttpResponseNotFound("<h2>Task not found</h2>")
+
+
+def index_bot(request):
+    work_task = WorkTask.objects.all().order_by("-id")
+    return render(request, "task/work_task.html", {"work_task": work_task})
+
+
 # Добавление данных
 def create(request):
     if request.method == "POST":

@@ -83,7 +83,41 @@ def delete(request, id):
         return HttpResponseNotFound("<h2>Task not found</h2>")
 
 
-# Реализация экспорта данных в excel
+# Реализация экспорта данных в excel таблицы Task
+def export_excel_work_task(request):
+    response = HttpResponse(content_type='applications/ms-excel')
+    response['Content-Disposition'] = 'attachment; filename=work_task' + str(datetime.datetime.now()) + '.xls'
+
+    wb = xlwt.Workbook(encoding='utf-8')
+    ws = wb.add_sheet('report')
+    row_num = 0
+    font_style = xlwt.XFStyle()
+    font_style.font.bold = True
+
+    columns = ['#',
+               'Дата',
+               'Время',
+               'Исполнитель',
+               'Местонахождение',
+               'Номер задачи']
+
+    for col_num in range(len(columns)):
+        ws.write(row_num, col_num, columns[col_num], font_style)
+
+    rows = WorkTask.objects.all().values_list('id', 'date_work_task', 'time_work_task', 'employee_work_task', 'address_work_task', 'task_id')
+
+    for row in rows:
+        row_num += 1
+
+        for col_num in range(len(row)):
+            ws.write(row_num, col_num, str(row[col_num]), font_style)
+
+    wb.save(response)
+
+    return response
+
+
+# Реализация экспорта данных в excel таблицы Task
 def export_excel(request):
     response = HttpResponse(content_type='applications/ms-excel')
     response['Content-Disposition'] = 'attachment; filename=report' + str(datetime.datetime.now()) + '.xls'

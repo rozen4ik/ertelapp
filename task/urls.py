@@ -10,6 +10,7 @@ urlpatterns = [
     path('delete/<int:id>/', views.delete),
     path('work_task/', views.index_bot),
     path('export_excel', views.export_excel, name="export-excel"),
+    path('export_excel_work_task', views.export_excel_work_task, name="export-excel-work-task"),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

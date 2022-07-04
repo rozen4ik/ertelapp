@@ -11,7 +11,7 @@
 <body class="container-fluid">
 {% if user.is_authenticated %}
 <br>
-    <p><a class="btn btn-outline-primary" href="{% url 'logout' %}" role="button">Выйти - {{ user.first_name }} {{ user.last_name }} </a> <a class="btn btn-primary" href="/" role="button">На главную</a></p>
+    <p><a class="btn btn-outline-primary" href="{% url 'logout' %}" role="button">Выйти - {{ user.first_name }} {{ user.last_name }} </a> <a class="btn btn-primary" href="/" role="button">На главную</a> <a class="btn btn-primary" href="{% url 'export-excel-work-task' %}" role="button">Экспортировать в Excel</a></p>
     <form method="POST" action="create/" class="contact-form" id="tg">
         {% csrf_token %}
         <div class="table-responsive">

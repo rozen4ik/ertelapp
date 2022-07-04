@@ -14,6 +14,7 @@ import os, django
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+import dj_database_url
 from django.conf import settings
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -155,6 +156,7 @@ REST_FRAMEWORK = {
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # prod_db = dj_database_url.config(conn_max_age=500)
 # DATABASES['default'].update(prod_db)
+DATABASES['default'] = dj_database_url.config(conn_max_age=600)
 
 
 SETTINGS = dict((key, val) for key, val in locals().items() if key.isupper())

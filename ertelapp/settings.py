@@ -162,4 +162,5 @@ DATABASES['default'] = dj_database_url.config(conn_max_age=600)
 SETTINGS = dict((key, val) for key, val in locals().items() if key.isupper())
 if not settings.configured:
     settings.configure(**SETTINGS)
-django.setup()
+if __name__ == '__main__':
+    django.setup()

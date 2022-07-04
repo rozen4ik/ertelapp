@@ -2,6 +2,8 @@ import telebot
 import datetime
 from telebot import types
 from django.core.management.base import BaseCommand
+
+import task.views
 from ertelapp import settings
 from task.models import *
 from dadata import Dadata
@@ -44,7 +46,11 @@ def location_message(message):
 # Обработка команд подоваемых пользователем боту для изменения состояния статуса задачи
 @bot.message_handler(content_types=['text'])
 def task_message(message):
-    end_task = Task.objects.all().latest("id")
+    user = User.objects.all().select_related("profile")
+    user = user.filter(profile__chat_id=message.chat.id)
+    print(f"{user[0].first_name} {user[0].last_name}")
+    end_task = Task.objects.filter(employee_task=f"{user[0].first_name} {user[0].last_name}").latest("id")
+    print(f"{end_task.id}\n{end_task.date_task}\n{end_task.time_task}\n{end_task.author_task}\n{end_task.status_task}\n{end_task.text_task}\n{end_task.line_task}")
     end_task_fullname = end_task.employee_task.split()
     end_task_firstname = end_task_fullname[0]
     end_task_lastname = end_task_fullname[1]

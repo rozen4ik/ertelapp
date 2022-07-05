@@ -36,13 +36,13 @@ def location_message(message):
     result = dadata.geolocate(name="address", lat=message.location.latitude, lon=message.location.longitude, count=1)
     result = result[0]
     if message.location is not None:
-        dt_message = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S").split()
         markup = telebot.types.InlineKeyboardMarkup()
         markup.add(telebot.types.InlineKeyboardButton(text='Выехал на объект', callback_data=1))
         markup.add(telebot.types.InlineKeyboardButton(text='Прибыл на объект', callback_data=2))
         markup.add(telebot.types.InlineKeyboardButton(text='Убыл с объекта', callback_data=3))
 
         def create_row_work_tas(status):
+            dt_message = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S").split()
             user = User.objects.all().select_related("profile")
             user = user.get(profile__chat_id=message.chat.id)
             end_task = Task.objects.filter(employee_task=f"{user.first_name} {user.last_name}").latest("id")

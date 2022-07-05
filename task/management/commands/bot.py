@@ -31,6 +31,7 @@ def start_message(message):
 # Функционал для работы с местоположением и фиксацией времени
 @bot.message_handler(content_types=['location'])
 def location_message(message):
+    dt_message = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S").split()
     token_dadata = settings.TOKEN_DADATA
     dadata = Dadata(token_dadata)
     result = dadata.geolocate(name="address", lat=message.location.latitude, lon=message.location.longitude, count=1)
@@ -42,14 +43,14 @@ def location_message(message):
         markup.add(telebot.types.InlineKeyboardButton(text='Убыл с объекта', callback_data=3))
 
         def create_row_work_tas(status):
-            dt_message = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S").split()
+            dt = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S").split()
             user = User.objects.all().select_related("profile")
             user = user.get(profile__chat_id=message.chat.id)
             end_task = Task.objects.filter(employee_task=f"{user.first_name} {user.last_name}").latest("id")
             end_task_fullname = end_task.employee_task
             work_task = WorkTask()
-            work_task.date_work_task = dt_message[0]
-            work_task.time_work_task = dt_message[1]
+            work_task.date_work_task = dt[0]
+            work_task.time_work_task = dt[1]
             work_task.employee_work_task = f"{end_task_fullname}"
             work_task.address_work_task = result["value"]
             work_task.task_id = end_task.id

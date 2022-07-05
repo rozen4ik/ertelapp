@@ -44,13 +44,13 @@ def location_message(message):
 
         def create_row_work_tas(status):
             user = User.objects.all().select_related("profile")
-            user = user.filter(profile__chat_id=message.chat.id)
-            end_task = Task.objects.filter(employee_task=f"{user[0].first_name} {user[0].last_name}").latest("id")
-            print(end_task)
+            user = user.get(profile__chat_id=message.chat.id)
+            end_task = Task.objects.filter(employee_task=f"{user.first_name} {user.last_name}").latest("id")
+            end_task_fullname = end_task.employee_task
             work_task = WorkTask()
             work_task.date_work_task = dt_message[0]
             work_task.time_work_task = dt_message[1]
-            work_task.employee_work_task = f"{user[0].first_name} {user[0].last_name}"
+            work_task.employee_work_task = f"{end_task_fullname}"
             work_task.address_work_task = result["value"]
             work_task.task_id = end_task.id
             work_task.status_work_task = status

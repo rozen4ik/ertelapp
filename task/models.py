@@ -40,7 +40,7 @@ class Position(models.Model):
     department_id = models.ForeignKey(Department, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.department_id} {self.name}"
+        return f"{self.name} {self.department_id}"
 
     class Meta:
         verbose_name = "Должность"

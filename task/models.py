@@ -24,10 +24,34 @@ class Task(models.Model):
         verbose_name_plural = 'Задачи'
 
 
+class Department(models.Model):
+    name = models.CharField(max_length=150)
+
+    def __str__(self):
+        return f"{self.name}"
+
+    class Meta:
+        verbose_name = "Подразделение"
+        verbose_name_plural = "Подразделения"
+
+
+class Position(models.Model):
+    name = models.CharField(max_length=150)
+    department_id = models.ForeignKey(Department, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.department_id} {self.name}"
+
+    class Meta:
+        verbose_name = "Должность"
+        verbose_name_plural = "Должности"
+
+
 # Таблица профиля связа с таблицей User
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     chat_id = models.CharField(max_length=150)
+    position_dep_id = models.ForeignKey(Position, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.user.first_name} {self.user.last_name}"

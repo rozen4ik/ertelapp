@@ -5,3 +5,5 @@ from .models import *
 admin.site.register(Task)
 admin.site.register(Profile)
 admin.site.register(WorkTask)
+admin.site.register(Department)
+admin.site.register(Position)

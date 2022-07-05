@@ -35,16 +35,16 @@ class Department(models.Model):
         verbose_name_plural = "Подразделения"
 
 
-# class Position(models.Model):
-#     name = models.CharField(max_length=150)
-#     department_id = models.ForeignKey(Department, on_delete=models.CASCADE)
-#
-#     def __str__(self):
-#         return f"{self.name} {self.department_id}"
-#
-#     class Meta:
-#         verbose_name = "Должность"
-#         verbose_name_plural = "Должности"
+class Position(models.Model):
+    name = models.CharField(max_length=150)
+    department_id = models.ForeignKey(Department, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.name} {self.department_id}"
+
+    class Meta:
+        verbose_name = "Должность"
+        verbose_name_plural = "Должности"
 
 
 # Таблица профиля связа с таблицей User

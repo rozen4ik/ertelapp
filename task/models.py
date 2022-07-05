@@ -51,7 +51,7 @@ class Position(models.Model):
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     chat_id = models.CharField(max_length=150)
-    position_dep_id = models.ForeignKey(Position, on_delete=models.CASCADE)
+    position_dep_id = models.ForeignKey(Position, default=1, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.user.first_name} {self.user.last_name}"

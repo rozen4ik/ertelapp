@@ -42,6 +42,7 @@ class WorkTask(models.Model):
     time_work_task = models.TimeField()
     employee_work_task = models.CharField(max_length=120)
     address_work_task = models.CharField(max_length=500)
+    status_work_task = models.CharField(max_length=120)
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
 
     def __str__(self):

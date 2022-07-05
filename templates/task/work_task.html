@@ -24,6 +24,7 @@
                         <th scope="col"><label>Исполнитель</label></th>
                         <th scope="col"><label>Местонахождение</label></th>
                         <th scope="col"><label>№ задачи</label></th>
+                        <th scope="col"><label>Статус исполнителя</label></th>
                         <th scope="col"><label>Примечание</label></th>
                     </tr>
                 </thead>
@@ -36,7 +37,8 @@
                         <td>{{ work.employee_work_task }}</td>
                         <td>{{ work.address_work_task }}</td>
                         <td>{{ work.task_id }}</td>
-                        <td><a href="{% url 'id_task' work.task_id %}">Перейти к задаче</a></td>
+                        <td>{{ work.status_work_task }}</td>
+                        <td><a href="{% url 'id_task' work.task_id %}">Перейти к задаче</a> | <a href="delete/{{work.id}}">Удалить</a></td>
                     </tr>
                 </tbody>
                 {% endfor %}

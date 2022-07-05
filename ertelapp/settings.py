@@ -156,11 +156,11 @@ REST_FRAMEWORK = {
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # prod_db = dj_database_url.config(conn_max_age=500)
 # DATABASES['default'].update(prod_db)
-DATABASES['default'] = dj_database_url.config(conn_max_age=600)
+# DATABASES['default'] = dj_database_url.config(conn_max_age=600)
 
 
 SETTINGS = dict((key, val) for key, val in locals().items() if key.isupper())
 if not settings.configured:
     settings.configure(**SETTINGS)
-if __name__ == '__main__':
-    django.setup()
+# if __name__ == '__main__':
+django.setup()

@@ -49,6 +49,15 @@ def index_bot(request):
     return render(request, "task/work_task.html", {"work_task": work_task})
 
 
+def delete_work_task(request, id):
+    try:
+        work_task = WorkTask.objects.get(id=id)
+        work_task.delete()
+        return HttpResponseRedirect("/work_task/")
+    except Task.DoesNotExist:
+        return HttpResponseNotFound("<h2>Task not found</h2>")
+
+
 # Добавление данных
 def create(request):
     if request.method == "POST":
@@ -76,8 +85,8 @@ def edit(request, id):
 # Удаление данных
 def delete(request, id):
     try:
-        person = Task.objects.get(id=id)
-        person.delete()
+        task = Task.objects.get(id=id)
+        task.delete()
         return HttpResponseRedirect("/")
     except Task.DoesNotExist:
         return HttpResponseNotFound("<h2>Task not found</h2>")

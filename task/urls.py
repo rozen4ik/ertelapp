@@ -9,6 +9,7 @@ urlpatterns = [
     path('edit/<int:id>/', views.edit),
     path('delete/<int:id>/', views.delete),
     path('work_task/', views.index_bot),
+    path('work_task/delete/<int:id>/', views.delete_work_task),
     path('export_excel', views.export_excel, name="export-excel"),
     path('export_excel_work_task', views.export_excel_work_task, name="export-excel-work-task"),
 ]

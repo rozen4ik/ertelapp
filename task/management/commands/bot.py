@@ -136,9 +136,31 @@ def task_message(message):
         @bot.callback_query_handler(func=lambda call: True)
         def all_my_task(call):
             answer = f"Вы выбрали задачу №{call.data}"
-            bot.send_message(call.message.chat.id, answer)
-            bot.delete_message(call.message.chat.id, call.message.message_id)
-            bot.edit_message_reply_markup(call.message.chat.id, call.message.message_id)
+            tasker = Task.objects.filter(id=call.data)
+            key = telebot.types.InlineKeyboardMarkup()
+            key.add(telebot.types.InlineKeyboardButton(text="Выполняется", callback_data=1))
+            key.add(telebot.types.InlineKeyboardButton(text="Выполнено", callback_data=2))
+
+            @bot.callback_query_handler(func=lambda call_d: True)
+            def new_task(call_d):
+                if call_d.data == 1:
+                    tasker.status_task = "Выполняется"
+                    tasker.save()
+                elif call_d.data == 2:
+                    tasker.status_task = "Выполнено"
+                    tasker.save()
+
+                message_t = f"<b>Номер задачи:</b> {tasker.id}\n<b>Дата:</b> " \
+                               f"{tasker.date_task}\n<b>Время:</b> {tasker.time_task}\n<b>Кто поручил:</b> " \
+                               f"{tasker.author_task}\n<b>Статус задачи:</b> {tasker.status_task}\n<b>Задача:</b> " \
+                               f"{tasker.text_task}\n<b>Место выполнения:</b> {tasker.address_task}\n" \
+                               f"<b>Сроки выполнения:</b> {tasker.line_task}\n"
+
+                ans = f"Статус задачи №{tasker.id} изменен на {tasker.status_task}"
+                bot.send_message(call_d.message.chat.id, ans)
+                bot.send_message(call_d.message.chat.id, text=message_t, parse_mode="HTML")
+
+            bot.send_message(call.message.chat.id, answer, reply_markup=key)
 
         bot.send_message(message.chat.id, text=message_task, parse_mode="HTML", reply_markup=mark)
 

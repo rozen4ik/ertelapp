@@ -1,5 +1,7 @@
 import telebot
 import datetime
+
+from django.db.models import Q
 from telebot import types
 from django.core.management.base import BaseCommand
 from ertelapp import settings
@@ -21,8 +23,8 @@ def start_message(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     btn1 = types.KeyboardButton("Выполняется")
     btn2 = types.KeyboardButton("Выполнено")
-    btn3 = types.KeyboardButton("Не выполнено")
-    btn4 = types.KeyboardButton(text="Указать местоположение", request_location=True)
+    btn3 = types.KeyboardButton("Указать местоположение", request_location=True)
+    btn4 = types.KeyboardButton("Мои задачи")
     markup.add(btn1, btn2, btn3, btn4)
     bot.send_message(message.chat.id, text="Привет ✌️!\nЯ бот компании ЭРТЭЛ, через меня тебе будут ставить задания.",
                      reply_markup=markup)
@@ -115,18 +117,30 @@ def task_message(message):
         bot.send_message(message.chat.id, text=f"Статус задачи {end_task.id} изменен на\n<b>Выполнено</b>",
                          parse_mode="HTML")
         bot.send_message(message.chat.id, text=message_task, parse_mode="HTML")
-    elif message.text == "Не выполнено":
-        end_task.status_task = "Не выполнено"
-        end_task.save()
-        end_task = Task.objects.filter(employee_task=f"{end_task_firstname} {end_task_lastname}").latest("id")
-        message_task = f"<b>Номер задачи:</b> {end_task.id}\n<b>Дата:</b> " \
-                       f"{end_task.date_task}\n<b>Время:</b> {end_task.time_task}\n<b>Кто поручил:</b> " \
-                       f"{end_task.author_task}\n<b>Статус задачи:</b> {end_task.status_task}\n<b>Задача:</b> " \
-                       f"{end_task.text_task}\n<b>Место выполнения:</b> {end_task.address_task}\n" \
-                       f"<b>Сроки выполнения:</b> {end_task.line_task}"
-        bot.send_message(message.chat.id, text=f"Статус задачи {end_task.id} изменен на\n<b>Не выполнено</b>",
-                         parse_mode="HTML")
-        bot.send_message(message.chat.id, text=message_task, parse_mode="HTML")
+    elif message.text == "Мои задачи":
+        mark = telebot.types.InlineKeyboardMarkup()
+        tasks = Task.objects.filter(Q(status_task="Выполняется") | Q(status_task="Отдано в разработку"),
+                                    employee_task=f"{end_task_firstname} {end_task_lastname}")
+        message_task = ""
+        for task in tasks:
+            mark.add(
+                telebot.types.InlineKeyboardButton(text=f"Переключиться на задачу №{task.id}", callback_data=task.id))
+
+            message_task += "-----------------------"
+            message_task += f"<b>Номер задачи:</b> {task.id}\n<b>Дата:</b> " \
+                            f"{task.date_task}\n<b>Время:</b> {task.time_task}\n<b>Кто поручил:</b> " \
+                            f"{task.author_task}\n<b>Статус задачи:</b> {task.status_task}\n<b>Задача:</b> " \
+                            f"{task.text_task}\n<b>Место выполнения:</b> {task.address_task}\n" \
+                            f"<b>Сроки выполнения:</b> {task.line_task}\n"
+
+        @bot.callback_query_handler(func=lambda call: True)
+        def all_my_task(call):
+            answer = f"Вы выбрали задачу №{call.data}"
+            bot.send_message(call.message.chat.id, answer)
+            bot.delete_message(call.message.chat.id, call.message.message_id)
+            bot.edit_message_reply_markup(call.message.chat.id, call.message.message_id)
+
+        bot.send_message(message.chat.id, text=message_task, parse_mode="HTML", reply_markup=mark)
 
 
 bot.infinity_polling()

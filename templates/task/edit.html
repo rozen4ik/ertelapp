@@ -11,11 +11,12 @@
     {% if user.is_authenticated %}
         <br>
         <p><a class="btn btn-outline-primary" href="{% url 'logout' %}" role="button">Выйти - {{ user.first_name }} {{ user.last_name }} </a> <a class="btn btn-primary" href="/" role="button">На главную</a> <a class="btn btn-primary" href="/work_task/" role="button">Перейти к контролю выполнения работ</a></p>
+        <div style="text-align: center;"><h1>Изменить задачу №{{ task.id }}</h1></div>
     <form method="POST">
         {% csrf_token %}
         <div class="table-responsive">
-            <table class="table table-bordered table-sm">
-                <thead>
+            <table class="table table-bordered table-sm align-middle table-hover">
+                <thead class="align-middle table-primary">
                     <tr>
                         <th scope="col"><label class="form-label">Дата</label></th>
                         <th scope="col"><label class="form-label">Время</label></th>
@@ -29,25 +30,34 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <th scope="row"><input class="form-control" type="date" name="date_task" value="{{ task.date_task }}"/></th>
-                        <th><input class="form-control" type="time" name="time_task" value="{{ task.time_task }}"/></th>
-                        <th><textarea class="form-control" name="text_task" rows="1" cols="45" value="{{ task.text_task }}"></textarea></th>
+                        <th scope="row">{{ task.date_task }}</th>
+                        <th>{{ task.time_task }}</th>
+                        <th>{{ task.text_task }}</th>
+                        <th>{{ task.address_task }}</th>
+                        <th>{{ task.employee_task }}</th>
+                        <th>{{ task.line_task }}</th>
+                        <th>{{ task.status_task }}</th>
+                    </tr>
+                    <tr>
+                        <th scope="row"><input class="form-control" type="date" name="date_task"/></th>
+                        <th><input class="form-control" type="time" name="time_task"/></th>
+                        <th><textarea class="form-control" name="text_task" rows="1" cols="45"></textarea></th>
                         <script src="{% static "js/autho_size_textarea.js" %}"></script>
-                        <td><input class="form-control" type="text" name="address_task" value="{{ task.address_task }}"/></td>
+                        <td><input class="form-control" type="text" name="address_task"/></td>
                         <th><select class="form-select" name="employee_task">
                                 {% for user in users %}
                                     <option value="{{ user.first_name }} {{ user.last_name }}">{{ user.first_name }} {{ user.last_name }}</option>
                                 {% endfor %}
                             </select>
                         </th>
-                        <td><input class="form-control" type="text" name="line_task" value="{{ tasks.line_task }}"/></td>
-                        <td><select class="form-select" name="status_task">
+                        <th><input class="form-control" type="date" name="line_task"/></th>
+                        <th><select class="form-select" name="status_task">
                                 <option value="Отдано в разработку">Отдано в разработку</option>
                                 <option value="Выполнено">Выполнено</option>
                                 <option value="Выполняется">Выполняется</option>
                                 <option value="Не выполнено">Не выполнено</option>
                             </select>
-                        </td>
+                        </th>
                         <th><input type="submit" class="btn btn-outline-primary" value="Сохранить" ></th>
                     </tr>
                 </tbody>

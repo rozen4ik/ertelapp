@@ -15,8 +15,8 @@
     <form method="POST" action="create/" class="contact-form" id="tg">
         {% csrf_token %}
         <div class="table-responsive">
-            <table class="table table-bordered table-sm">
-                <thead>
+            <table class="table table-bordered table-sm align-middle table-hover">
+                <thead class="align-middle table-primary">
                     <tr>
                         <th scope="col"><label>Дата</label></th>
                         <th scope="col"><label>Время</label></th>
@@ -40,7 +40,7 @@
                                 <option value="{{ user.first_name }} {{ user.last_name }}">{{ user.first_name }} {{ user.last_name }}</option>
                             {% endfor %}
                         </select></td>
-                        <td><input class="form-control" type="text" name="line_task" /></td>
+                        <td><input class="form-control" type="date" name="line_task" /></td>
                         <td><select class="form-select" name="status_task">
                             <option value="Отдано в разработку">Отдано в разработку</option>
                             <option value="Выполнено">Выполнено</option>
@@ -57,8 +57,8 @@
     <div style="text-align: center;"><h1>Сортировка данных</h1></div>
     <form method="get" action="">
         <div class="table-responsive">
-            <table class="table table-bordered table-sm">
-                <thead>
+            <table class="table table-bordered table-sm align-middle table-hover">
+                <thead class="align-middle table-primary">
                     <th scope="col"><label for="{{ form.date_task.id_for_label }}">Дата постановки задачи</label></th>
                     <th scope="col"><label for="{{ form.employee_task.id_for_label }}">Исполнитель</label></th>
                     <th scope="col"><label for="{{ form.status_task.id_for_label }}">Статус работы</label></th>

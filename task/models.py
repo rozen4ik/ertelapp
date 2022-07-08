@@ -12,7 +12,7 @@ class Task(models.Model):
     address_task = models.CharField(max_length=500)
     author_task = models.CharField(max_length=120)
     employee_task = models.CharField(max_length=120)
-    line_task = models.CharField(max_length=150)
+    line_task = models.DateField(max_length=150)
     status_task = models.CharField(max_length=150)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 

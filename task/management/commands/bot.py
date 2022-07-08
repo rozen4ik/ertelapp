@@ -129,7 +129,6 @@ def task_message(message):
             end_task.save()
             end_task = find_task(Task, find_task_id)
             message_task = get_message(end_task)
-            print(end_task)
 
         bot.send_message(message.chat.id, text=f"Статус задачи {end_task.id} изменен на\n<b>Выполняется</b>",
                          parse_mode="HTML")

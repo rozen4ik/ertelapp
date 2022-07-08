@@ -17,6 +17,7 @@ class Command(BaseCommand):
         pass
 
 
+# Формирование сообщения для отправки задачи исполнителю
 def get_message(task):
     message_task = f"<b>Номер задачи:</b> {task.id}\n<b>Дата:</b> " \
                    f"{task.date_task}\n<b>Время:</b> {task.time_task}\n<b>Кто поручил:</b> " \
@@ -26,11 +27,13 @@ def get_message(task):
     return message_task
 
 
+# Поиск задачи по id
 def find_task(o_task, task_id):
     task = o_task.objects.get(id=task_id)
     return task
 
 
+# Значение id задачи на которую хотим переключится
 find_task_id = 0
 
 
@@ -103,12 +106,15 @@ def location_message(message):
 # Обработка команд подоваемых пользователем боту для изменения состояния статуса задачи
 @bot.message_handler(content_types=['text'])
 def task_message(message):
+    # Поиск задачи с которой предстоит работать пользователю
     user = User.objects.all().select_related("profile")
     user = user.filter(profile__chat_id=message.chat.id)
     end_task = Task.objects.filter(employee_task=f"{user[0].first_name} {user[0].last_name}").latest("id")
     end_task_fullname = end_task.employee_task.split()
     end_task_firstname = end_task_fullname[0]
     end_task_lastname = end_task_fullname[1]
+    # Если find_task_id равен 0, то работает с последней задачей которая нам поручена
+    # Если нет, то уже с той задачей, id которой равен find_task_id
     if message.text == "Выполняется":
         if find_task_id == 0:
             end_task.status_task = "Выполняется"
@@ -116,6 +122,8 @@ def task_message(message):
             end_task = Task.objects.filter(employee_task=f"{end_task_firstname} {end_task_lastname}").latest("id")
             message_task = get_message(end_task)
         else:
+            # Формируется запрос на поиск задачи по указанному id,
+            # А именно по значению find_task_id
             end_task = find_task(Task, find_task_id)
             end_task.status_task = "Выполняется"
             end_task.save()
@@ -141,10 +149,14 @@ def task_message(message):
                          parse_mode="HTML")
         bot.send_message(message.chat.id, text=message_task, parse_mode="HTML")
     elif message.text == "Выбрать задачу":
+        # Формируется запрос на отправку всех задач исполнителю которые
+        # Которые находятся в стадии "Выполняется" или "Отдано в разработку
         mark = telebot.types.InlineKeyboardMarkup()
         tasks = Task.objects.filter(Q(status_task="Выполняется") | Q(status_task="Отдано в разработку"),
                                     employee_task=f"{end_task_firstname} {end_task_lastname}")
         message_task = ""
+        # После формирования и вывода сообщения, к нему прикрепляются кнопки,
+        # Которые содержат id задачи
         for task in tasks:
             mark.add(
                 telebot.types.InlineKeyboardButton(text=f"Переключиться на задачу №{task.id}", callback_data=task.id))
@@ -154,6 +166,8 @@ def task_message(message):
 
         @bot.callback_query_handler(func=lambda call: True)
         def all_my_task(call):
+            # После нажатия на кнопку с id задачей, find_task_id принимает значение
+            # Выбранно задачи, и далее исполнитель работает по выбранной задаче
             tasker = Task.objects.get(id=call.data)
             global find_task_id
             find_task_id = tasker.id

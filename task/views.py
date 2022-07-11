@@ -7,13 +7,20 @@ from django.http import HttpResponse
 from ertelapp import settings
 from .forms import *
 from .models import *
-from task.models import Task
 
 
 # Получение данных
 def index(request):
     task = Task.objects.all().order_by("-id")
     users = User.objects.all().select_related('profile')
+    director_user = Profile.objects.get(position_dep_id_id=1)
+    eng_user = Profile.objects.get(position_dep_id_id=7)
+    sales_user = Profile.objects.get(position_dep_id_id=2)
+    technical_user = Profile.objects.get(position_dep_id_id=3)
+    engineering_task = Task.objects.filter(author_task=eng_user).order_by("-id")
+    sales_task = Task.objects.filter(author_task=sales_user).order_by("-id")
+    technical_task = Task.objects.filter(author_task=technical_user).order_by("-id")
+
     form = TaskFilter(request.GET)
     if form.is_valid():
         if form.cleaned_data["date_task"]:
@@ -27,16 +34,66 @@ def index(request):
 
     end_task = Task.objects.all().latest("id")
 
-    if end_task is not None:
-        end_task_fullname = end_task.employee_task.split()
-        end_task_firstname = end_task_fullname[0]
-        end_task_lastname = end_task_fullname[1]
-        tg_chat_id = User.objects.get(first_name=end_task_firstname, last_name=end_task_lastname)
-        tg_chat_id = Profile.objects.get(user_id=tg_chat_id).chat_id
-        token_tg_bot = settings.TOKEN_TG_BOT
-        return render(request, "task/tasks.html", {"task": task, "users": users, "form": form, "end_task": end_task, "tg_chat_id": tg_chat_id, "token_tg_bot": token_tg_bot})
+    if request.user.username == director_user.user.username:
+        if end_task is not None:
+            end_task_fullname = end_task.employee_task.split()
+            end_task_firstname = end_task_fullname[0]
+            end_task_lastname = end_task_fullname[1]
+            tg_chat_id = User.objects.get(first_name=end_task_firstname, last_name=end_task_lastname)
+            tg_chat_id = Profile.objects.get(user_id=tg_chat_id).chat_id
+            token_tg_bot = settings.TOKEN_TG_BOT
+            return render(request, "task/tasks.html",
+                          {"task": task, "users": users, "form": form, "end_task": end_task, "tg_chat_id": tg_chat_id,
+                           "token_tg_bot": token_tg_bot})
+        else:
+            return render(request, "task/tasks.html", {"task": task, "users": users, "form": form})
+    elif request.user.username == eng_user.user.username:
+        if end_task is not None:
+            end_task_fullname = end_task.employee_task.split()
+            end_task_firstname = end_task_fullname[0]
+            end_task_lastname = end_task_fullname[1]
+            tg_chat_id = User.objects.get(first_name=end_task_firstname, last_name=end_task_lastname)
+            tg_chat_id = Profile.objects.get(user_id=tg_chat_id).chat_id
+            token_tg_bot = settings.TOKEN_TG_BOT
+            return render(request, "task/role/engineering_task.html",
+                          {"engineering_task": engineering_task, "users": users, "form": form,
+                           "end_task": end_task, "tg_chat_id": tg_chat_id,
+                           "token_tg_bot": token_tg_bot})
+        else:
+            return render(request, "task/role/engineering_task.html",
+                          {"engineering_task": engineering_task, "users": users, "form": form})
+    elif request.user.username == sales_user.user.username:
+        if end_task is not None:
+            end_task_fullname = end_task.employee_task.split()
+            end_task_firstname = end_task_fullname[0]
+            end_task_lastname = end_task_fullname[1]
+            tg_chat_id = User.objects.get(first_name=end_task_firstname, last_name=end_task_lastname)
+            tg_chat_id = Profile.objects.get(user_id=tg_chat_id).chat_id
+            token_tg_bot = settings.TOKEN_TG_BOT
+            return render(request, "task/role/sales_task.html",
+                          {"sales_task": sales_task, "users": users, "form": form, "end_task": end_task,
+                           "tg_chat_id": tg_chat_id,
+                           "token_tg_bot": token_tg_bot})
+        else:
+            return render(request, "task/role/sales_task.html",
+                          {"sales_task": sales_task, "users": users, "form": form})
+    elif request.user.username == technical_user.user.username:
+        if end_task is not None:
+            end_task_fullname = end_task.employee_task.split()
+            end_task_firstname = end_task_fullname[0]
+            end_task_lastname = end_task_fullname[1]
+            tg_chat_id = User.objects.get(first_name=end_task_firstname, last_name=end_task_lastname)
+            tg_chat_id = Profile.objects.get(user_id=tg_chat_id).chat_id
+            token_tg_bot = settings.TOKEN_TG_BOT
+            return render(request, "task/role/technical_task.html",
+                          {"technical_task": technical_task, "users": users, "form": form, "end_task": end_task,
+                           "tg_chat_id": tg_chat_id,
+                           "token_tg_bot": token_tg_bot})
+        else:
+            return render(request, "task/role/technical_task.html",
+                          {"technical_task": technical_task, "users": users, "form": form})
     else:
-        return render(request, "task/tasks.html", {"task": task, "users": users, "form": form})
+        return render(request, "task/role/no_access.html")
 
 
 # Вывод задачи по id

@@ -81,6 +81,7 @@ def location_message(message):
         # Обработка статуса работника относительно местоположения
         @bot.callback_query_handler(func=lambda call: True)
         def status_local(call):
+            print(find_task_id)
             bot.answer_callback_query(callback_query_id=call.id, text='Спасибо за честный ответ!')
             answer = ''
             if call.data == '1':
@@ -92,6 +93,8 @@ def location_message(message):
             elif call.data == '3':
                 answer = 'Вы убыли с объекта'
                 create_row_work_tas("Убыл с объекта")
+
+            bot.edit_message_reply_markup(call.message.chat.id, call.message.message_id)
             bot.send_message(call.message.chat.id, answer)
             bot.edit_message_reply_markup(call.message.chat.id, call.message.message_id)
 
@@ -168,12 +171,14 @@ def task_message(message):
             # После нажатия на кнопку с id задачей, find_task_id принимает значение
             # Выбранно задачи, и далее исполнитель работает по выбранной задаче
             tasker = Task.objects.get(id=call.data)
+            print(call.data)
             global find_task_id
-            find_task_id = tasker.id
+            find_task_id = call.data
             tasker.save()
 
             answer = f"{get_message(tasker)}\n"
 
+            bot.edit_message_reply_markup(call.message.chat.id, call.message.message_id)
             bot.send_message(call.message.chat.id, text=f"Выбрана задача №{tasker.id}")
             bot.send_message(call.message.chat.id, answer, parse_mode="HTML")
 

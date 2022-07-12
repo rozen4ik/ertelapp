@@ -23,12 +23,8 @@ def index(request):
 
     form = TaskFilter(request.GET)
     if form.is_valid():
-        if form.cleaned_data["date_task"]:
-            task = task.filter(date_task=form.cleaned_data["date_task"])
-
         if form.cleaned_data["employee_task"]:
             task = task.filter(employee_task=form.cleaned_data["employee_task"])
-
         if form.cleaned_data["status_task"]:
             task = task.filter(status_task=form.cleaned_data["status_task"])
 

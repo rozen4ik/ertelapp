@@ -59,17 +59,16 @@
         <div class="table-responsive">
             <table class="table table-bordered table-sm align-middle table-hover">
                 <thead class="align-middle table-primary">
-                    <th scope="col"><label for="{{ form.date_task.id_for_label }}">Дата постановки задачи</label></th>
                     <th scope="col"><label for="{{ form.employee_task.id_for_label }}">Исполнитель</label></th>
                     <th scope="col"><label for="{{ form.status_task.id_for_label }}">Статус работы</label></th>
+                    <th></th>
                 </thead>
                 <tbody>
-                    <th scope="row">{{ form.date_task }}</th>
-                    <td>{{ form.employee_task }}</td>
+                    <td scope="row">{{ form.employee_task }}</td>
                     <td>{{ form.status_task }}</td>
+                    <td><input class="btn btn-outline-primary" type="submit" value="Поиск"></td>
                 </tbody>
             </table>
-            <input class="btn btn-primary" type="submit" value="Поиск">
         </div>
     </form>
     <hr>

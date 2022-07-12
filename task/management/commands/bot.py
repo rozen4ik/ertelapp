@@ -110,7 +110,7 @@ def location_message(message):
                 end_task = end_task_return(Task, user, message)
                 print(end_task)
                 save_work_task(dt, end_task, result, status)
-            elif find_task_id != 0:
+            else:
                 end_task = find_task(find_task_id)
                 print(end_task)
                 save_work_task(dt, end_task, result, status)

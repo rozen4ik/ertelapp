@@ -1,9 +1,20 @@
+
 <!-- templates/registration/login.html -->
-{% extends 'task/base.html' %} &nbsp;{% block content %}
-<h2>Авторизация</h2>
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_table }}
-  <button class="btn btn-primary" type="submit">войти в систему</button>
-</form>
+{% extends 'task/base.html' %} &nbsp;
+{% block content %}
+    {% load crispy_forms_filters %}
+    <div class="card">
+        <div class="card-body">
+        <h4 class="card-title">Войти в систему</h4>
+
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ next }}">
+
+                {{ form|crispy }}
+                <br>
+                <button type="submit" class="btn btn-primary btn-block">Войти</button>
+            </form>
+        </div>
+    </div>
 {% endblock content %}

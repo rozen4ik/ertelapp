@@ -128,7 +128,6 @@ def location_message(message):
             elif data == '3':
                 answer = 'Вы убыли с объекта'
                 create_row_work_tas("Убыл с объекта")
-
             bot.edit_message_reply_markup(call.message.chat.id, call.message.message_id)
             bot.send_message(call.message.chat.id, answer)
 

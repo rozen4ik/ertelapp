@@ -8,6 +8,8 @@ from ertelapp import settings
 from .forms import *
 from .models import *
 
+
+# Словарь полей, по которым фильтруются данные таблицы Task
 filter_task = {}
 
 
@@ -31,14 +33,7 @@ def index(request):
             task = task.filter(status_task=form.cleaned_data["status_task"])
 
     global filter_task
-    print(filter_task)
     filter_task = form.cleaned_data
-    if filter_task:
-        filter_employee = filter_task["employee_task"]
-        filter_status = filter_task["status_task"]
-        print(f"Поиск по {filter_employee} - {filter_status}")
-    print(filter_task)
-
     end_task = Task.objects.all().latest("id")
 
     if request.user.username == director_user.user.username:
@@ -160,7 +155,7 @@ def delete(request, id):
         return HttpResponseNotFound("<h2>Task not found</h2>")
 
 
-# Реализация экспорта данных в excel таблицы Task
+# Реализация экспорта данных в excel таблицы WorkTask
 def export_excel_work_task(request):
     response = HttpResponse(content_type='applications/ms-excel')
     response['Content-Disposition'] = 'attachment; filename=work_task' + str(datetime.datetime.now()) + '.xls'

@@ -77,9 +77,6 @@ def set_status_task(status_task, end_task, user, message):
 # Значение id задачи на которую хотим переключится
 find_task_id: int = 0
 
-# Текст сообщения с выбранной задачей
-text_task_find = ""
-
 
 @bot.message_handler(commands=['start'])
 def start_message(message):
@@ -112,17 +109,9 @@ def location_message(message):
             user = User.objects.all().select_related("profile")
             if find_task_id == 0:
                 end_task = end_task_return(Task, user, message)
-                print(end_task)
                 save_work_task(dt, end_task, result, status)
             else:
-                global text_task_find
-                print(text_task_find)
-                text_task_find = text_task_find.split("\n")
-                text_task_find = text_task_find[0].split("</b>")
-                text_task_find = text_task_find[1].strip()
-                print(text_task_find)
-                end_task = find_task(int(text_task_find))
-                print(end_task)
+                end_task = find_task(int(find_task_id))
                 save_work_task(dt, end_task, result, status)
 
         # Обработка статуса работника относительно местоположения
@@ -143,7 +132,6 @@ def location_message(message):
 
             bot.edit_message_reply_markup(call.message.chat.id, call.message.message_id)
             bot.send_message(call.message.chat.id, answer)
-            bot.edit_message_reply_markup(call.message.chat.id, call.message.message_id)
 
         bot.send_message(message.chat.id, parse_mode="HTML",
                          text=f"<b>Ваше местоположение:</b> {result['value']}\n<b>Время отправки сообщения:</b> "
@@ -178,22 +166,22 @@ def task_message(message):
             for task in tasks:
                 mark.add(
                     telebot.types.InlineKeyboardButton(text=f"Переключиться на задачу №{task.id}",
-                                                       callback_data=task.id))
+                                                       callback_data=f"task:{task.id}"))
 
                 message_task += "-----------------------\n"
                 message_task += f"{get_message(task)}\n"
 
-            @bot.callback_query_handler(func=lambda call: True)
+            @bot.callback_query_handler(func=lambda call: call.data.split(":")[0] == "task")
             def all_my_task(call):
                 # После нажатия на кнопку с id задачей, find_task_id принимает значение
                 # Выбранно задачи, и далее исполнитель работает по выбранной задаче
-                tasker = Task.objects.get(id=call.data)
+                data_id = call.data.split(":")[1]
+                print(data_id)
+                tasker = Task.objects.get(id=data_id)
                 global find_task_id
                 find_task_id = tasker.id
                 tasker.save()
                 answer = f"{get_message(tasker)}\n"
-                global text_task_find
-                text_task_find = answer
                 bot.edit_message_reply_markup(call.message.chat.id, call.message.message_id)
                 bot.delete_message(call.message.chat.id, call.message.message_id)
                 bot.send_message(call.message.chat.id, text=f"Выбрана задача №{tasker.id}")

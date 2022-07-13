@@ -63,6 +63,7 @@ def set_status_task(status_task, end_task, user, message):
     else:
         # Формируется запрос на поиск задачи по указанному id,
         # А именно по значению find_task_id
+
         end_task = find_task(find_task_id)
         end_task.status_task = status_task
         end_task.save()
@@ -75,6 +76,9 @@ def set_status_task(status_task, end_task, user, message):
 
 # Значение id задачи на которую хотим переключится
 find_task_id: int = 0
+
+# Текст сообщения с выбранной задачей
+text_task_find = ""
 
 
 @bot.message_handler(commands=['start'])
@@ -98,10 +102,10 @@ def location_message(message):
     result = dadata.geolocate(name="address", lat=message.location.latitude, lon=message.location.longitude, count=1)
     result = result[0]
     if message.location is not None:
-        markup = telebot.types.InlineKeyboardMarkup()
-        markup.add(telebot.types.InlineKeyboardButton(text='Выехал на объект', callback_data="prefix:1"))
-        markup.add(telebot.types.InlineKeyboardButton(text='Прибыл на объект', callback_data="prefix:2"))
-        markup.add(telebot.types.InlineKeyboardButton(text='Убыл с объекта', callback_data="prefix:3"))
+        keyboard = telebot.types.InlineKeyboardMarkup()
+        keyboard.add(telebot.types.InlineKeyboardButton(text='Выехал на объект', callback_data="prefix:1"))
+        keyboard.add(telebot.types.InlineKeyboardButton(text='Прибыл на объект', callback_data="prefix:2"))
+        keyboard.add(telebot.types.InlineKeyboardButton(text='Убыл с объекта', callback_data="prefix:3"))
 
         def create_row_work_tas(status):
             dt = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S").split()
@@ -111,7 +115,13 @@ def location_message(message):
                 print(end_task)
                 save_work_task(dt, end_task, result, status)
             else:
-                end_task = find_task(find_task_id)
+                global text_task_find
+                print(text_task_find)
+                text_task_find = text_task_find.split("\n")
+                text_task_find = text_task_find[0].split("</b>")
+                text_task_find = text_task_find[1].strip()
+                print(text_task_find)
+                end_task = find_task(int(text_task_find))
                 print(end_task)
                 save_work_task(dt, end_task, result, status)
 
@@ -137,7 +147,7 @@ def location_message(message):
 
         bot.send_message(message.chat.id, parse_mode="HTML",
                          text=f"<b>Ваше местоположение:</b> {result['value']}\n<b>Время отправки сообщения:</b> "
-                              f"{dt_message[0]} {dt_message[1]}", reply_markup=markup)
+                              f"{dt_message[0]} {dt_message[1]}", reply_markup=keyboard)
     else:
         bot.send_message(message.chat.id, parse_mode="HTML", text="Не удалось отправить ваше местонахождение")
 
@@ -180,10 +190,10 @@ def task_message(message):
                 tasker = Task.objects.get(id=call.data)
                 global find_task_id
                 find_task_id = tasker.id
-                print(f"Выбрана задача: {find_task_id}")
                 tasker.save()
                 answer = f"{get_message(tasker)}\n"
-
+                global text_task_find
+                text_task_find = answer
                 bot.edit_message_reply_markup(call.message.chat.id, call.message.message_id)
                 bot.delete_message(call.message.chat.id, call.message.message_id)
                 bot.send_message(call.message.chat.id, text=f"Выбрана задача №{tasker.id}")

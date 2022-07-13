@@ -8,6 +8,8 @@ from ertelapp import settings
 from .forms import *
 from .models import *
 
+filter_task = {}
+
 
 # Получение данных
 def index(request):
@@ -27,6 +29,15 @@ def index(request):
             task = task.filter(employee_task=form.cleaned_data["employee_task"])
         if form.cleaned_data["status_task"]:
             task = task.filter(status_task=form.cleaned_data["status_task"])
+
+    global filter_task
+    print(filter_task)
+    filter_task = form.cleaned_data
+    if filter_task:
+        filter_employee = filter_task["employee_task"]
+        filter_status = filter_task["status_task"]
+        print(f"Поиск по {filter_employee} - {filter_status}")
+    print(filter_task)
 
     end_task = Task.objects.all().latest("id")
 
@@ -170,7 +181,8 @@ def export_excel_work_task(request):
     for col_num in range(len(columns)):
         ws.write(row_num, col_num, columns[col_num], font_style)
 
-    rows = WorkTask.objects.all().values_list('id', 'date_work_task', 'time_work_task', 'employee_work_task', 'address_work_task', 'task_id')
+    rows = WorkTask.objects.all().values_list('id', 'date_work_task', 'time_work_task', 'employee_work_task',
+                                              'address_work_task', 'task_id')
 
     for row in rows:
         row_num += 1
@@ -207,8 +219,22 @@ def export_excel(request):
     for col_num in range(len(columns)):
         ws.write(row_num, col_num, columns[col_num], font_style)
 
-    rows = Task.objects.all().values_list('id', 'date_task', 'time_task', 'text_task', 'address_task', 'author_task',
-                                          'employee_task', 'line_task', 'status_task')
+    if filter_task:
+        filter_employee = filter_task["employee_task"]
+        filter_status = filter_task["status_task"]
+        rows = Task.objects.filter(employee_task=filter_employee, status_task=filter_status).values_list('id',
+                                                                                                         'date_task',
+                                                                                                         'time_task',
+                                                                                                         'text_task',
+                                                                                                         'address_task',
+                                                                                                         'author_task',
+                                                                                                         'employee_task',
+                                                                                                         'line_task',
+                                                                                                         'status_task')
+    else:
+        rows = Task.objects.all().values_list('id', 'date_task', 'time_task', 'text_task', 'address_task',
+                                              'author_task',
+                                              'employee_task', 'line_task', 'status_task')
 
     for row in rows:
         row_num += 1

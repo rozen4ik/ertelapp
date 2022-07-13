@@ -63,7 +63,6 @@ def set_status_task(status_task, end_task, user, message):
     else:
         # Формируется запрос на поиск задачи по указанному id,
         # А именно по значению find_task_id
-
         end_task = find_task(find_task_id)
         end_task.status_task = status_task
         end_task.save()
@@ -176,7 +175,6 @@ def task_message(message):
                 # После нажатия на кнопку с id задачей, find_task_id принимает значение
                 # Выбранно задачи, и далее исполнитель работает по выбранной задаче
                 data_id = call.data.split(":")[1]
-                print(data_id)
                 tasker = Task.objects.get(id=data_id)
                 global find_task_id
                 find_task_id = tasker.id

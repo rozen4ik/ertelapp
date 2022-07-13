@@ -9,6 +9,22 @@ from .forms import *
 from .models import *
 
 
+# Формирование показа страницы в зависимости от отдела
+def show_department_task(request, end_task, path_file, dict_task):
+    if end_task is not None:
+        end_task_fullname = end_task.employee_task.split()
+        end_task_firstname = end_task_fullname[0]
+        end_task_lastname = end_task_fullname[1]
+        tg_chat_id = User.objects.get(first_name=end_task_firstname, last_name=end_task_lastname)
+        tg_chat_id = Profile.objects.get(user_id=tg_chat_id).chat_id
+        token_tg_bot = settings.TOKEN_TG_BOT
+        dict_task["tg_chat_id"] = tg_chat_id
+        dict_task["token_tg_bot"] = token_tg_bot
+        return render(request, path_file, dict_task)
+    else:
+        return render(request, path_file, dict_task)
+
+
 # Словарь полей, по которым фильтруются данные таблицы Task
 filter_task = {}
 
@@ -36,66 +52,28 @@ def index(request):
     filter_task = form.cleaned_data
     end_task = Task.objects.all().latest("id")
 
-    if request.user.username == director_user.user.username:
-        if end_task is not None:
-            end_task_fullname = end_task.employee_task.split()
-            end_task_firstname = end_task_fullname[0]
-            end_task_lastname = end_task_fullname[1]
-            tg_chat_id = User.objects.get(first_name=end_task_firstname, last_name=end_task_lastname)
-            tg_chat_id = Profile.objects.get(user_id=tg_chat_id).chat_id
-            token_tg_bot = settings.TOKEN_TG_BOT
-            return render(request, "task/tasks.html",
-                          {"task": task, "users": users, "form": form, "end_task": end_task, "tg_chat_id": tg_chat_id,
-                           "token_tg_bot": token_tg_bot})
-        else:
-            return render(request, "task/tasks.html", {"task": task, "users": users, "form": form})
-    elif request.user.username == eng_user.user.username:
-        if end_task is not None:
-            end_task_fullname = end_task.employee_task.split()
-            end_task_firstname = end_task_fullname[0]
-            end_task_lastname = end_task_fullname[1]
-            tg_chat_id = User.objects.get(first_name=end_task_firstname, last_name=end_task_lastname)
-            tg_chat_id = Profile.objects.get(user_id=tg_chat_id).chat_id
-            token_tg_bot = settings.TOKEN_TG_BOT
-            return render(request, "task/role/engineering_task.html",
-                          {"engineering_task": engineering_task, "users": users, "form": form,
-                           "end_task": end_task, "tg_chat_id": tg_chat_id,
-                           "token_tg_bot": token_tg_bot})
-        else:
-            return render(request, "task/role/engineering_task.html",
-                          {"engineering_task": engineering_task, "users": users, "form": form})
-    elif request.user.username == sales_user.user.username:
-        if end_task is not None:
-            end_task_fullname = end_task.employee_task.split()
-            end_task_firstname = end_task_fullname[0]
-            end_task_lastname = end_task_fullname[1]
-            tg_chat_id = User.objects.get(first_name=end_task_firstname, last_name=end_task_lastname)
-            tg_chat_id = Profile.objects.get(user_id=tg_chat_id).chat_id
-            token_tg_bot = settings.TOKEN_TG_BOT
-            return render(request, "task/role/sales_task.html",
-                          {"sales_task": sales_task, "users": users, "form": form, "end_task": end_task,
-                           "tg_chat_id": tg_chat_id,
-                           "token_tg_bot": token_tg_bot})
-        else:
-            return render(request, "task/role/sales_task.html",
-                          {"sales_task": sales_task, "users": users, "form": form})
-    elif request.user.username == technical_user.user.username:
-        if end_task is not None:
-            end_task_fullname = end_task.employee_task.split()
-            end_task_firstname = end_task_fullname[0]
-            end_task_lastname = end_task_fullname[1]
-            tg_chat_id = User.objects.get(first_name=end_task_firstname, last_name=end_task_lastname)
-            tg_chat_id = Profile.objects.get(user_id=tg_chat_id).chat_id
-            token_tg_bot = settings.TOKEN_TG_BOT
-            return render(request, "task/role/technical_task.html",
-                          {"technical_task": technical_task, "users": users, "form": form, "end_task": end_task,
-                           "tg_chat_id": tg_chat_id,
-                           "token_tg_bot": token_tg_bot})
-        else:
-            return render(request, "task/role/technical_task.html",
-                          {"technical_task": technical_task, "users": users, "form": form})
-    else:
-        return render(request, "task/role/no_access.html")
+    dict_task = {"users": users, "form": form, "end_task": end_task}
+
+    # Показ задач в зависимости от должности
+    match request.user.username:
+        case director_user.user.username:
+            first_dict_task = {"task": task}
+            first_dict_task.update(dict_task)
+            return show_department_task(request, end_task, "task/tasks.html", first_dict_task)
+        case eng_user.user.username:
+            first_dict_task = {"engineering_task": engineering_task}
+            first_dict_task.update(dict_task)
+            return show_department_task(request, end_task, "task/role/engineering_task.html", first_dict_task)
+        case sales_user.user.username:
+            first_dict_task = {"sales_task": sales_task}
+            first_dict_task.update(dict_task)
+            return show_department_task(request, end_task, "task/role/sales_task.html", first_dict_task)
+        case technical_user.user.username:
+            first_dict_task = {"technical_task": technical_task}
+            first_dict_task.update(dict_task)
+            return show_department_task(request, end_task, "task/role/technical_task.html", first_dict_task)
+        case _:
+            return render(request, "task/role/no_access.html")
 
 
 # Вывод задачи по id

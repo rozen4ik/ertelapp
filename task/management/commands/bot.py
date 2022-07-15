@@ -41,18 +41,6 @@ def end_task_return(end_task, user, message):
     return task
 
 
-# Сохранение данных в таблицу work_task
-def save_work_task(dt, end_task, result, status):
-    work_task = WorkTask()
-    work_task.date_work_task = dt[0]
-    work_task.time_work_task = dt[1]
-    work_task.employee_work_task = end_task.employee_task
-    work_task.address_work_task = result
-    work_task.task_id = end_task.id
-    work_task.status_work_task = status
-    work_task.save()
-
-
 # Изменение статуса задачи
 def set_status_task(status_task, end_task, user, message):
     if find_task_id == 0:
@@ -85,7 +73,7 @@ def start_message(message):
     btn3 = types.KeyboardButton("Указать местоположение", request_location=True)
     btn4 = types.KeyboardButton("Выбрать задачу")
     markup.add(btn1, btn2, btn3, btn4)
-    bot.send_message(message.chat.id, text="Привет ✌️!\nЯ бот компании ЭРТЭЛ, через меня тебе будут ставить задания.",
+    bot.send_message(message.chat.id, text="Привет ✌️!\nЯ бот компании ЭРТЕЛ, через меня тебе будут ставить задания.",
                      reply_markup=markup)
 
 
@@ -108,10 +96,24 @@ def location_message(message):
             user = User.objects.all().select_related("profile")
             if find_task_id == 0:
                 end_task = end_task_return(Task, user, message)
-                save_work_task(dt, end_task, result["value"], status)
+                work_task = WorkTask()
+                work_task.date_work_task = dt[0]
+                work_task.time_work_task = dt[1]
+                work_task.employee_work_task = end_task.employee_task
+                work_task.address_work_task = result["value"]
+                work_task.task_id = end_task.id
+                work_task.status_work_task = status
+                work_task.save()
             else:
                 end_task = find_task(int(find_task_id))
-                save_work_task(dt, end_task, result["value"], status)
+                work_task = WorkTask()
+                work_task.date_work_task = dt[0]
+                work_task.time_work_task = dt[1]
+                work_task.employee_work_task = end_task.employee_task
+                work_task.address_work_task = result["value"]
+                work_task.task_id = end_task.id
+                work_task.status_work_task = status
+                work_task.save()
 
         # Обработка статуса работника относительно местоположения
         @bot.callback_query_handler(func=lambda call: call.data.split(":")[0] == "prefix")

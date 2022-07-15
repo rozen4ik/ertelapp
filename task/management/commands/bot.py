@@ -47,7 +47,7 @@ def save_work_task(dt, end_task, result, status):
     work_task.date_work_task = dt[0]
     work_task.time_work_task = dt[1]
     work_task.employee_work_task = end_task.employee_task
-    work_task.address_work_task = result["value"]
+    work_task.address_work_task = result
     work_task.task_id = end_task.id
     work_task.status_work_task = status
     work_task.save()
@@ -108,10 +108,10 @@ def location_message(message):
             user = User.objects.all().select_related("profile")
             if find_task_id == 0:
                 end_task = end_task_return(Task, user, message)
-                save_work_task(dt, end_task, result, status)
+                save_work_task(dt, end_task, result["value"], status)
             else:
                 end_task = find_task(int(find_task_id))
-                save_work_task(dt, end_task, result, status)
+                save_work_task(dt, end_task, result["value"], status)
 
         # Обработка статуса работника относительно местоположения
         @bot.callback_query_handler(func=lambda call: call.data.split(":")[0] == "prefix")

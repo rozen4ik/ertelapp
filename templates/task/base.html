@@ -12,63 +12,65 @@
 {% if user.is_authenticated %}
 <br>
     <p><a class="btn btn-outline-primary" href="{% url 'logout' %}" role="button">Выйти - {{ user.first_name }} {{ user.last_name }} </a> <a class="btn btn-primary" href="/" role="button">На главную</a> <a class="btn btn-primary" href="/work_task/" role="button">Перейти к контролю выполнения работ</a></p>
-    <form method="POST" action="create/" class="contact-form" id="tg">
-        {% csrf_token %}
-        <div class="table-responsive">
-            <table class="table table-bordered table-sm align-middle table-hover">
-                <thead class="align-middle table-primary">
-                    <tr>
-                        <th scope="col"><label>Дата</label></th>
-                        <th scope="col"><label>Время</label></th>
-                        <th scope="col"><label>Задача</label></th>
-                        <th scope="col"><label>Адрес</label></th>
-                        <th scope="col"><label>Кому поставленка задача</label></th>
-                        <th scope="col"><label>Сроки выполнения</label></th>
-                        <th scope="col"><label>Cтатус выполнения</label></th>
-                        <th scope="col"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <th scope="row"><input class="form-control" type="date" name="date_task" /></th>
-                        <td><input class="form-control" type="time" name="time_task" /></td>
-                        <td><textarea class="form-control" name="text_task" rows="1" cols="45"></textarea></td>
-                        <script src="{% static "js/autho_size_textarea.js" %}"></script>
-                        <td><input class="form-control" type="text" name="address_task" /></td>
-                        <td><select class="form-select" name="employee_task">
-                            {% for user in users %}
-                                <option value="{{ user.first_name }} {{ user.last_name }}">{{ user.first_name }} {{ user.last_name }}</option>
-                            {% endfor %}
-                        </select></td>
-                        <td><input class="form-control" type="date" name="line_task" /></td>
-                        <td><select class="form-select" name="status_task">
-                            <option value="Отдано в разработку">Отдано в разработку</option>
-                            <option value="Выполнено">Выполнено</option>
-                            <option value="Выполненяется">Выполненяется</option>
-                            <option value="Не выполнено">Не выполнено</option>
-                        </select></td>
-                        <td><input type="submit" name="sun" class="btn btn-outline-primary contact-form__button" value="Сохранить" ></td>
-                    </tr>
-                </tbody>
-            </table>
+    <div style="text-align: center;"><h1>Постановка задач</h1></div>
+    <form class="row g-3" method="POST" action="create/" id="tg">
+    {% csrf_token %}
+        <div class="col-md-2">
+            <label for="inputDate" class="form-label">Дата</label>
+            <input type="date" class="form-control" id="inputDate" name="date_task">
+        </div>
+        <div class="col-md-2">
+            <label for="inputTime" class="form-label">Время</label>
+            <input type="time" class="form-control" id="inputTime" name="time_task">
+        </div>
+        <div class="col-md-7">
+            <label for="inputText" class="form-label">Задача</label>
+            <textarea class="form-control" id="inputText" name="text_task" rows="1" cols="45" placeholder="Укажите что нужно сделать исполнителю"></textarea>
+        </div>
+        <div class="col-md-4">
+            <label for="inputAddress" class="form-label">Адрес</label>
+            <textarea class="form-control" id="inputAddress" name="address_task" rows="1" cols="45" placeholder="Укажите место выполнения задачи"></textarea>
+            <script src="{% static "js/autho_size_textarea.js" %}"></script>
+        </div>
+        <div class="col-md-2">
+            <label for="inputEmployee" class="form-label">Исполнитель</label>
+            <select class="form-select" id="inputEmployee" name="employee_task">
+                {% for user in users %}
+                    <option value="{{ user.first_name }} {{ user.last_name }}">{{ user.first_name }} {{ user.last_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label for="inputLine" class="form-label">Сроки выполнения</label>
+            <input type="date" class="form-control" id="inputLine" name="line_task">
+        </div>
+        <div class="col-md-3">
+            <label for="inputStatus" class="form-label">Статус выполнения</label>
+            <select class="form-select" id="inputStatus" name="status_task">
+                <option value="Отдано в разработку">Отдано в разработку</option>
+                <option value="Выполнено">Выполнено</option>
+                <option value="Выполненяется">Выполненяется</option>
+                <option value="Не выполнено">Не выполнено</option>
+            </select>
+        </div>
+        <div class="col-12">
+            <input type="submit" name="sun" class="btn btn-outline-primary contact-form__button" value="Сохранить" >
         </div>
     </form>
+    <br>
     <hr>
     <div style="text-align: center;"><h1>Сортировка данных</h1></div>
-    <form method="get" action="">
-        <div class="table-responsive">
-            <table class="table table-bordered table-sm align-middle table-hover">
-                <thead class="align-middle table-primary">
-                    <th scope="col"><label for="{{ form.employee_task.id_for_label }}">Исполнитель</label></th>
-                    <th scope="col"><label for="{{ form.status_task.id_for_label }}">Статус работы</label></th>
-                    <th></th>
-                </thead>
-                <tbody>
-                    <td scope="row">{{ form.employee_task }}</td>
-                    <td>{{ form.status_task }}</td>
-                    <td><input class="btn btn-outline-primary" type="submit" value="Поиск"></td>
-                </tbody>
-            </table>
+    <form class="row g-3" method="get" action="">
+        <div class="col-md-3">
+            <label for="{{ form.employee_task.id_for_label }}">Исполнитель</label>
+            {{ form.employee_task }}
+        </div>
+        <div class="col-md-3">
+            <label for="{{ form.status_task.id_for_label }}">Статус выполнения</label>
+            {{ form.status_task }}
+        </div>
+        <div class="col-12">
+            <input type="submit" name="sun" class="btn btn-outline-primary contact-form__button" value="Поиск" >
         </div>
     </form>
     <hr>

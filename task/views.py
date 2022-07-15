@@ -157,6 +157,8 @@ def export_excel_work_task(request):
     rows = WorkTask.objects.all().values_list('id', 'date_work_task', 'time_work_task', 'employee_work_task',
                                               'address_work_task', 'task_id')
 
+    rows = rows.order_by("-id")
+
     for row in rows:
         row_num += 1
 
@@ -208,6 +210,8 @@ def export_excel(request):
         rows = Task.objects.all().values_list('id', 'date_task', 'time_task', 'text_task', 'address_task',
                                               'author_task',
                                               'employee_task', 'line_task', 'status_task')
+
+    rows = rows.order_by("-id")
 
     for row in rows:
         row_num += 1

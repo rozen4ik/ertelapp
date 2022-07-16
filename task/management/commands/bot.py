@@ -61,6 +61,18 @@ def set_status_task(status_task, end_task, user, message):
     bot.send_message(message.chat.id, text=message_task, parse_mode="HTML")
 
 
+# Сохранение данных в таблицу work_task
+def save_work_task(dt, end_task, result, status):
+    work_task = WorkTask()
+    work_task.date_work_task = dt[0]
+    work_task.time_work_task = dt[1]
+    work_task.employee_work_task = end_task.employee_task
+    work_task.address_work_task = result["value"]
+    work_task.task_id = end_task.id
+    work_task.status_work_task = status
+    work_task.save()
+
+
 # Значение id задачи на которую хотим переключится
 find_task_id: int = 0
 
@@ -96,24 +108,10 @@ def location_message(message):
             user = User.objects.all().select_related("profile")
             if find_task_id == 0:
                 end_task = end_task_return(Task, user, message)
-                work_task = WorkTask()
-                work_task.date_work_task = dt[0]
-                work_task.time_work_task = dt[1]
-                work_task.employee_work_task = end_task.employee_task
-                work_task.address_work_task = result["value"]
-                work_task.task_id = end_task.id
-                work_task.status_work_task = status
-                work_task.save()
+                save_work_task(dt, end_task, result, status)
             else:
                 end_task = find_task(int(find_task_id))
-                work_task = WorkTask()
-                work_task.date_work_task = dt[0]
-                work_task.time_work_task = dt[1]
-                work_task.employee_work_task = end_task.employee_task
-                work_task.address_work_task = result["value"]
-                work_task.task_id = end_task.id
-                work_task.status_work_task = status
-                work_task.save()
+                save_work_task(dt, end_task, result, status)
 
         # Обработка статуса работника относительно местоположения
         @bot.callback_query_handler(func=lambda call: call.data.split(":")[0] == "prefix")
@@ -124,18 +122,25 @@ def location_message(message):
             if data == '1':
                 answer = 'Вы убыли на объект'
                 create_row_work_tas("Выехал на объект")
+
             elif data == '2':
                 answer = 'Вы прибыли на объект'
                 create_row_work_tas("Прибыл на объект")
             elif data == '3':
                 answer = 'Вы убыли с объекта'
                 create_row_work_tas("Убыл с объекта")
+
             bot.edit_message_reply_markup(call.message.chat.id, call.message.message_id)
             bot.send_message(call.message.chat.id, answer)
+            user = User.objects.get(profile__chat_id=message.chat.id)
+            work_task = WorkTask.objects.filter(employee_work_task=f"{user.first_name} {user.last_name}").latest("id")
+            work_task.address_work_task = result["value"]
+            work_task.save()
 
         bot.send_message(message.chat.id, parse_mode="HTML",
                          text=f"<b>Ваше местоположение:</b> {result['value']}\n<b>Время отправки сообщения:</b> "
                               f"{dt_message[0]} {dt_message[1]}", reply_markup=keyboard)
+
     else:
         bot.send_message(message.chat.id, parse_mode="HTML", text="Не удалось отправить ваше местонахождение")
 

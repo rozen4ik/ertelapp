@@ -1,0 +1,27 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<h1>Задачи</h1>
+
+{% for task in tasks %}
+    <p>
+        {{ task.id }}
+        {{ task.date_task }}
+        {{ task.time_task }}
+        {{ task.text_task }}
+        {{ task.address_task }}
+        {{ task.author_task }}
+        {{ task.employee_task }}
+        {{ task.line_task }}
+        {{ task.status_task }}
+    </p>
+{% endfor %}
+</body>
+</html>

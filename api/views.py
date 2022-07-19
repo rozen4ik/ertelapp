@@ -1,62 +1,84 @@
-from api import serializers
-from rest_framework import generics
+from django.contrib.auth.models import User
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from api.serializers import TaskSerializer, WorkTaskSerializer
 from task.models import Task, WorkTask
-from rest_framework.permissions import IsAuthenticated
 
 
-# API Вернуть все значения
-class TaskList(generics.ListAPIView):
-    queryset = Task.objects.all().order_by("-id")
-    serializer_class = serializers.TaskSerializer
-    permission_classes = ()
+@api_view(['GET', 'POST'])
+def api_task_list(request, employee_task):
+    if request.method == 'GET':
+        user = User.objects.get(username=employee_task)
+        tasks = Task.objects.filter(employee_task=f"{user.first_name} {user.last_name}").order_by("-id")
+        serializer = TaskSerializer(tasks, many=True)
+        return Response(serializer.data)
+
+    elif request.method == 'POST':
+        serializer = TaskSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# API Вернуть значение по id
-class TaskDetail(generics.RetrieveAPIView):
-    queryset = Task.objects.all().order_by("-id")
-    serializer_class = serializers.TaskSerializer
-    permission_classes = ()
+@api_view(['GET', 'PUT', 'DELETE'])
+def api_task_detail(request, pk, employee_task):
+    try:
+        user = User.objects.get(username=employee_task)
+        task = Task.objects.get(pk=pk, employee_task=f"{user.first_name} {user.last_name}")
+    except Task.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        serializer = TaskSerializer(task)
+        return Response(serializer.data)
+
+    elif request.method == 'PUT':
+        serializer = TaskSerializer(task, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method == 'DELETE':
+        task.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-# API Добавить данные
-class TaskList(generics.ListCreateAPIView):
-    queryset = Task.objects.all().order_by("-id")
-    serializer_class = serializers.TaskSerializer
-    permission_classes = ()
+@api_view(['GET', 'POST'])
+def api_work_task_list(request):
+    if request.method == 'GET':
+        work_tasks = WorkTask.objects.all().order_by("-id")
+        serializer = WorkTaskSerializer(work_tasks, many=True)
+        return Response(serializer.data)
 
-    def perform_create(self, serializer):
-        serializer.save()
-
-
-# API Изменить, удалить данные
-class TaskDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Task.objects.all().order_by("-id")
-    serializer_class = serializers.TaskSerializer
-    permission_classes = ()
+    elif request.method == 'POST':
+        serializer = WorkTaskSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class WorkTaskList(generics.ListAPIView):
-    queryset = WorkTask.objects.all().order_by("-id")
-    serializer_class = serializers.WorkTaskSerializer
-    permission_classes = ()
+@api_view(['GET', 'PUT', 'DELETE'])
+def api_work_task_detail(request, pk):
+    try:
+        work_task = WorkTask.objects.get(pk=pk)
+    except Task.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
+    if request.method == 'GET':
+        serializer = WorkTaskSerializer(work_task)
+        return Response(serializer.data)
 
-class WorkTaskDetail(generics.RetrieveAPIView):
-    queryset = WorkTask.objects.all().order_by("-id")
-    serializer_class = serializers.WorkTaskSerializer
-    permission_classes = ()
+    elif request.method == 'PUT':
+        serializer = WorkTaskSerializer(work_task, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-class WorkTaskList(generics.ListCreateAPIView):
-    queryset = WorkTask.objects.all().order_by("-id")
-    serializer_class = serializers.WorkTaskSerializer
-    permission_classes = ()
-
-    def perform_create(self, serializer):
-        serializer.save()
-
-
-class WorkTaskDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = WorkTask.objects.all().order_by("-id")
-    serializer_class = serializers.WorkTaskSerializer
-    permission_classes = ()
+    elif request.method == 'DELETE':
+        work_task.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

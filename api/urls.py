@@ -4,10 +4,10 @@ from . import views
 
 urlpatterns = [
     path('api/drf-auth', include('rest_framework.urls')),
-    path('api/tasks/', views.TaskList.as_view()),
-    path('api/tasks/<int:pk>/', views.TaskDetail.as_view()),
-    path('api/work_tasks/', views.WorkTaskList.as_view()),
-    path('api/work_tasks/<int:pk>/', views.WorkTaskDetail.as_view())
+    path('api/tasks/<str:employee_task>/', views.api_task_list),
+    path('api/tasks/<str:employee_task>/<int:pk>/', views.api_task_detail),
+    path('api/work_tasks/', views.api_work_task_list),
+    path('api/work_tasks/<int:pk>/', views.api_work_task_detail)
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

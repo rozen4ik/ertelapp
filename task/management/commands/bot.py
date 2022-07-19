@@ -34,10 +34,10 @@ def find_task(task_id: int):
 
 
 # Поиск последней задачи
-def end_task_return(end_task, user, message):
-    user = user.get(profile__chat_id=message.chat.id)
-    task = end_task.objects.filter(Q(status_task="Выполняется") | Q(status_task="Отдано в разработку"),
-                                   employee_task=f"{user.first_name} {user.last_name}").latest("id")
+def end_task_return(message):
+    user = User.objects.get(profile__chat_id=message.chat.id)
+    task = Task.objects.filter(Q(status_task="Выполняется") | Q(status_task="Отдано в разработку"),
+                               employee_task=f"{user.first_name} {user.last_name}").latest("id")
     return task
 
 
@@ -46,7 +46,7 @@ def set_status_task(status_task, end_task, user, message):
     if find_task_id == 0:
         end_task.status_task = status_task
         end_task.save()
-        end_task = end_task_return(Task, user, message)
+        end_task = end_task_return(message)
         message_task = get_message(end_task)
     else:
         # Формируется запрос на поиск задачи по указанному id,
@@ -59,18 +59,6 @@ def set_status_task(status_task, end_task, user, message):
     bot.send_message(message.chat.id, text=f"Статус задачи {end_task.id} изменен на\n<b>Выполняется</b>",
                      parse_mode="HTML")
     bot.send_message(message.chat.id, text=message_task, parse_mode="HTML")
-
-
-# Сохранение данных в таблицу work_task
-def save_work_task(dt, end_task, result, status):
-    work_task = WorkTask()
-    work_task.date_work_task = dt[0]
-    work_task.time_work_task = dt[1]
-    work_task.employee_work_task = end_task.employee_task
-    work_task.address_work_task = result["value"]
-    work_task.task_id = end_task.id
-    work_task.status_work_task = status
-    work_task.save()
 
 
 # Значение id задачи на которую хотим переключится
@@ -105,13 +93,22 @@ def location_message(message):
 
         def create_row_work_tas(status):
             dt = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S").split()
-            user = User.objects.all().select_related("profile")
+            global find_task_id
+
             if find_task_id == 0:
-                end_task = end_task_return(Task, user, message)
-                save_work_task(dt, end_task, result, status)
-            else:
-                end_task = find_task(int(find_task_id))
-                save_work_task(dt, end_task, result, status)
+                end_task = end_task_return(message)
+                find_task_id = end_task.id
+
+            end_task = find_task(int(find_task_id))
+            end_task_fullname = end_task.employee_task
+            work_task = WorkTask()
+            work_task.date_work_task = dt[0]
+            work_task.time_work_task = dt[1]
+            work_task.employee_work_task = f"{end_task_fullname}"
+            work_task.address_work_task = result["value"]
+            work_task.task_id = end_task.id
+            work_task.status_work_task = status
+            work_task.save()
 
         # Обработка статуса работника относительно местоположения
         @bot.callback_query_handler(func=lambda call: call.data.split(":")[0] == "prefix")
@@ -132,10 +129,6 @@ def location_message(message):
 
             bot.edit_message_reply_markup(call.message.chat.id, call.message.message_id)
             bot.send_message(call.message.chat.id, answer)
-            user = User.objects.get(profile__chat_id=message.chat.id)
-            work_task = WorkTask.objects.filter(employee_work_task=f"{user.first_name} {user.last_name}").latest("id")
-            work_task.address_work_task = result["value"]
-            work_task.save()
 
         bot.send_message(message.chat.id, parse_mode="HTML",
                          text=f"<b>Ваше местоположение:</b> {result['value']}\n<b>Время отправки сообщения:</b> "
@@ -150,7 +143,7 @@ def location_message(message):
 def task_message(message):
     # Поиск задачи с которой предстоит работать пользователю
     user = User.objects.all().select_related("profile")
-    end_task = end_task_return(Task, user, message)
+    end_task = end_task_return(message)
     # Если find_task_id равен 0, то работает с последней задачей которая нам поручена
     # Если нет, то уже с той задачей, id которой равен find_task_id
     match message.text:

@@ -13,7 +13,7 @@ class Task(models.Model):
     author_task = models.CharField(max_length=120)
     employee_task = models.CharField(max_length=120)
     line_task = models.DateField(max_length=150)
-    status_task = models.CharField(max_length=150)
+    status_task = models.CharField(max_length=150, default="Отдано в разработку")
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):

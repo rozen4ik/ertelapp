@@ -8,7 +8,6 @@ from ertelapp import settings
 from .forms import *
 from .models import *
 
-
 # Словарь полей, по которым фильтруются данные таблицы Task
 filter_task = {}
 
@@ -80,7 +79,15 @@ def index(request):
 def create(request):
     if request.method == "POST":
         task = Task()
-        init_task(request, task)
+        task.date_task = request.POST.get("date_task")
+        task.time_task = request.POST.get("time_task")
+        task.text_task = request.POST.get("text_task")
+        task.address_task = request.POST.get("address_task")
+        task.author_task = request.user.first_name + " " + request.user.last_name
+        task.employee_task = request.POST.get("employee_task")
+        task.line_task = request.POST.get("line_task")
+        task.user_id = request.user.id
+        task.save()
 
     return HttpResponseRedirect("/")
 
@@ -223,6 +230,7 @@ def export_excel(request):
     wb.save(response)
 
     return response
+
 
 # Инициализация таблицы task
 def init_task(request, task):

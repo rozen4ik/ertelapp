@@ -85,20 +85,6 @@ def index_detail(request, id):
         return HttpResponseNotFound("<h2>Задача не найдена</h2>")
 
 
-def index_bot(request):
-    work_task = WorkTask.objects.all().order_by("-id")
-    return render(request, "task/work_task.html", {"work_task": work_task})
-
-
-def delete_work_task(request, id):
-    try:
-        work_task = WorkTask.objects.get(id=id)
-        work_task.delete()
-        return HttpResponseRedirect("/work_task/")
-    except Task.DoesNotExist:
-        return HttpResponseNotFound("<h2>Task not found</h2>")
-
-
 # Добавление данных
 def create(request):
     if request.method == "POST":
@@ -131,6 +117,30 @@ def delete(request, id):
         return HttpResponseRedirect("/")
     except Task.DoesNotExist:
         return HttpResponseNotFound("<h2>Task not found</h2>")
+
+
+# Вывод раздела контроль выполнения работ
+def index_bot(request):
+    work_task = WorkTask.objects.all().order_by("-id")
+    return render(request, "task/work_task.html", {"work_task": work_task})
+
+
+# Удаление записи в в разделе контроля выполнения работ
+def delete_work_task(request, id):
+    try:
+        work_task = WorkTask.objects.get(id=id)
+        work_task.delete()
+        return HttpResponseRedirect("/work_task/")
+    except Task.DoesNotExist:
+        return HttpResponseNotFound("<h2>Task not found</h2>")
+
+
+def show_work_task_for_task(request, id):
+    try:
+        work_task_employee = WorkTask.objects.filter(task=id).order_by("-id")
+        return render(request, "task/work_task_employee.html", {"work_task_employee": work_task_employee})
+    except WorkTask.DoesNotExist:
+        return HttpResponseNotFound("<h2>WorkTask not found</h2>")
 
 
 # Реализация экспорта данных в excel таблицы WorkTask
@@ -223,7 +233,7 @@ def export_excel(request):
 
     return response
 
-
+# Инициализация таблицы task
 def init_task(request, task):
     task.date_task = request.POST.get("date_task")
     task.time_task = request.POST.get("time_task")

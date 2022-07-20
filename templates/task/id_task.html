@@ -57,7 +57,7 @@
                             <td>{{ task.employee_task }}</td>
                             <td>{{ task.line_task }}</td>
                             <td>{{ task.status_task }}</td>
-                            <td><a href="{% url 'edit' task.pk %}">Изменить</a>|<a href="delete/{{tasks.id}}">Удалить</a></td>
+                            <td><a href="{% url 'edit' task.pk %}">Изменить</a>|<a href="{% url 'work' task.pk %}">Контроль</a>|<a href="delete/{{tasks.id}}">Удалить</a></td>
                         </tr>
                     </tbody>
                 </table>

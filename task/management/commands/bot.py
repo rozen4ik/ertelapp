@@ -67,6 +67,9 @@ find_task_id: int = 0
 
 @bot.message_handler(commands=['start'])
 def start_message(message):
+    global find_task_id
+    end_task = end_task_return(message)
+    find_task_id = end_task.id
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     btn1 = types.KeyboardButton("Выполняется")
     btn2 = types.KeyboardButton("Выполнено")
@@ -80,10 +83,6 @@ def start_message(message):
 # Функционал для работы с местоположением и фиксацией времени
 @bot.message_handler(content_types=['location'])
 def location_message(message):
-    global find_task_id
-    if find_task_id == 0:
-        task = end_task_return(message)
-        find_task_id = task.id
     dt_message = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S").split()
     token_dadata = settings.TOKEN_DADATA
     dadata = Dadata(token_dadata)
@@ -96,9 +95,26 @@ def location_message(message):
         keyboard.add(telebot.types.InlineKeyboardButton(text='Прибыл на объект', callback_data="prefix:2"))
         keyboard.add(telebot.types.InlineKeyboardButton(text='Убыл с объекта', callback_data="prefix:3"))
 
-        def create_row_work_tas(status):
+        # Обработка статуса работника относительно местоположения
+        @bot.callback_query_handler(func=lambda call: call.data.split(":")[0] == "prefix")
+        def status_local(call):
+            data = call.data.split(":")[1]
+            bot.answer_callback_query(callback_query_id=call.id, text='Спасибо за честный ответ!')
+            answer = ""
+            status = ""
+            if data == "1":
+                answer = 'Вы убыли на объект'
+                status = "Выехал на объект"
+
+            elif data == "2":
+                answer = 'Вы прибыли на объект'
+                status = "Прибыл на объект"
+            elif data == "3":
+                answer = 'Вы убыли с объекта'
+                status = "Убыл с объекта"
+
             dt = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S").split()
-            end_task = find_task(int(find_task_id))
+            end_task = find_task(find_task_id)
             end_task_fullname = end_task.employee_task
             work_task = WorkTask()
             work_task.date_work_task = dt[0]
@@ -108,23 +124,6 @@ def location_message(message):
             work_task.task_id = end_task.id
             work_task.status_work_task = status
             work_task.save()
-
-        # Обработка статуса работника относительно местоположения
-        @bot.callback_query_handler(func=lambda call: call.data.split(":")[0] == "prefix")
-        def status_local(call):
-            data = call.data.split(":")[1]
-            bot.answer_callback_query(callback_query_id=call.id, text='Спасибо за честный ответ!')
-            answer = ''
-            if data == '1':
-                answer = 'Вы убыли на объект'
-                create_row_work_tas("Выехал на объект")
-
-            elif data == '2':
-                answer = 'Вы прибыли на объект'
-                create_row_work_tas("Прибыл на объект")
-            elif data == '3':
-                answer = 'Вы убыли с объекта'
-                create_row_work_tas("Убыл с объекта")
 
             bot.edit_message_reply_markup(call.message.chat.id, call.message.message_id)
             bot.send_message(call.message.chat.id, answer)
@@ -173,10 +172,9 @@ def task_message(message):
                 # После нажатия на кнопку с id задачей, find_task_id принимает значение
                 # Выбранно задачи, и далее исполнитель работает по выбранной задаче
                 data_id = call.data.split(":")[1]
-                tasker = Task.objects.get(id=data_id)
+                tasker = find_task(data_id)
                 global find_task_id
                 find_task_id = tasker.id
-                tasker.save()
                 answer = f"{get_message(tasker)}\n"
                 bot.edit_message_reply_markup(call.message.chat.id, call.message.message_id)
                 bot.delete_message(call.message.chat.id, call.message.message_id)

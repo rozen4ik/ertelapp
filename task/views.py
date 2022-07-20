@@ -9,6 +9,10 @@ from .forms import *
 from .models import *
 
 
+# Словарь полей, по которым фильтруются данные таблицы Task
+filter_task = {}
+
+
 # Формирование показа страницы в зависимости от отдела
 def show_department_task(request, end_task, path_file, dict_task):
     if end_task is not None:
@@ -23,10 +27,6 @@ def show_department_task(request, end_task, path_file, dict_task):
         return render(request, path_file, dict_task)
     else:
         return render(request, path_file, dict_task)
-
-
-# Словарь полей, по которым фильтруются данные таблицы Task
-filter_task = {}
 
 
 # Получение данных

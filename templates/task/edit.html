@@ -52,6 +52,7 @@
                             <th>{{ task.employee_task }}</th>
                             <th>{{ task.line_task }}</th>
                             <th>{{ task.status_task }}</th>
+                            <th><a class="btn btn-outline-primary" href="{% url 'work' task.pk %}">Контроль</a></th>
                         </tr>
                         <tr>
                             <th scope="row"><input class="form-control" type="date" name="date_task"/></th>

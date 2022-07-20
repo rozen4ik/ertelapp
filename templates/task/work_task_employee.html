@@ -57,7 +57,7 @@
                             <td>{{ work.address_work_task }}</td>
                             <td>{{ work.task_id }}</td>
                             <td>{{ work.status_work_task }}</td>
-                            <td><a href="{% url 'id_task' work.task_id %}">Перейти к задаче</a> | <a href="delete/{{work.id}}">Удалить</a></td>
+                            <td><a class="btn btn-outline-primary" href="{% url 'edit' work.task_id %}">Перейти к задаче</a></td>
                         </tr>
                     </tbody>
                     {% endfor %}

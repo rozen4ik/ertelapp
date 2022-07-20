@@ -76,15 +76,6 @@ def index(request):
             return render(request, "task/role/no_access.html")
 
 
-# Вывод задачи по id
-def index_detail(request, id):
-    try:
-        task = Task.objects.get(id=id)
-        return render(request, "task/id_task.html", {"task": task})
-    except Task.DoesNotExist:
-        return HttpResponseNotFound("<h2>Задача не найдена</h2>")
-
-
 # Добавление данных
 def create(request):
     if request.method == "POST":
@@ -109,14 +100,14 @@ def edit(request, id):
         return HttpResponseNotFound("<h2>Task not found</h2>")
 
 
-# Удаление данных
-def delete(request, id):
-    try:
-        task = Task.objects.get(id=id)
-        task.delete()
-        return HttpResponseRedirect("/")
-    except Task.DoesNotExist:
-        return HttpResponseNotFound("<h2>Task not found</h2>")
+# # Удаление данных
+# def delete(request, id):
+#     try:
+#         task = Task.objects.get(id=id)
+#         task.delete()
+#         return HttpResponseRedirect("/")
+#     except Task.DoesNotExist:
+#         return HttpResponseNotFound("<h2>Task not found</h2>")
 
 
 # Вывод раздела контроль выполнения работ

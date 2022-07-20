@@ -42,7 +42,7 @@
                         <td>{{ tasks.employee_task }}</td>
                         <td>{{ tasks.line_task }}</td>
                         <td>{{ tasks.status_task }}</td>
-                        <td><a href="/{{ tasks.id }}">Открыть</a>|<a href="work_task/{{ tasks.id }}">Контроль</a>|<a href="edit/{{tasks.id}}">Изменить</a>|<a href="delete/{{tasks.id}}">Удалить</a></td>
+                        <td><p><a class="btn btn-outline-primary" href="work_task/{{ tasks.id }}">Контроль</a></p><a class="btn btn-outline-primary" href="edit/{{tasks.id}}">Изменить</a></td>
                     </tr>
                 </tbody>
                 {% endfor %}

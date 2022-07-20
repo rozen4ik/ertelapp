@@ -4,10 +4,9 @@ from . import views
 
 urlpatterns = [
     path('', views.index),
-    path('<int:id>/', views.index_detail, name="id_task"),
     path('create/', views.create),
     path('edit/<int:id>/', views.edit, name="edit"),
-    path('delete/<int:id>/', views.delete),
+    # path('delete/<int:id>/', views.delete),
     path('work_task/', views.index_bot),
     path('work_task/delete/<int:id>/', views.delete_work_task),
     path('work_task/<int:id>/', views.show_work_task_for_task, name="work"),

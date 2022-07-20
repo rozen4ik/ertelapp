@@ -76,15 +76,6 @@ def index(request):
             return render(request, "task/role/no_access.html")
 
 
-def index_employee_task(request, employee_task):
-    try:
-        user = User.objects.get(username=employee_task)
-        tasks = Task.objects.filter(employee_task=f"{user.first_name} {user.last_name}")
-        return render(request, "task/employee_task.html", {"tasks": tasks})
-    except Task.DoesNotExist:
-        return HttpResponseNotFound("<h2>Пользователь не найден</h2>")
-
-
 # Вывод задачи по id
 def index_detail(request, id):
     try:

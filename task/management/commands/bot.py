@@ -80,11 +80,16 @@ def start_message(message):
 # Функционал для работы с местоположением и фиксацией времени
 @bot.message_handler(content_types=['location'])
 def location_message(message):
+    global find_task_id
+    if find_task_id == 0:
+        task = end_task_return(message)
+        find_task_id = task.id
     dt_message = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S").split()
     token_dadata = settings.TOKEN_DADATA
     dadata = Dadata(token_dadata)
     result = dadata.geolocate(name="address", lat=message.location.latitude, lon=message.location.longitude, count=1)
     result = result[0]
+
     if message.location is not None:
         keyboard = telebot.types.InlineKeyboardMarkup()
         keyboard.add(telebot.types.InlineKeyboardButton(text='Выехал на объект', callback_data="prefix:1"))
@@ -93,12 +98,6 @@ def location_message(message):
 
         def create_row_work_tas(status):
             dt = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S").split()
-            global find_task_id
-
-            if find_task_id == 0:
-                end_task = end_task_return(message)
-                find_task_id = end_task.id
-
             end_task = find_task(int(find_task_id))
             end_task_fullname = end_task.employee_task
             work_task = WorkTask()

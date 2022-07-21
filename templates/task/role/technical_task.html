@@ -32,7 +32,7 @@
                 </thead>
                 {% for tasks in technical_task %}
                 <tbody>
-                    <tr>
+                    <tr class="{% if tasks.status_task == 'Выполнено' %}table-success{% elif tasks.status_task == 'Отдано в разработку'%}table-danger{% else %}table-warning{% endif %}">
                         <td scope="row">{{ tasks.id }}</td>
                         <td>{{ tasks.date_task }}</td>
                         <td>{{ tasks.time_task }}</td>

@@ -44,7 +44,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
+                        <tr class="{% if task.status_task == 'Выполнено' %}table-success{% elif task.status_task == 'Отдано в разработку'%}table-danger{% else %}table-warning{% endif %}">
                             <th scope="row">{{ task.date_task }}</th>
                             <th>{{ task.time_task }}</th>
                             <th>{{ task.text_task }}</th>

@@ -29,10 +29,10 @@
                         let message = "<b>Номер задачи:</b> {{ end_task.id }}\n<b>Дата:</b> {{ end_task.date_task }}\n<b>Время:</b> {{ end_task.time_task }}\n<b>Кто поручил:</b> {{ end_task.author_task }}\n<b>Статус задачи:</b> {{ end_task.status_task }}\n<b>Задача:</b> {{ end_task.text_task }}\n<b>Место выполнения:</b> {{ end_task.address_task }}\n<b>Сроки выполнения:</b> {{ end_task.line_task }}";
                         tg_task_push_employee(`{{ tg_chat_id }}`, `{{ token_tg_bot }}`, message)
                     </script>
-                </thead>    
+                </thead>
                 {% for tasks in task %}
                 <tbody>
-                    <tr>
+                    <tr class="{% if tasks.status_task == 'Выполнено' %}table-success{% elif tasks.status_task == 'Отдано в разработку'%}table-danger{% else %}table-warning{% endif %}">
                         <td scope="row">{{ tasks.id }}</td>
                         <td>{{ tasks.date_task }}</td>
                         <td>{{ tasks.time_task }}</td>

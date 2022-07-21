@@ -8,7 +8,12 @@
                 <form method="POST">
                     <a class="btn btn-primary" href="{% url 'export-excel' %}" role="button">Экспортировать в Excel</a> |
                     <input type="submit" name="sun" class="btn btn-primary contact-form__button" value="Отправить в телеграм" >
-                    <hr>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="off" onclick="showHide('table-success');">
+                        <label class="form-check-label" for="inlineCheckbox1">Убрать выполненые задачи</label>
+                        <script src="{% static "js/filter_ch_box.js" %}"></script>
+                    </div>
+                    <p></p>
                 </form>
                 <thead class="align-middle table-primary">
                     <tr>

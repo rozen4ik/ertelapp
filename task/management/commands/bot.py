@@ -83,12 +83,16 @@ def start_message(message):
 # Функционал для работы с местоположением и фиксацией времени
 @bot.message_handler(content_types=['location'])
 def location_message(message):
+    global find_task_id
+    if find_task_id == 0:
+        end_task = end_task_return(message)
+        find_task_id = end_task.id
     dt_message = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S").split()
     token_dadata = settings.TOKEN_DADATA
     dadata = Dadata(token_dadata)
     result = dadata.geolocate(name="address", lat=message.location.latitude, lon=message.location.longitude, count=1)
     result = result[0]
-    address = result["value"]
+    result = result["value"]
 
     if message.location is not None:
         keyboard = telebot.types.InlineKeyboardMarkup()
@@ -114,6 +118,8 @@ def location_message(message):
                 answer = 'Вы убыли с объекта'
                 status = "Убыл с объекта"
 
+            address = dadata.geolocate(name="address", lat=message.location.latitude, lon=message.location.longitude, count=1)
+            address = address[0]
             dt = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S").split()
             end_task = find_task(find_task_id)
             end_task_fullname = end_task.employee_task
@@ -121,7 +127,7 @@ def location_message(message):
             work_task.date_work_task = dt[0]
             work_task.time_work_task = dt[1]
             work_task.employee_work_task = f"{end_task_fullname}"
-            work_task.address_work_task = address
+            work_task.address_work_task = address["value"]
             work_task.task_id = end_task.id
             work_task.status_work_task = status
             work_task.save()
@@ -130,7 +136,7 @@ def location_message(message):
             bot.send_message(call.message.chat.id, answer)
 
         bot.send_message(message.chat.id, parse_mode="HTML",
-                         text=f"<b>Ваше местоположение:</b> {address}\n<b>Время отправки сообщения:</b> "
+                         text=f"<b>Ваше местоположение:</b> {result}\n<b>Время отправки сообщения:</b> "
                               f"{dt_message[0]} {dt_message[1]}", reply_markup=keyboard)
 
     else:

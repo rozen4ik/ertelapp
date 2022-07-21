@@ -88,6 +88,7 @@ def location_message(message):
     dadata = Dadata(token_dadata)
     result = dadata.geolocate(name="address", lat=message.location.latitude, lon=message.location.longitude, count=1)
     result = result[0]
+    address = result["value"]
 
     if message.location is not None:
         keyboard = telebot.types.InlineKeyboardMarkup()
@@ -120,7 +121,7 @@ def location_message(message):
             work_task.date_work_task = dt[0]
             work_task.time_work_task = dt[1]
             work_task.employee_work_task = f"{end_task_fullname}"
-            work_task.address_work_task = result["value"]
+            work_task.address_work_task = address
             work_task.task_id = end_task.id
             work_task.status_work_task = status
             work_task.save()
@@ -129,7 +130,7 @@ def location_message(message):
             bot.send_message(call.message.chat.id, answer)
 
         bot.send_message(message.chat.id, parse_mode="HTML",
-                         text=f"<b>Ваше местоположение:</b> {result['value']}\n<b>Время отправки сообщения:</b> "
+                         text=f"<b>Ваше местоположение:</b> {address}\n<b>Время отправки сообщения:</b> "
                               f"{dt_message[0]} {dt_message[1]}", reply_markup=keyboard)
 
     else:

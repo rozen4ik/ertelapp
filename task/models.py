@@ -24,6 +24,7 @@ class Task(models.Model):
         verbose_name_plural = 'Задачи'
 
 
+# Таблица подразделений
 class Department(models.Model):
     name = models.CharField(max_length=150)
 

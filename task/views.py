@@ -1,5 +1,6 @@
 import datetime
 import xlwt
+from django.core.paginator import Paginator
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.http import HttpResponseNotFound
@@ -30,6 +31,7 @@ def show_department_task(request, end_task, path_file, dict_task):
 
 # Получение данных
 def index(request):
+    page_number = request.GET.get("page")
     task = Task.objects.all().order_by("-id")
     users = User.objects.all().select_related('profile')
     director_user = Profile.objects.get(position_dep_id_id=1)
@@ -56,23 +58,32 @@ def index(request):
     # Показ задач в зависимости от должности
     match request.user.username:
         case director_user.user.username:
-            first_dict_task = {"task": task}
+            page_m = paginator(task, page_number)
+            first_dict_task = {"task": task, "page_m": page_m}
             first_dict_task.update(dict_task)
             return show_department_task(request, end_task, "task/tasks.html", first_dict_task)
         case eng_user.user.username:
-            first_dict_task = {"engineering_task": engineering_task}
+            page_m = paginator(engineering_task, page_number)
+            first_dict_task = {"engineering_task": engineering_task, "page_m": page_m}
             first_dict_task.update(dict_task)
             return show_department_task(request, end_task, "task/role/engineering_task.html", first_dict_task)
         case sales_user.user.username:
-            first_dict_task = {"sales_task": sales_task}
+            page_m = paginator(sales_task, page_number)
+            first_dict_task = {"sales_task": sales_task, "page_m": page_m}
             first_dict_task.update(dict_task)
             return show_department_task(request, end_task, "task/role/sales_task.html", first_dict_task)
         case technical_user.user.username:
-            first_dict_task = {"technical_task": technical_task}
+            page_m = paginator(technical_task, page_number)
+            first_dict_task = {"technical_task": technical_task, "page_m": page_m}
             first_dict_task.update(dict_task)
             return show_department_task(request, end_task, "task/role/technical_task.html", first_dict_task)
         case _:
             return render(request, "task/role/no_access.html")
+
+
+def paginator(model, number):
+    page_model = Paginator(model, 10)
+    return page_model.get_page(number)
 
 
 # Добавление данных

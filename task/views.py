@@ -38,9 +38,13 @@ def index(request):
     eng_user = Profile.objects.get(position_dep_id_id=7)
     sales_user = Profile.objects.get(position_dep_id_id=2)
     technical_user = Profile.objects.get(position_dep_id_id=3)
+    accounting_user = Profile.objects.get(position_dep_id_id=11)
+    personnel_user = Profile.objects.get(position_dep_id_id=13)
     engineering_task = Task.objects.filter(author_task=eng_user).order_by("-id")
     sales_task = Task.objects.filter(author_task=sales_user).order_by("-id")
     technical_task = Task.objects.filter(author_task=technical_user).order_by("-id")
+    accounting_task = Task.objects.filter(author_task=accounting_user).order_by("-id")
+    personnel_task = Task.objects.filter(author_task=personnel_user).order_by("-id")
 
     form = TaskFilter(request.GET)
     if form.is_valid():
@@ -77,6 +81,14 @@ def index(request):
             first_dict_task = {"technical_task": technical_task, "page_m": page_m}
             first_dict_task.update(dict_task)
             return show_department_task(request, end_task, "task/role/technical_task.html", first_dict_task)
+        case accounting_user.user.username:
+            page_m = paginator(accounting_task, page_number)
+            first_dict_task = {"accounting_task": accounting_task, "page_m": page_m}
+            return show_department_task(request, end_task, "task/role/accounting_task.html", first_dict_task)
+        case personnel_user.user.username:
+            page_m = paginator(personnel_task, page_number)
+            first_dict_task = {"personnel_task": personnel_task, "page_m": page_m}
+            return show_department_task(request, end_task, "task/role/personnel_task.html", first_dict_task)
         case _:
             return render(request, "task/role/no_access.html")
 

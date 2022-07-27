@@ -9,7 +9,7 @@ class Task(models.Model):
     date_task = models.DateField()
     time_task = models.TimeField()
     text_task = models.TextField()
-    address_task = models.CharField(max_length=500)
+    address_task = models.CharField(max_length=500, default="Офис Эртел")
     author_task = models.CharField(max_length=120)
     employee_task = models.CharField(max_length=120)
     line_task = models.DateField(max_length=150)
@@ -76,6 +76,34 @@ class WorkTask(models.Model):
     class Meta:
         verbose_name = "Учёт рабочего времени"
         verbose_name_plural = "Учёт рабочего времени"
+
+
+class CountrpartyWarrantyObligations(models.Model):
+    name = models.CharField(max_length=250)
+    type = models.CharField(max_length=150)
+    contract = models.CharField(max_length=150)
+    address = models.CharField(max_length=150)
+
+    def __str__(self):
+        return f"Контрагент: {self.name} - Тип: {self.type}"
+
+    class Meta:
+        verbose_name = "Контрагент: гарантийные обязательства"
+        verbose_name_plural = "Контрагенты: гарантийные обязательства"
+
+
+class CounterpartyTO(models.Model):
+    name = models.CharField(max_length=250, )
+    type = models.CharField(max_length=150)
+    contract = models.CharField(max_length=150)
+    address = models.CharField(max_length=150)
+
+    def __str__(self):
+        return f"Контрагент: {self.name} - Тип: {self.type}"
+
+    class Meta:
+        verbose_name = "Контрагент: техническое обслуживание"
+        verbose_name_plural = "Контрагенты: техническое обслуживание"
 
 
 @receiver(post_save, sender=User)

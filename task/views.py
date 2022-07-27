@@ -1,6 +1,7 @@
 import datetime
 import xlwt
 from django.core.paginator import Paginator
+from django.db.models import Q
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.http import HttpResponseNotFound
@@ -42,9 +43,11 @@ def index(request):
     personnel_user = Profile.objects.get(position_dep_id_id=13)
     engineering_task = Task.objects.filter(author_task=eng_user).order_by("-id")
     sales_task = Task.objects.filter(author_task=sales_user).order_by("-id")
-    technical_task = Task.objects.filter(author_task=technical_user).order_by("-id")
+    technical_task = Task.objects.filter(Q(author_task=technical_user) | Q(author_task=eng_user)).order_by("-id")
     accounting_task = Task.objects.filter(author_task=accounting_user).order_by("-id")
     personnel_task = Task.objects.filter(author_task=personnel_user).order_by("-id")
+    counterparty_to = CounterpartyTO.objects.all()
+    countrparty_warranty_obligations = CountrpartyWarrantyObligations.objects.all()
 
     form = TaskFilter(request.GET)
     if form.is_valid():
@@ -57,7 +60,13 @@ def index(request):
     filter_task = form.cleaned_data
     end_task = Task.objects.all().latest("id")
 
-    dict_task = {"users": users, "form": form, "end_task": end_task}
+    dict_task = {
+        "users": users,
+        "form": form,
+        "end_task": end_task,
+        "counterparty_to": counterparty_to,
+        "countrparty_warranty_obligations": countrparty_warranty_obligations
+    }
 
     # Показ задач в зависимости от должности
     match request.user.username:
@@ -161,6 +170,22 @@ def show_work_task_for_task(request, id):
         work_task_employee = WorkTask.objects.filter(task=id).order_by("-id")
         return render(request, "task/work_task_employee.html", {"work_task_employee": work_task_employee})
     except WorkTask.DoesNotExist:
+        return HttpResponseNotFound("<h2>WorkTask not found</h2>")
+
+
+def counterparty_to_detail(request, id):
+    try:
+        counterparty = CounterpartyTO.objects.get(id=id)
+        return render(request, "task/counterparty.html", {"counterparty": counterparty})
+    except CounterpartyTO.DoesNotExist:
+        return HttpResponseNotFound("<h2>WorkTask not found</h2>")
+
+
+def countrparty_warranty_obligations_detail(request, id):
+    try:
+        counterparty = CountrpartyWarrantyObligations.objects.get(id=id)
+        return render(request, "task/counterparty.html", {"counterparty": counterparty})
+    except CountrpartyWarrantyObligations.DoesNotExist:
         return HttpResponseNotFound("<h2>WorkTask not found</h2>")
 
 

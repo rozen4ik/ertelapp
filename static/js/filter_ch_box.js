@@ -1,13 +1,15 @@
-function showHide(className) {
-    let elements = document.getElementsByClassName(className);
-    for (let i = 0; i < elements.length; i++) {
-        let element = elements[i];
-        const style = element.style;
-        if (style.display == "none") {
-            style.display = "";
-        }
-        else {
-            style.display = "none";
-        }
-    }
-}
+var label = document.querySelectorAll('label'),
+    itemDiv = document.querySelectorAll('.box-style');
+
+label.forEach(function(checked) {
+  checked.addEventListener("click", function(event) {
+
+    itemDiv.forEach(function(item){
+      item.classList.remove('active');
+    });
+
+    var targetDiv = document.querySelector(this.getAttribute('data-target'));
+
+    targetDiv.classList.add('active');
+  });
+});

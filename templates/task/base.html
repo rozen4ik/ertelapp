@@ -52,7 +52,6 @@
                         <div class="col-md-7">
                             <label for="inputText" class="form-label">Задача</label>
                             <textarea class="form-control" id="inputText" name="text_task" rows="1" cols="45" placeholder="Укажите что нужно сделать исполнителю"></textarea>
-                            <script src="{% static "js/autho_size_textarea.js" %}"></script>
                         </div>
                         <div class="col-md-4 inputAddress1">
                             <label for="inputAddress" class="form-label">Объект</label>
@@ -74,6 +73,11 @@
                             <label for="inputLine" class="form-label">Сроки выполнения</label>
                             <input type="date" class="form-control" id="inputLine" name="line_task">
                         </div>
+                        <div class="col-md-8 form-check form-switch">
+                            <label for="inputBusinessTrip" class="form-label">Командировка</label>
+                            <input type="checkbox" class="form-check-input" id="inputBusinessTrip" onchange="checkFluency1()" name="business_trip" value="False">
+                        </div>
+                        <script src="{% static "js/switch_busines_trip.js" %}"></script>
                         <div class="col-12">
                             <input type="submit" name="sun" class="btn btn-outline-primary contact-form__button" value="Сохранить" >
                         </div>
@@ -115,6 +119,11 @@
                             <label for="inputLine" class="form-label">Сроки выполнения</label>
                             <input type="date" class="form-control" id="inputLine" name="line_task">
                         </div>
+                        <div class="col-md-8 form-check form-switch">
+                            <label for="inputBusinessTrip2" class="form-label">Командировка</label>
+                            <input type="checkbox" class="form-check-input" id="inputBusinessTrip2" onchange="checkFluency2()" name="business_trip" value="False">
+                        </div>
+                        <script src="{% static "js/switch_busines_trip.js" %}"></script>
                         <div class="col-12">
                             <input type="submit" name="sun" class="btn btn-outline-primary contact-form__button" value="Сохранить" >
                         </div>

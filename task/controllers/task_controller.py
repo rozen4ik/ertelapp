@@ -38,7 +38,11 @@ class TaskController:
         new_task.author_task = request.user.first_name + " " + request.user.last_name
         new_task.employee_task = request.POST.get("employee_task")
         new_task.line_task = request.POST.get("line_task")
-        new_task.user_id = request.user.id
+        business_trip = request.POST.get("business_trip")
+        if not business_trip:
+            new_task.business_trip = False
+        elif business_trip:
+            new_task.business_trip = True
         new_task.save()
 
     def edit_task(self, request, task):
@@ -50,7 +54,6 @@ class TaskController:
         task.employee_task = request.POST.get("employee_task")
         task.line_task = request.POST.get("line_task")
         task.status_task = request.POST.get("status_task")
-        task.user_id = request.user.id
         task.save()
 
     def get_tg_chat_id(self):

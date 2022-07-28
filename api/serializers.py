@@ -16,7 +16,6 @@ class TaskSerializer(serializers.ModelSerializer):
                 'employee_task',
                 'line_task',
                 'status_task',
-                'user'
             ]
 
 

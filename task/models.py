@@ -14,7 +14,8 @@ class Task(models.Model):
     employee_task = models.CharField(max_length=120)
     line_task = models.DateField(max_length=150)
     status_task = models.CharField(max_length=150, default="Отдано в разработку")
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    # user = models.ForeignKey(User, on_delete=models.CASCADE)
+    business_trip = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.text_task}"

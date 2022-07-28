@@ -7,11 +7,14 @@ from django.http import HttpResponseRedirect
 from django.http import HttpResponseNotFound
 from django.http import HttpResponse
 from ertelapp import settings
+from .controllers.task_controller import TaskController
 from .forms import *
 from .models import *
 
 # Словарь полей, по которым фильтруются данные таблицы Task
 filter_task = {}
+
+task_controller = TaskController()
 
 
 # Формирование показа страницы в зависимости от отдела
@@ -33,7 +36,7 @@ def show_department_task(request, end_task, path_file, dict_task):
 # Получение данных
 def index(request):
     page_number = request.GET.get("page")
-    task = Task.objects.all().order_by("-id")
+    task = task_controller.get_objects_all(Task)
     users = User.objects.all().select_related('profile')
     director_user = Profile.objects.get(position_dep_id_id=1)
     eng_user = Profile.objects.get(position_dep_id_id=7)
@@ -110,28 +113,18 @@ def paginator(model, number):
 # Добавление данных
 def create(request):
     if request.method == "POST":
-        task = Task()
-        task.date_task = request.POST.get("date_task")
-        task.time_task = request.POST.get("time_task")
-        task.text_task = request.POST.get("text_task")
-        task.address_task = request.POST.get("address_task")
-        task.author_task = request.user.first_name + " " + request.user.last_name
-        task.employee_task = request.POST.get("employee_task")
-        task.line_task = request.POST.get("line_task")
-        task.user_id = request.user.id
-        task.save()
-
+        task_controller.create_task(request)
     return HttpResponseRedirect("/")
 
 
 # Изменение данных
 def edit(request, id):
     try:
-        task = Task.objects.get(id=id)
+        task = task_controller.get_detail_object(Task, id)
         users = User.objects.all().select_related('profile')
 
         if request.method == "POST":
-            init_task(request, task)
+            task_controller.edit_task(request, task)
             return HttpResponseRedirect("/")
         else:
             return render(request, "task/edit.html", {"task": task, "users": users})
@@ -151,14 +144,14 @@ def edit(request, id):
 
 # Вывод раздела контроль выполнения работ
 def index_bot(request):
-    work_task = WorkTask.objects.all().order_by("-id")
+    work_task = task_controller.get_objects_all(WorkTask)
     return render(request, "task/work_task.html", {"work_task": work_task})
 
 
 # Удаление записи в в разделе контроля выполнения работ
 def delete_work_task(request, id):
     try:
-        work_task = WorkTask.objects.get(id=id)
+        work_task = task_controller.get_detail_object(WorkTask, id)
         work_task.delete()
         return HttpResponseRedirect("/work_task/")
     except Task.DoesNotExist:
@@ -175,7 +168,7 @@ def show_work_task_for_task(request, id):
 
 def counterparty_to_detail(request, id):
     try:
-        counterparty = CounterpartyTO.objects.get(id=id)
+        counterparty = task_controller.get_detail_object(CounterpartyTO, id)
         return render(request, "task/counterparty.html", {"counterparty": counterparty})
     except CounterpartyTO.DoesNotExist:
         return HttpResponseNotFound("<h2>WorkTask not found</h2>")
@@ -183,7 +176,7 @@ def counterparty_to_detail(request, id):
 
 def countrparty_warranty_obligations_detail(request, id):
     try:
-        counterparty = CountrpartyWarrantyObligations.objects.get(id=id)
+        counterparty = task_controller.get_detail_object(CountrpartyWarrantyObligations, id)
         return render(request, "task/counterparty.html", {"counterparty": counterparty})
     except CountrpartyWarrantyObligations.DoesNotExist:
         return HttpResponseNotFound("<h2>WorkTask not found</h2>")
@@ -278,17 +271,3 @@ def export_excel(request):
     wb.save(response)
 
     return response
-
-
-# Инициализация таблицы task
-def init_task(request, task):
-    task.date_task = request.POST.get("date_task")
-    task.time_task = request.POST.get("time_task")
-    task.text_task = request.POST.get("text_task")
-    task.address_task = request.POST.get("address_task")
-    task.author_task = request.user.first_name + " " + request.user.last_name
-    task.employee_task = request.POST.get("employee_task")
-    task.line_task = request.POST.get("line_task")
-    task.status_task = request.POST.get("status_task")
-    task.user_id = request.user.id
-    task.save()

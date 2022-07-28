@@ -35,6 +35,7 @@ def show_location(message):
     tasks = bot_controller.get_tasks(user)
 
     if message.location is not None:
+        bot_controller.set_location(message)
 
         for task in tasks:
             loc_mark = telebot.types.InlineKeyboardMarkup()
@@ -55,21 +56,22 @@ def show_location(message):
             match location_code:
                 case "1":
                     msg_local = "Вы убыли на объект"
-                    bot_controller.create_work_task(task_id, "Убыл на объект", message)
+                    bot_controller.create_work_task(task_id, "Убыл на объект")
                 case "2":
                     msg_local = "Вы прибыли на объект"
-                    bot_controller.create_work_task(task_id, "Прибыл на объект", message)
+                    bot_controller.create_work_task(task_id, "Прибыл на объект")
                 case "3":
                     msg_local = "Вы убыли с объекта"
-                    bot_controller.create_work_task(task_id, "Убыл с объекта", message)
+                    bot_controller.create_work_task(task_id, "Убыл с объекта")
                 case _:
                     bot.send_message(call.message.chat.id, text="Поступили неправильные данные")
 
             bot.send_message(call.message.chat.id, msg_local)
 
         bot.send_message(message.chat.id, text=f"<b>Ваше местоположение:</b> "
-                                               f"{bot_controller.get_location(message)}\n<b>Время отправки "
-                                               f"сообщения:</b> {bot_controller.get_datetime()}", parse_mode="HTML")
+                                               f"{bot_controller.get_location()}\n<b>Время отправки "
+                                               f"сообщения:</b> {bot_controller.get_datetime()[0]} "
+                                               f"{bot_controller.get_datetime()[1]}", parse_mode="HTML")
 
 
 @bot.message_handler(content_types=["text"])

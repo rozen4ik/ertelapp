@@ -17,12 +17,18 @@
       <div class="container-fluid">
         <div class="navbar-collapse" id="navbarScroll">
             <a class="btn btn-outline-light" href="{% url 'logout' %}" role="button">Выйти - {{ user.first_name }} {{ user.last_name }} </a>
-            <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
+            <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="/">На главную</a>
+                    <a class="nav-link active" aria-current="page" href="/">Главная</a>
                 </li>
-                <li class="nav-item ">
-                    <a class="nav-link active" href="/work_task/">Перейти к контролю выполнения работ</a>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/work_task/">Контроль выполнения работ</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/counterparty_to/">Контрагенты (Техническое обслуживание)</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/countrparty_warranty_obligations/">Контрагенты (Гарантийные работы)</a>
                 </li>
             </ul>
         </div>
@@ -36,6 +42,7 @@
             <div class="tabs__nav">
                 <button class="tabs__nav-btn" type="button" data-tab="#tab_1">Работы гарантийного обязательства</button>
                 <button class="tabs__nav-btn" type="button" data-tab="#tab_2">Ежемесячное техническое обслуживание</button>
+                <button class="tabs__nav-btn" type="button" data-tab="#tab_3">Работы в офисе</button>
             </div>
             <div class="tabs__content">
                 <div class="tabs__item" id="tab_1">
@@ -97,7 +104,6 @@
                         <div class="col-md-7">
                             <label for="inputText" class="form-label">Задача</label>
                             <textarea class="form-control" id="inputText" name="text_task" rows="1" cols="45" placeholder="Укажите что нужно сделать исполнителю"></textarea>
-                            <script src="{% static "js/autho_size_textarea.js" %}"></script>
                         </div>
                         <div class="col-md-4 inputAddress2">
                             <label for="inputAddress" class="form-label">Объект</label>
@@ -124,6 +130,38 @@
                             <input type="checkbox" class="form-check-input" id="inputBusinessTrip2" onchange="checkFluency2()" name="business_trip" value="False">
                         </div>
                         <script src="{% static "js/switch_busines_trip.js" %}"></script>
+                        <div class="col-12">
+                            <input type="submit" name="sun" class="btn btn-outline-primary contact-form__button" value="Сохранить" >
+                        </div>
+                    </form>
+                </div>
+                <div class="tabs__item" id="tab_3">
+                    <form class="row g-3" method="POST" action="create/" id="tg">
+                        {% csrf_token %}
+                        <div class="col-md-2">
+                            <label for="inputDate" class="form-label">Дата</label>
+                            <input type="date" class="form-control" id="inputDate" name="date_task">
+                        </div>
+                        <div class="col-md-2">
+                            <label for="inputTime" class="form-label">Время</label>
+                            <input type="time" class="form-control" id="inputTime" name="time_task">
+                        </div>
+                        <div class="col-md-7">
+                            <label for="inputText" class="form-label">Задача</label>
+                            <textarea class="form-control" id="inputText" name="text_task" rows="1" cols="45" placeholder="Укажите что нужно сделать исполнителю"></textarea>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="inputEmployee" class="form-label">Исполнитель</label>
+                            <select class="form-select" id="inputEmployee" name="employee_task">
+                                {% for user in users %}
+                                    <option value="{{ user.first_name }} {{ user.last_name }}">{{ user.first_name }} {{ user.last_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="inputLine" class="form-label">Сроки выполнения</label>
+                            <input type="date" class="form-control" id="inputLine" name="line_task">
+                        </div>
                         <div class="col-12">
                             <input type="submit" name="sun" class="btn btn-outline-primary contact-form__button" value="Сохранить" >
                         </div>
@@ -157,6 +195,7 @@
     {% endif %}
     {% block content %}
     {% endblock content %}
+    <script src="{% static "js/autho_size_textarea.js" %}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
     </div>
 </body>

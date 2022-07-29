@@ -15,10 +15,16 @@
                 <a class="btn btn-outline-light" href="{% url 'logout' %}" role="button">Выйти - {{ user.first_name }} {{ user.last_name }} </a>
                 <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="/">На главную</a>
+                        <a class="nav-link active" aria-current="page" href="/">Главная</a>
                     </li>
-                    <li class="nav-item ">
-                        <a class="nav-link active" href="/work_task/">Перейти к контролю выполнения работ</a>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/work_task/">Контроль выполнения работ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/counterparty_to/">Контрагенты (Техническое обслуживание)</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/countrparty_warranty_obligations/">Контрагенты (Гарантийные работы)</a>
                     </li>
                 </ul>
             </div>

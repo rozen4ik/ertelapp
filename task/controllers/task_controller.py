@@ -56,6 +56,14 @@ class TaskController:
         task.status_task = request.POST.get("status_task")
         task.save()
 
+    def create_counterparty(self, request, model):
+        new_counterparty = model()
+        new_counterparty.name = request.POST.get("name")
+        new_counterparty.type = request.POST.get("type")
+        new_counterparty.contract = request.POST.get("contract")
+        new_counterparty.address = request.POST.get("address")
+        new_counterparty.save()
+
     def get_tg_chat_id(self):
         return self.tg_chat_id
 

@@ -1,9 +1,9 @@
 import telebot
+from django.contrib.auth.models import User
 from telebot import types
 from django.core.management.base import BaseCommand
 from ertelapp import settings
 from task.controllers.bot_controller import BotController
-from task.models import *
 
 
 class Command(BaseCommand):

@@ -3,8 +3,9 @@ import datetime
 from django.contrib.auth.models import User
 from django.db.models import Q
 from ertelapp import settings
-from task.models import *
+from task.models import Task
 from dadata import Dadata
+from work_task.models import WorkTask
 
 
 class BotController:
@@ -13,7 +14,8 @@ class BotController:
 
     # Формирование сообщения для отправки задачи исполнителю
     def get_message(self, task: Task) -> str:
-        message_task = f"<b>Номер задачи:</b> {task.id}\n<b>Дата:</b> " \
+        message_task = f"<b>Номер задачи:</b> {task.id}\n<b>Тип задачи:</b> {task.type_task}\n" \
+                       f"<b>{task.business_trip}</b>\n<b>Дата:</b> " \
                        f"{task.date_task}\n<b>Время:</b> {task.time_task}\n<b>Кто поручил:</b> " \
                        f"{task.author_task}\n<b>Статус задачи:</b> {task.status_task}\n<b>Задача:</b> " \
                        f"{task.text_task}\n<b>Место выполнения:</b> {task.address_task}\n" \

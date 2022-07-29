@@ -2,21 +2,18 @@ from django.contrib import admin
 from .models import *
 
 
-class CounterpartyTOAdmin(admin.ModelAdmin):
-    list_display = ("name", "type", "contract", "address")
-    list_filter = ["type"]
+class TaskAdmin(admin.ModelAdmin):
+    list_display = (
+        "date_task",
+        "time_task",
+        "text_task",
+        "address_task",
+        "author_task",
+        "employee_task",
+        "line_task",
+        "status_task",
+        "business_trip"
+    )
 
 
-class CountrpartyWarrantyObligationsAdmin(admin.ModelAdmin):
-    list_display = ("name", "type", "contract", "address")
-    list_filter = ["type"]
-
-
-# Register your models here.
-admin.site.register(Task)
-admin.site.register(Profile)
-admin.site.register(WorkTask)
-admin.site.register(Department)
-admin.site.register(Position)
-admin.site.register(CounterpartyTO, CounterpartyTOAdmin)
-admin.site.register(CountrpartyWarrantyObligations, CountrpartyWarrantyObligationsAdmin)
+admin.site.register(Task, TaskAdmin)

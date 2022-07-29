@@ -53,6 +53,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'task.apps.TaskConfig',
+    'work_task.apps.WorkTaskConfig',
+    'counterparty.apps.CounterpartyConfig',
+    'employee.apps.EmployeeConfig',
     'api.apps.ApiConfig',
     'crispy_forms',
 ]

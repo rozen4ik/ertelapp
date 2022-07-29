@@ -1,15 +1,19 @@
 import datetime
 import xlwt
+from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.http import HttpResponseNotFound
 from django.http import HttpResponse
+from counterparty.models import CounterpartyTO, CountrpartyWarrantyObligations
+from employee.models import Profile
 from ertelapp import settings
+from work_task.models import WorkTask
 from .controllers.task_controller import TaskController
 from .forms import *
-from .models import *
+from .models import Task
 
 # Словарь полей, по которым фильтруются данные таблицы Task
 filter_task = {}
@@ -58,6 +62,10 @@ def index(request):
             task = task.filter(employee_task=form.cleaned_data["employee_task"])
         if form.cleaned_data["status_task"]:
             task = task.filter(status_task=form.cleaned_data["status_task"])
+        if form.cleaned_data["type_task"]:
+            task = task.filter(type_task=form.cleaned_data["type_task"])
+        if form.cleaned_data["business_trip"]:
+            task = task.filter(business_trip=form.cleaned_data["business_trip"])
 
     global filter_task
     filter_task = form.cleaned_data
@@ -143,102 +151,37 @@ def edit(request, id):
 
 
 # Вывод раздела контроль выполнения работ
-def index_bot(request):
-    work_task = task_controller.get_objects_all(WorkTask)
-    return render(request, "task/work_task.html", {"work_task": work_task})
-
-
-# Удаление записи в в разделе контроля выполнения работ
-def delete_work_task(request, id):
-    try:
-        work_task = task_controller.get_detail_object(WorkTask, id)
-        work_task.delete()
-        return HttpResponseRedirect("/work_task/")
-    except Task.DoesNotExist:
-        return HttpResponseNotFound("<h2>Task not found</h2>")
-
-
-def show_work_task_for_task(request, id):
-    try:
-        work_task_employee = WorkTask.objects.filter(task=id).order_by("-id")
-        return render(request, "task/work_task_employee.html", {"work_task_employee": work_task_employee})
-    except WorkTask.DoesNotExist:
-        return HttpResponseNotFound("<h2>WorkTask not found</h2>")
-
-
-def counterparty_to(request):
-    page_number = request.GET.get("page")
-    counterparty = task_controller.get_objects_all(CounterpartyTO)
-    page_m = paginator(counterparty, page_number)
-    data = {
-        "counterparty": counterparty,
-        "page_m": page_m
-    }
-    return render(request, "countrparty/countrparty_to/countrparty_to.html", data)
-
-
-def countrparty_warranty_obligations(request):
-    page_number = request.GET.get("page")
-    counterparty = task_controller.get_objects_all(CountrpartyWarrantyObligations)
-    page_m = paginator(counterparty, page_number)
-    data = {
-        "counterparty": counterparty,
-        "page_m": page_m
-    }
-    return render(request, "countrparty/countrparty_warranty_obligations/countrparty_warranty_obligations.html", data)
-
-
-def create_counterparty_to(request):
-    if request.method == "POST":
-        task_controller.create_counterparty(request, CounterpartyTO)
-    return HttpResponseRedirect("/counterparty_to/")
-
-
-def create_countrparty_warranty_obligations(request):
-    if request.method == "POST":
-        task_controller.create_counterparty(request, CountrpartyWarrantyObligations)
-    return HttpResponseRedirect("/countrparty_warranty_obligations/")
-
-
-# def counterparty_to_detail(request, id):
-#     try:
-#         counterparty = task_controller.get_detail_object(CounterpartyTO, id)
-#         return render(request, "task/counterparty.html", {"counterparty": counterparty})
-#     except CounterpartyTO.DoesNotExist:
-#         return HttpResponseNotFound("<h2>WorkTask not found</h2>")
-#
-#
-# def countrparty_warranty_obligations_detail(request, id):
-#     try:
-#         counterparty = task_controller.get_detail_object(CountrpartyWarrantyObligations, id)
-#         return render(request, "task/counterparty.html", {"counterparty": counterparty})
-#     except CountrpartyWarrantyObligations.DoesNotExist:
-#         return HttpResponseNotFound("<h2>WorkTask not found</h2>")
-
-
 # Реализация экспорта данных в excel таблицы WorkTask
 def export_excel_work_task(request):
-    response = HttpResponse(content_type='applications/ms-excel')
-    response['Content-Disposition'] = 'attachment; filename=work_task' + str(datetime.datetime.now()) + '.xls'
+    response = HttpResponse(content_type="applications/ms-excel")
+    response["Content-Disposition"] = "attachment; filename=work_task" + str(datetime.datetime.now()) + ".xls"
 
-    wb = xlwt.Workbook(encoding='utf-8')
-    ws = wb.add_sheet('report')
+    wb = xlwt.Workbook(encoding="utf-8")
+    ws = wb.add_sheet("report")
     row_num = 0
     font_style = xlwt.XFStyle()
     font_style.font.bold = True
 
-    columns = ['#',
-               'Дата',
-               'Время',
-               'Исполнитель',
-               'Местонахождение',
-               'Номер задачи']
+    columns = [
+        "#",
+        "Дата",
+        "Время",
+        "Исполнитель",
+        "Местонахождение",
+        "Номер задачи"
+    ]
 
     for col_num in range(len(columns)):
         ws.write(row_num, col_num, columns[col_num], font_style)
 
-    rows = WorkTask.objects.all().values_list('id', 'date_work_task', 'time_work_task', 'employee_work_task',
-                                              'address_work_task', 'task_id')
+    rows = WorkTask.objects.all().values_list(
+        "id",
+        "date_work_task",
+        "time_work_task",
+        "employee_work_task",
+        "address_work_task",
+        "user_id"
+    )
 
     rows = rows.order_by("-id")
 
@@ -255,24 +198,28 @@ def export_excel_work_task(request):
 
 # Реализация экспорта данных в excel таблицы Task
 def export_excel(request):
-    response = HttpResponse(content_type='applications/ms-excel')
-    response['Content-Disposition'] = 'attachment; filename=report' + str(datetime.datetime.now()) + '.xls'
+    response = HttpResponse(content_type="applications/ms-excel")
+    response["Content-Disposition"] = "attachment; filename=report" + str(datetime.datetime.now()) + ".xls"
 
-    wb = xlwt.Workbook(encoding='utf-8')
-    ws = wb.add_sheet('report')
+    wb = xlwt.Workbook(encoding="utf-8")
+    ws = wb.add_sheet("report")
     row_num = 0
     font_style = xlwt.XFStyle()
     font_style.font.bold = True
 
-    columns = ['#',
-               'Дата',
-               'Время',
-               'Задача',
-               'Адрес выполнения',
-               'Кто поручил',
-               'Исполнитель',
-               'Сроки выполнения',
-               'Статус задачи']
+    columns = [
+        "#",
+        "Дата",
+        "Время",
+        "Задача",
+        "Адрес выполнения",
+        "Кто поручил",
+        "Исполнитель",
+        "Сроки выполнения",
+        "Статус задачи",
+        "Тип задачи",
+        "Отношение к командировке"
+    ]
 
     for col_num in range(len(columns)):
         ws.write(row_num, col_num, columns[col_num], font_style)
@@ -280,19 +227,40 @@ def export_excel(request):
     if filter_task:
         filter_employee = filter_task["employee_task"]
         filter_status = filter_task["status_task"]
-        rows = Task.objects.filter(employee_task=filter_employee, status_task=filter_status).values_list('id',
-                                                                                                         'date_task',
-                                                                                                         'time_task',
-                                                                                                         'text_task',
-                                                                                                         'address_task',
-                                                                                                         'author_task',
-                                                                                                         'employee_task',
-                                                                                                         'line_task',
-                                                                                                         'status_task')
+        filter_type = filter_task["type_task"]
+        filter_business_trip = filter_task["business_trip"]
+        rows = Task.objects.filter(
+            employee_task=filter_employee,
+            status_task=filter_status,
+            type_task=filter_type,
+            business_trip=filter_business_trip
+        ).values_list(
+            'id',
+            'date_task',
+            'time_task',
+            'text_task',
+            'address_task',
+            'author_task',
+            'employee_task',
+            'line_task',
+            'status_task',
+            'type_task',
+            'business_trip'
+        )
     else:
-        rows = Task.objects.all().values_list('id', 'date_task', 'time_task', 'text_task', 'address_task',
-                                              'author_task',
-                                              'employee_task', 'line_task', 'status_task')
+        rows = Task.objects.all().values_list(
+            'id',
+            'date_task',
+            'time_task',
+            'text_task',
+            'address_task',
+            'author_task',
+            'employee_task',
+            'line_task',
+            'status_task',
+            'type_task',
+            'business_trip'
+        )
 
     rows = rows.order_by("-id")
 

@@ -3,7 +3,8 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from api.serializers import TaskSerializer, WorkTaskSerializer
-from task.models import Task, WorkTask
+from task.models import Task
+from work_task.models import WorkTask
 
 
 @api_view(['GET', 'POST'])

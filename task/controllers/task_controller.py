@@ -5,22 +5,6 @@ class TaskController:
     tg_chat_id: str
     token_tg_bot: str
 
-    task = Task.objects.all().order_by("-id")
-    users = User.objects.all().select_related('profile')
-    director_user = Profile.objects.get(position_dep_id_id=1)
-    eng_user = Profile.objects.get(position_dep_id_id=7)
-    sales_user = Profile.objects.get(position_dep_id_id=2)
-    technical_user = Profile.objects.get(position_dep_id_id=3)
-    accounting_user = Profile.objects.get(position_dep_id_id=11)
-    personnel_user = Profile.objects.get(position_dep_id_id=13)
-    engineering_task = Task.objects.filter(author_task=eng_user).order_by("-id")
-    sales_task = Task.objects.filter(author_task=sales_user).order_by("-id")
-    technical_task = Task.objects.filter(author_task=technical_user).order_by("-id")
-    accounting_task = Task.objects.filter(author_task=accounting_user).order_by("-id")
-    personnel_task = Task.objects.filter(author_task=personnel_user).order_by("-id")
-
-
-
     def get_objects_all(self, model):
         model = model.objects.all().order_by("-id")
         return model
@@ -40,9 +24,18 @@ class TaskController:
         new_task.line_task = request.POST.get("line_task")
         business_trip = request.POST.get("business_trip")
         if not business_trip:
-            new_task.business_trip = False
+            new_task.business_trip = "Не командировка"
         elif business_trip:
-            new_task.business_trip = True
+            new_task.business_trip = "Командировка"
+        type_task = request.POST.get("type_task")
+        if not type_task:
+            new_task.type_task = "Офис"
+        elif type_task == "ГР":
+            new_task.type_task = "Гарантийные работы"
+        elif type_task == "ТО":
+            new_task.type_task = "Ежемесячное ТО"
+        # elif type_task == "Офис":
+        #     new_task.type_task = "Офис"
         new_task.save()
 
     def edit_task(self, request, task):

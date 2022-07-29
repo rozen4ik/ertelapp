@@ -7,8 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Задачи</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js" integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.min.js" integrity="sha384-kjU+l4N0Yf4ZOJErLsIcvOU2qSb74wXpOhqTvwVx3OElZRweTnQ6d31fXEoRD1Jy" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="{% static 'css/tabs.css' %}" type="text/css">
 </head>
 <body>
@@ -42,7 +40,7 @@
             <div class="tabs__nav">
                 <button class="tabs__nav-btn" type="button" data-tab="#tab_1">Работы гарантийного обязательства</button>
                 <button class="tabs__nav-btn" type="button" data-tab="#tab_2">Ежемесячное техническое обслуживание</button>
-                <button class="tabs__nav-btn" type="button" data-tab="#tab_3">Работы в офисе</button>
+                <button class="tabs__nav-btn" type="button" data-tab="#tab_3">Работа в офисе</button>
             </div>
             <div class="tabs__content">
                 <div class="tabs__item" id="tab_1">
@@ -82,9 +80,13 @@
                         </div>
                         <div class="col-md-8 form-check form-switch">
                             <label for="inputBusinessTrip" class="form-label">Командировка</label>
-                            <input type="checkbox" class="form-check-input" id="inputBusinessTrip" onchange="checkFluency1()" name="business_trip" value="False">
+                            <input type="checkbox" class="form-check-input" id="inputBusinessTrip" onchange="checkFluency1()" name="business_trip" value="Не командировка">
                         </div>
                         <script src="{% static "js/switch_busines_trip.js" %}"></script>
+                        <div class="col-md-2" style="display: none">
+                            <label for="inputType" class="form-label">Тип работы</label>
+                            <input type="text" class="form-control" id="inputType" name="type_task" value="ГР">
+                        </div>
                         <div class="col-12">
                             <input type="submit" name="sun" class="btn btn-outline-primary contact-form__button" value="Сохранить" >
                         </div>
@@ -127,9 +129,13 @@
                         </div>
                         <div class="col-md-8 form-check form-switch">
                             <label for="inputBusinessTrip2" class="form-label">Командировка</label>
-                            <input type="checkbox" class="form-check-input" id="inputBusinessTrip2" onchange="checkFluency2()" name="business_trip" value="False">
+                            <input type="checkbox" class="form-check-input" id="inputBusinessTrip2" onchange="checkFluency2()" name="business_trip" value="Не командировка">
                         </div>
                         <script src="{% static "js/switch_busines_trip.js" %}"></script>
+                        <div class="col-md-2" style="display: none">
+                            <label for="inputType" class="form-label">Тип работы</label>
+                            <input type="text" class="form-control" id="inputType" name="type_task" value="ТО">
+                        </div>
                         <div class="col-12">
                             <input type="submit" name="sun" class="btn btn-outline-primary contact-form__button" value="Сохранить" >
                         </div>
@@ -162,6 +168,19 @@
                             <label for="inputLine" class="form-label">Сроки выполнения</label>
                             <input type="date" class="form-control" id="inputLine" name="line_task">
                         </div>
+                        <div class="col-md-8 form-check form-switch" style="display: none">
+                            <label for="inputBusinessTrip2" class="form-label">Командировка</label>
+                            <input type="checkbox" class="form-check-input" id="inputBusinessTrip2" onchange="checkFluency3()" name="business_trip" value="Не командировка">
+                        </div>
+                        <script src="{% static "js/switch_busines_trip.js" %}"></script>
+                        <div class="col-md-2" style="display: none">
+                            <label for="inputType" class="form-label">Тип работы</label>
+                            <input type="text" class="form-control" id="inputType" name="type_task" value="">
+                        </div>
+                        <div class="col-md-2" style="display: none">
+                            <label for="inputAddress" class="form-label">Тип работы</label>
+                            <input type="text" class="form-control" id="inputAddress" name="address_task" value="Офис ЭРТЕЛ">
+                        </div>
                         <div class="col-12">
                             <input type="submit" name="sun" class="btn btn-outline-primary contact-form__button" value="Сохранить" >
                         </div>
@@ -182,6 +201,14 @@
                 <label for="{{ form.status_task.id_for_label }}">Статус выполнения</label>
                 {{ form.status_task }}
             </div>
+            <div class="col-md-3">
+                <label for="{{ form.type_task.id_for_label }}">Тип задачи</label>
+                {{ form.type_task }}
+            </div>
+            <div class="col-md-3">
+                <label for="{{ form.business_trip.id_for_label }}">Отношение к командировке</label>
+                {{ form.business_trip }}
+            </div>
             <div class="col-12">
                 <input type="submit" name="sun" class="btn btn-outline-primary contact-form__button" value="Поиск" >
             </div>
@@ -196,7 +223,8 @@
     {% block content %}
     {% endblock content %}
     <script src="{% static "js/autho_size_textarea.js" %}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js" integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.min.js" integrity="sha384-kjU+l4N0Yf4ZOJErLsIcvOU2qSb74wXpOhqTvwVx3OElZRweTnQ6d31fXEoRD1Jy" crossorigin="anonymous"></script>
     </div>
 </body>
 </html>

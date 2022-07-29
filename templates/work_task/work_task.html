@@ -19,7 +19,7 @@
                         <a class="nav-link active" aria-current="page" href="/">Главная</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="/work_task/">Контроль выполнения работ</a>
+                        <a class="nav-link active" href="/work_task">Контроль выполнения работ</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link active" href="/counterparty_to/">Контрагенты (Техническое обслуживание)</a>
@@ -53,7 +53,7 @@
                             <th scope="col"><label>Примечание</label></th>
                         </tr>
                     </thead>
-                    {% for work in work_task_employee %}
+                    {% for work in work_task %}
                     <tbody>
                         <tr>
                             <th scope="row">{{ work.id }}</th>

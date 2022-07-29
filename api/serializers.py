@@ -1,5 +1,8 @@
 from rest_framework import serializers
-from task.models import *
+
+from employee.models import Department, Position, Profile
+from task.models import Task
+from work_task.models import WorkTask
 
 
 class TaskSerializer(serializers.ModelSerializer):

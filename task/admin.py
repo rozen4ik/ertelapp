@@ -12,6 +12,7 @@ class TaskAdmin(admin.ModelAdmin):
         "employee_task",
         "line_task",
         "status_task",
+        "type_task",
         "business_trip"
     )
 

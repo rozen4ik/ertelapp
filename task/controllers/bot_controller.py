@@ -1,3 +1,4 @@
+import requests
 import telebot
 import datetime
 from django.contrib.auth.models import User

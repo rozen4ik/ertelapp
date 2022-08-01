@@ -15,7 +15,7 @@ class Task(models.Model):
     type_task = models.CharField(max_length=150, default="Офис")
 
     def __str__(self):
-        return f"{self.text_task}"
+        return f"id:{self.id} date: {self.date_task} time: {self.time_task} text: {self.text_task}"
 
     class Meta:
         verbose_name = "Задача"

@@ -27,7 +27,8 @@ SECRET_KEY = 'django-insecure-mnt1_sr+!j5c%*_hivw^-_=@r%3&gbunz07r0yd1jj74(p%@81
 # Настройки бота
 # token для тестового бота, для использования на продакшене используй другой токен
 TOKEN_TG_BOT = "5511027826:AAHqELXnnN7xEGGKI4YThot8Zl1pzv8eoWY"
-BOT_URL = f"https://api.telegram.org/bot{TOKEN_TG_BOT}/getUpdates"
+# BOT_URL = f"https://api.telegram.org/bot{TOKEN_TG_BOT}/getUpdates"
+URL_API = f"https://api.telegram.org/bot{TOKEN_TG_BOT}/sendMessage"
 # Настройки Дадата
 TOKEN_DADATA = "4f28172b70208e18c68c354ab1b8a0fd02c1fa9f"
 

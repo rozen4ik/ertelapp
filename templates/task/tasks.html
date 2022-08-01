@@ -6,8 +6,7 @@
         <div class="table-responsive">
             <table id="tag" class="table table-bordered table-sm align-middle table-hover">
                 <form method="POST">
-                    <a class="btn btn-primary" href="{% url 'export-excel' %}" role="button">Экспортировать в Excel</a> |
-                    <input type="submit" name="sun" class="btn btn-primary contact-form__button" value="Отправить в телеграм" >
+                    <a class="btn btn-primary" href="{% url 'export-excel' %}" role="button">Экспортировать в Excel</a>
                     <p></p>
                 </form>
                 <thead class="align-middle table-primary">
@@ -26,11 +25,6 @@
                         <th scope="col">Редактирование</th>
                     </tr>
                     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-                    <script src="{% static "js/telega.js" %}"></script>
-                    <script>
-                        let message = "<b>Номер задачи:</b> {{ end_task.id }}\n<b>Дата:</b> {{ end_task.date_task }}\n<b>Время:</b> {{ end_task.time_task }}\n<b>Кто поручил:</b> {{ end_task.author_task }}\n<b>Статус задачи:</b> {{ end_task.status_task }}\n<b>Задача:</b> {{ end_task.text_task }}\n<b>Место выполнения:</b> {{ end_task.address_task }}\n<b>Сроки выполнения:</b> {{ end_task.line_task }}";
-                        tg_task_push_employee(`{{ tg_chat_id }}`, `{{ token_tg_bot }}`, message)
-                    </script>
                 </thead>
                     <tbody>
                     {% for tasks in page_m %}
@@ -46,7 +40,10 @@
                             <td class="{{ tasks.status_task }}">{{ tasks.status_task }}</td>
                             <td>{{ tasks.type_task }}</td>
                             <td>{{ tasks.business_trip }}</td>
-                            <td><p><a class="btn btn-outline-primary" href="work_tasks/{{ tasks.id }}">Контроль</a></p><a class="btn btn-outline-primary" href="edit/{{tasks.id}}">Изменить</a></td>
+                            <td>
+                                <p><a class="btn btn-outline-primary btn-sm" href="work_tasks/{{ tasks.id }}">Контроль</a></p>
+                                <p><a class="btn btn-outline-primary btn-sm" href="edit/{{tasks.id}}">Изменить</a></p>
+                            </td>
                         </tr>
                     {% endfor %}
                     </tbody>

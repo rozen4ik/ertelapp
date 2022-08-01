@@ -74,7 +74,6 @@ def index(request):
     dict_task = {
         "users": users,
         "form": form,
-        "end_task": end_task,
         "counterparty_to": counterparty_to,
         "countrparty_warranty_obligations": countrparty_warranty_obligations
     }
@@ -130,12 +129,20 @@ def edit(request, id):
     try:
         task = task_controller.get_detail_object(Task, id)
         users = User.objects.all().select_related('profile')
+        counterparty_to = task_controller.get_objects_all(CounterpartyTO)
+        countrparty_warranty_obligations = task_controller.get_objects_all(CountrpartyWarrantyObligations)
+        data = {
+            "task": task,
+            "users": users,
+            "counterparty_to": counterparty_to,
+            "countrparty_warranty_obligations": countrparty_warranty_obligations
+        }
 
         if request.method == "POST":
             task_controller.edit_task(request, task)
             return HttpResponseRedirect("/")
         else:
-            return render(request, "task/edit.html", {"task": task, "users": users})
+            return render(request, "task/edit.html", data)
     except Task.DoesNotExist:
         return HttpResponseNotFound("<h2>Task not found</h2>")
 

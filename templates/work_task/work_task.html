@@ -13,7 +13,7 @@
     <nav class="navbar navbar-fixed-top-top navbar-expand-lg navbar-dark bg-primary">
         <div class="container-fluid">
             <div class="navbar-collapse" id="navbarScroll">
-                <a class="btn btn-outline-light" href="{% url 'logout' %}" role="button">Выйти - {{ user.first_name }} {{ user.last_name }} </a>
+                <a class="btn btn-outline-light btn-sm" href="{% url 'logout' %}" role="button">Выйти - {{ user.first_name }} {{ user.last_name }} </a>
                 <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="/">Главная</a>
@@ -63,7 +63,7 @@
                             <td>{{ work.address_work_task }}</td>
                             <td>{{ work.task_id }}</td>
                             <td>{{ work.status_work_task }}</td>
-                            <td><a class="btn btn-outline-primary" href="{% url 'edit' work.task_id %}">Перейти к задаче</a></td>
+                            <td><a class="btn btn-outline-primary btn-sm" href="{% url 'edit' work.task_id %}">Перейти к задаче</a></td>
                         </tr>
                     </tbody>
                     {% endfor %}

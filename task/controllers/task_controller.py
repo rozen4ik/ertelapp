@@ -1,9 +1,23 @@
+import requests
+from django.contrib.auth.models import User
+
+from employee.models import Profile
+from ertelapp import settings
 from task.models import *
 
 
 class TaskController:
     tg_chat_id: str
     token_tg_bot: str
+
+    def get_message(self, task: Task) -> str:
+        message_task = f"<b>Номер задачи:</b> {task.id}\n<b>Тип задачи:</b> {task.type_task}\n" \
+                       f"<b>{task.business_trip}</b>\n<b>Дата:</b> " \
+                       f"{task.date_task}\n<b>Время:</b> {task.time_task}\n<b>Кто поручил:</b> " \
+                       f"{task.author_task}\n<b>Статус задачи:</b> {task.status_task}\n<b>Задача:</b> " \
+                       f"{task.text_task}\n<b>Место выполнения:</b> {task.address_task}\n" \
+                       f"<b>Сроки выполнения:</b> {task.line_task}"
+        return message_task
 
     def get_objects_all(self, model):
         model = model.objects.all().order_by("-id")
@@ -34,9 +48,19 @@ class TaskController:
             new_task.type_task = "Гарантийные работы"
         elif type_task == "ТО":
             new_task.type_task = "Ежемесячное ТО"
-        # elif type_task == "Офис":
-        #     new_task.type_task = "Офис"
         new_task.save()
+        self.send_message_telegram(new_task, "У вас новая задача!")
+
+    def send_message_telegram(self, task, msg):
+        url = settings.URL_API
+        em_pr = task.employee_task.split()
+        user = User.objects.get(first_name=em_pr[0], last_name=em_pr[1])
+        em_pr = Profile.objects.get(user=user)
+        chat_id = em_pr.chat_id
+        text = self.get_message(task)
+        data = {"chat_id": chat_id, "text": text, "parse_mode": "HTML"}
+        requests.post(url, data={"chat_id": chat_id, "text": msg})
+        requests.post(url, data=data)
 
     def edit_task(self, request, task):
         task.date_task = request.POST.get("date_task")
@@ -46,8 +70,21 @@ class TaskController:
         task.author_task = request.user.first_name + " " + request.user.last_name
         task.employee_task = request.POST.get("employee_task")
         task.line_task = request.POST.get("line_task")
-        task.status_task = request.POST.get("status_task")
+        task.status_task = "Отдано в разработку"
+        business_trip = request.POST.get("business_trip")
+        if not business_trip:
+            task.business_trip = "Не командировка"
+        elif business_trip:
+            task.business_trip = "Командировка"
+        type_task = request.POST.get("type_task")
+        if not type_task:
+            task.type_task = "Офис"
+        elif type_task == "ГР":
+            task.type_task = "Гарантийные работы"
+        elif type_task == "ТО":
+            task.type_task = "Ежемесячное ТО"
         task.save()
+        self.send_message_telegram(task, f"Задача №{task.id} изменилась!")
 
     def create_counterparty(self, request, model):
         new_counterparty = model()
@@ -72,4 +109,3 @@ class TaskController:
     def update_dict_task(self, dict_task):
         dict_task["tg_chat_id"] = self.get_tg_chat_id()
         dict_task["token_tg_bot"] = self.get_token_tg_bot()
-

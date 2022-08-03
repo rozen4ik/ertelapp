@@ -1,7 +1,5 @@
-import requests
 import telebot
 import datetime
-from django.contrib.auth.models import User
 from django.db.models import Q
 from ertelapp import settings
 from task.models import Task
@@ -9,7 +7,7 @@ from dadata import Dadata
 from work_task.models import WorkTask
 
 
-class BotController:
+class BotService:
     bot = telebot.TeleBot(settings.TOKEN_TG_BOT)
     location_employee = "Местоположение"
 

@@ -1,7 +1,7 @@
 from django.db import models
 
 
-class CountrpartyWarrantyObligations(models.Model):
+class CounterpartyWarrantyObligations(models.Model):
     name = models.CharField(max_length=250)
     type = models.CharField(max_length=150)
     contract = models.CharField(max_length=150)

@@ -1,59 +1,58 @@
 from django.http import HttpResponseRedirect, HttpResponseNotFound
 from django.shortcuts import render
-from counterparty.models import CounterpartyTO, CountrpartyWarrantyObligations
-from task.controllers.task_controller import TaskController
-from task.views import paginator
+from counterparty.models import CounterpartyTO, CounterpartyWarrantyObligations
+from task.services.task_service import TaskService
 
 
-task_controller = TaskController()
+task_service = TaskService()
 
 
 # Create your views here.
 def counterparty_to(request):
     page_number = request.GET.get("page")
-    counterparty = task_controller.get_objects_all(CounterpartyTO)
-    page_m = paginator(counterparty, page_number)
+    counterparty = task_service.get_objects_all(CounterpartyTO)
+    page_m = task_service.paginator(counterparty, page_number)
     data = {
         "counterparty": counterparty,
         "page_m": page_m
     }
-    return render(request, "countrparty/countrparty_to/countrparty_to.html", data)
+    return render(request, "counterparty/counterparty_to/counterparty_to.html", data)
 
 
-def countrparty_warranty_obligations(request):
+def counterparty_warranty_obligations(request):
     page_number = request.GET.get("page")
-    counterparty = task_controller.get_objects_all(CountrpartyWarrantyObligations)
-    page_m = paginator(counterparty, page_number)
+    counterparty = task_service.get_objects_all(CounterpartyWarrantyObligations)
+    page_m = task_service.paginator(counterparty, page_number)
     data = {
         "counterparty": counterparty,
         "page_m": page_m
     }
-    return render(request, "countrparty/countrparty_warranty_obligations/countrparty_warranty_obligations.html", data)
+    return render(request, "counterparty/counterparty_warranty_obligations/counterparty_warranty_obligations.html", data)
 
 
 def create_counterparty_to(request):
     if request.method == "POST":
-        task_controller.create_counterparty(request, CounterpartyTO)
+        task_service.create_counterparty(request, CounterpartyTO)
     return HttpResponseRedirect("/counterparty_to/")
 
 
 def create_countrparty_warranty_obligations(request):
     if request.method == "POST":
-        task_controller.create_counterparty(request, CountrpartyWarrantyObligations)
-    return HttpResponseRedirect("/countrparty_warranty_obligations/")
+        task_service.create_counterparty(request, CounterpartyWarrantyObligations)
+    return HttpResponseRedirect("/counterparty_warranty_obligations/")
 
 
 def counterparty_to_detail(request, id):
     try:
-        counterparty = task_controller.get_detail_object(CounterpartyTO, id)
-        return render(request, "countrparty/counterparty.html", {"counterparty": counterparty})
+        counterparty = task_service.get_detail_object(CounterpartyTO, id)
+        return render(request, "counterparty/counterparty.html", {"counterparty": counterparty})
     except CounterpartyTO.DoesNotExist:
         return HttpResponseNotFound("<h2>WorkTask not found</h2>")
 
 
 def countrparty_warranty_obligations_detail(request, id):
     try:
-        counterparty = task_controller.get_detail_object(CountrpartyWarrantyObligations, id)
-        return render(request, "countrparty/counterparty.html", {"counterparty": counterparty})
-    except CountrpartyWarrantyObligations.DoesNotExist:
+        counterparty = task_service.get_detail_object(CounterpartyWarrantyObligations, id)
+        return render(request, "counterparty/counterparty.html", {"counterparty": counterparty})
+    except CounterpartyWarrantyObligations.DoesNotExist:
         return HttpResponseNotFound("<h2>WorkTask not found</h2>")

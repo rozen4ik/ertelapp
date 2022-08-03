@@ -1,14 +1,18 @@
 import requests
 from django.contrib.auth.models import User
-
+from django.core.paginator import Paginator
 from employee.models import Profile
 from ertelapp import settings
 from task.models import *
 
 
-class TaskController:
+class TaskService:
     tg_chat_id: str
     token_tg_bot: str
+
+    def paginator(self, model, number):
+        page_model = Paginator(model, 10)
+        return page_model.get_page(number)
 
     def get_message(self, task: Task) -> str:
         message_task = f"<b>Номер задачи:</b> {task.id}\n<b>Тип задачи:</b> {task.type_task}\n" \
@@ -109,3 +113,4 @@ class TaskController:
     def update_dict_task(self, dict_task):
         dict_task["tg_chat_id"] = self.get_tg_chat_id()
         dict_task["token_tg_bot"] = self.get_token_tg_bot()
+        return dict_task

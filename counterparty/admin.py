@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from counterparty.models import CounterpartyTO, CountrpartyWarrantyObligations
+from counterparty.models import CounterpartyTO, CounterpartyWarrantyObligations
 
 
 class CounterpartyTOAdmin(admin.ModelAdmin):
@@ -14,4 +14,4 @@ class CountrpartyWarrantyObligationsAdmin(admin.ModelAdmin):
 
 
 admin.site.register(CounterpartyTO, CounterpartyTOAdmin)
-admin.site.register(CountrpartyWarrantyObligations, CountrpartyWarrantyObligationsAdmin)
+admin.site.register(CounterpartyWarrantyObligations, CountrpartyWarrantyObligationsAdmin)

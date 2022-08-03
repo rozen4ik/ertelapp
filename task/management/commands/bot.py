@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from telebot import types
 from django.core.management.base import BaseCommand
 from ertelapp import settings
-from task.controllers.bot_controller import BotController
+from task.services.bot_service import BotService
 
 
 class Command(BaseCommand):
@@ -14,7 +14,7 @@ class Command(BaseCommand):
 
 
 bot = telebot.TeleBot(settings.TOKEN_TG_BOT)
-bot_controller = BotController()
+bot_controller = BotService()
 
 
 @bot.message_handler(commands=["start"])

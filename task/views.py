@@ -1,37 +1,35 @@
 import datetime
 import xlwt
 from django.contrib.auth.models import User
-from django.core.paginator import Paginator
 from django.db.models import Q
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.http import HttpResponseNotFound
 from django.http import HttpResponse
-from counterparty.models import CounterpartyTO, CountrpartyWarrantyObligations
+from counterparty.models import CounterpartyTO, CounterpartyWarrantyObligations
 from employee.models import Profile
 from ertelapp import settings
 from work_task.models import WorkTask
-from .controllers.task_controller import TaskController
+from .services.task_service import TaskService
 from .forms import *
 from .models import Task
 
 # Словарь полей, по которым фильтруются данные таблицы Task
 filter_task = {}
-
-task_controller = TaskController()
+task_service = TaskService()
 
 
 # Формирование показа страницы в зависимости от отдела
 def show_department_task(request, end_task, path_file, dict_task):
+    # проверка на наличие задач в отделе
     if end_task is not None:
         end_task_fullname = end_task.employee_task.split()
         end_task_firstname = end_task_fullname[0]
         end_task_lastname = end_task_fullname[1]
-        tg_chat_id = User.objects.get(first_name=end_task_firstname, last_name=end_task_lastname)
-        tg_chat_id = Profile.objects.get(user_id=tg_chat_id).chat_id
-        token_tg_bot = settings.TOKEN_TG_BOT
-        dict_task["tg_chat_id"] = tg_chat_id
-        dict_task["token_tg_bot"] = token_tg_bot
+        task_service.set_tg_chat_id(Profile.objects.get(user_id=User.objects.get(first_name=end_task_firstname,
+                                                                                 last_name=end_task_lastname)).chat_id)
+        task_service.set_token_tg_bot(settings.TOKEN_TG_BOT)
+        dict_task = task_service.update_dict_task(dict_task)
         return render(request, path_file, dict_task)
     else:
         return render(request, path_file, dict_task)
@@ -40,21 +38,26 @@ def show_department_task(request, end_task, path_file, dict_task):
 # Получение данных
 def index(request):
     page_number = request.GET.get("page")
-    task = task_controller.get_objects_all(Task)
-    users = User.objects.all().select_related('profile')
+    task = task_service.get_objects_all(Task)
+    counterparty_to = task_service.get_objects_all(CounterpartyTO)
+    counterparty_warranty_obligations = task_service.get_objects_all(CounterpartyWarrantyObligations)
+    users = task_service.get_objects_all(User).select_related('profile')
+
     director_user = Profile.objects.get(position_dep_id_id=1)
     eng_user = Profile.objects.get(position_dep_id_id=7)
     sales_user = Profile.objects.get(position_dep_id_id=2)
     technical_user = Profile.objects.get(position_dep_id_id=3)
     accounting_user = Profile.objects.get(position_dep_id_id=11)
     personnel_user = Profile.objects.get(position_dep_id_id=13)
+    storekeeper_user = Profile.objects.get(position_dep_id_id=8)
+
     engineering_task = Task.objects.filter(author_task=eng_user).order_by("-id")
     sales_task = Task.objects.filter(author_task=sales_user).order_by("-id")
-    technical_task = Task.objects.filter(Q(author_task=technical_user) | Q(author_task=eng_user)).order_by("-id")
+    technical_task = Task.objects.filter(Q(author_task=technical_user) | Q(author_task=eng_user) |
+                                         Q(author_task=storekeeper_user)).order_by("-id")
     accounting_task = Task.objects.filter(author_task=accounting_user).order_by("-id")
     personnel_task = Task.objects.filter(author_task=personnel_user).order_by("-id")
-    counterparty_to = CounterpartyTO.objects.all()
-    countrparty_warranty_obligations = CountrpartyWarrantyObligations.objects.all()
+    storekeeper_task = Task.objects.filter(author_task=storekeeper_user).order_by("-id")
 
     form = TaskFilter(request.GET)
     if form.is_valid():
@@ -75,71 +78,73 @@ def index(request):
         "users": users,
         "form": form,
         "counterparty_to": counterparty_to,
-        "countrparty_warranty_obligations": countrparty_warranty_obligations
+        "counterparty_warranty_obligations": counterparty_warranty_obligations
     }
 
     # Показ задач в зависимости от должности
     match request.user.username:
         case director_user.user.username:
-            page_m = paginator(task, page_number)
+            page_m = task_service.paginator(task, page_number)
             first_dict_task = {"task": task, "page_m": page_m}
             first_dict_task.update(dict_task)
             return show_department_task(request, end_task, "task/tasks.html", first_dict_task)
         case eng_user.user.username:
-            page_m = paginator(engineering_task, page_number)
+            page_m = task_service.paginator(engineering_task, page_number)
             first_dict_task = {"engineering_task": engineering_task, "page_m": page_m}
             first_dict_task.update(dict_task)
             return show_department_task(request, end_task, "task/role/engineering_task.html", first_dict_task)
         case sales_user.user.username:
-            page_m = paginator(sales_task, page_number)
+            page_m = task_service.paginator(sales_task, page_number)
             first_dict_task = {"sales_task": sales_task, "page_m": page_m}
             first_dict_task.update(dict_task)
             return show_department_task(request, end_task, "task/role/sales_task.html", first_dict_task)
         case technical_user.user.username:
-            page_m = paginator(technical_task, page_number)
+            page_m = task_service.paginator(technical_task, page_number)
             first_dict_task = {"technical_task": technical_task, "page_m": page_m}
             first_dict_task.update(dict_task)
             return show_department_task(request, end_task, "task/role/technical_task.html", first_dict_task)
         case accounting_user.user.username:
-            page_m = paginator(accounting_task, page_number)
+            page_m = task_service.paginator(accounting_task, page_number)
             first_dict_task = {"accounting_task": accounting_task, "page_m": page_m}
+            first_dict_task.update(dict_task)
             return show_department_task(request, end_task, "task/role/accounting_task.html", first_dict_task)
         case personnel_user.user.username:
-            page_m = paginator(personnel_task, page_number)
+            page_m = task_service.paginator(personnel_task, page_number)
             first_dict_task = {"personnel_task": personnel_task, "page_m": page_m}
+            first_dict_task.update(dict_task)
             return show_department_task(request, end_task, "task/role/personnel_task.html", first_dict_task)
+        case storekeeper_user.user.username:
+            page_m = task_service.paginator(storekeeper_task, page_number)
+            first_dict_task = {"storekeeper_task": storekeeper_task, "page_m": page_m}
+            first_dict_task.update(dict_task)
+            return show_department_task(request, end_task, "task/role/storekeeper_task.html", first_dict_task)
         case _:
             return render(request, "task/role/no_access.html")
-
-
-def paginator(model, number):
-    page_model = Paginator(model, 10)
-    return page_model.get_page(number)
 
 
 # Добавление данных
 def create(request):
     if request.method == "POST":
-        task_controller.create_task(request)
+        task_service.create_task(request)
     return HttpResponseRedirect("/")
 
 
 # Изменение данных
 def edit(request, id):
     try:
-        task = task_controller.get_detail_object(Task, id)
+        task = task_service.get_detail_object(Task, id)
         users = User.objects.all().select_related('profile')
-        counterparty_to = task_controller.get_objects_all(CounterpartyTO)
-        countrparty_warranty_obligations = task_controller.get_objects_all(CountrpartyWarrantyObligations)
+        counterparty_to = task_service.get_objects_all(CounterpartyTO)
+        countrparty_warranty_obligations = task_service.get_objects_all(CounterpartyWarrantyObligations)
         data = {
             "task": task,
             "users": users,
             "counterparty_to": counterparty_to,
-            "countrparty_warranty_obligations": countrparty_warranty_obligations
+            "counterparty_warranty_obligations": countrparty_warranty_obligations
         }
 
         if request.method == "POST":
-            task_controller.edit_task(request, task)
+            task_service.edit_task(request, task)
             return HttpResponseRedirect("/")
         else:
             return render(request, "task/edit.html", data)

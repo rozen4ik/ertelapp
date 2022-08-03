@@ -10,6 +10,17 @@ class TaskService:
     tg_chat_id: str
     token_tg_bot: str
 
+    def create_user_roles(self, dep_id):
+        result = Profile.objects.get(position_dep_id_id=dep_id)
+        return result
+
+    # def get_filter_task(self, user):
+    #     result = ""
+    #
+    #     for u in user:
+    #         result = Task.objects.filter(author_task=u)
+    #
+    #     return result
     def paginator(self, model, number):
         page_model = Paginator(model, 10)
         return page_model.get_page(number)
@@ -89,14 +100,6 @@ class TaskService:
             task.type_task = "Ежемесячное ТО"
         task.save()
         self.send_message_telegram(task, f"Задача №{task.id} изменилась!")
-
-    def create_counterparty(self, request, model):
-        new_counterparty = model()
-        new_counterparty.name = request.POST.get("name")
-        new_counterparty.type = request.POST.get("type")
-        new_counterparty.contract = request.POST.get("contract")
-        new_counterparty.address = request.POST.get("address")
-        new_counterparty.save()
 
     def get_tg_chat_id(self):
         return self.tg_chat_id

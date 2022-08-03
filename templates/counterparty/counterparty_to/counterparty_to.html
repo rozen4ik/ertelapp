@@ -64,6 +64,7 @@
                 <th scope="col">Тип</th>
                 <th scope="col">Контракт</th>
                 <th scope="col">Адрес</th>
+                <th scope="col">Редактирование</th>
             </tr>
             </thead>
             <tbody>
@@ -74,6 +75,7 @@
                     <td>{{ co.type }}</td>
                     <td>{{ co.contract }}</td>
                     <td>{{ co.address }}</td>
+                    <td><p><a class="btn btn-outline-primary btn-sm" href="edit/{{co.id}}">Изменить</a></p></td>
                 </tr>
             {% endfor %}
             </tbody>

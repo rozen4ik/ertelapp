@@ -1,17 +1,18 @@
+from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, HttpResponseNotFound
 from django.shortcuts import render
 from counterparty.models import CounterpartyTO, CounterpartyWarrantyObligations
-from task.services.task_service import TaskService
+from counterparty.services.counterparty_service import CounterpartyService
 
 
-task_service = TaskService()
+counterparty_service = CounterpartyService()
 
 
 # Create your views here.
 def counterparty_to(request):
     page_number = request.GET.get("page")
-    counterparty = task_service.get_objects_all(CounterpartyTO)
-    page_m = task_service.paginator(counterparty, page_number)
+    counterparty = counterparty_service.get_objects_all(CounterpartyTO)
+    page_m = counterparty_service.paginator(counterparty, page_number)
     data = {
         "counterparty": counterparty,
         "page_m": page_m
@@ -21,8 +22,8 @@ def counterparty_to(request):
 
 def counterparty_warranty_obligations(request):
     page_number = request.GET.get("page")
-    counterparty = task_service.get_objects_all(CounterpartyWarrantyObligations)
-    page_m = task_service.paginator(counterparty, page_number)
+    counterparty = counterparty_service.get_objects_all(CounterpartyWarrantyObligations)
+    page_m = counterparty_service.paginator(counterparty, page_number)
     data = {
         "counterparty": counterparty,
         "page_m": page_m
@@ -32,27 +33,52 @@ def counterparty_warranty_obligations(request):
 
 def create_counterparty_to(request):
     if request.method == "POST":
-        task_service.create_counterparty(request, CounterpartyTO)
+        counterparty_service.create_counterparty(request, CounterpartyTO)
     return HttpResponseRedirect("/counterparty_to/")
 
 
-def create_countrparty_warranty_obligations(request):
+def create_counterparty_warranty_obligations(request):
     if request.method == "POST":
-        task_service.create_counterparty(request, CounterpartyWarrantyObligations)
+        counterparty_service.create_counterparty(request, CounterpartyWarrantyObligations)
     return HttpResponseRedirect("/counterparty_warranty_obligations/")
 
 
-def counterparty_to_detail(request, id):
+# Изменение данных
+def edit_counterparty_to(request, id):
     try:
-        counterparty = task_service.get_detail_object(CounterpartyTO, id)
-        return render(request, "counterparty/counterparty.html", {"counterparty": counterparty})
+        edit_counterparty_to = counterparty_service.get_detail_object(CounterpartyTO, id)
+        users = counterparty_service.get_objects_all(User).select_related('profile')
+
+        data = {
+            "edit_counterparty_to": edit_counterparty_to,
+            "users": users,
+        }
+
+        if request.method == "POST":
+            counterparty_service.edit_counterparty(request, edit_counterparty_to)
+            return HttpResponseRedirect("/")
+        else:
+            return render(request, "counterparty/counterparty_to/edit.html", data)
+
     except CounterpartyTO.DoesNotExist:
-        return HttpResponseNotFound("<h2>WorkTask not found</h2>")
+        return HttpResponseNotFound("<h2>Task not found</h2>")
 
 
-def countrparty_warranty_obligations_detail(request, id):
+def edit_counterparty_warranty_obligations(request, id):
     try:
-        counterparty = task_service.get_detail_object(CounterpartyWarrantyObligations, id)
-        return render(request, "counterparty/counterparty.html", {"counterparty": counterparty})
+        edit_counterparty_warranty_obligations = counterparty_service.get_detail_object(CounterpartyWarrantyObligations, id)
+        users = counterparty_service.get_objects_all(User).select_related('profile')
+
+        data = {
+            "edit_counterparty_warranty_obligations": edit_counterparty_warranty_obligations,
+            "users": users,
+        }
+
+        if request.method == "POST":
+            counterparty_service.edit_counterparty(request, edit_counterparty_warranty_obligations)
+            return HttpResponseRedirect("/")
+        else:
+            return render(request, "counterparty/counterparty_warranty_obligations/edit.html", data)
+
     except CounterpartyWarrantyObligations.DoesNotExist:
-        return HttpResponseNotFound("<h2>WorkTask not found</h2>")
+        return HttpResponseNotFound("<h2>Task not found</h2>")

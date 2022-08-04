@@ -3,44 +3,17 @@ from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from employee.models import Profile
 from ertelapp import settings
+from service import Service
 from task.models import *
 
 
-class TaskService:
+class TaskService(Service):
     tg_chat_id: str
     token_tg_bot: str
 
     def create_user_roles(self, dep_id):
         result = Profile.objects.get(position_dep_id_id=dep_id)
         return result
-
-    # def get_filter_task(self, user):
-    #     result = ""
-    #
-    #     for u in user:
-    #         result = Task.objects.filter(author_task=u)
-    #
-    #     return result
-    def paginator(self, model, number):
-        page_model = Paginator(model, 10)
-        return page_model.get_page(number)
-
-    def get_message(self, task: Task) -> str:
-        message_task = f"<b>Номер задачи:</b> {task.id}\n<b>Тип задачи:</b> {task.type_task}\n" \
-                       f"<b>{task.business_trip}</b>\n<b>Дата:</b> " \
-                       f"{task.date_task}\n<b>Время:</b> {task.time_task}\n<b>Кто поручил:</b> " \
-                       f"{task.author_task}\n<b>Статус задачи:</b> {task.status_task}\n<b>Задача:</b> " \
-                       f"{task.text_task}\n<b>Место выполнения:</b> {task.address_task}\n" \
-                       f"<b>Сроки выполнения:</b> {task.line_task}"
-        return message_task
-
-    def get_objects_all(self, model):
-        model = model.objects.all().order_by("-id")
-        return model
-
-    def get_detail_object(self, model, id):
-        model = model.objects.get(id=id)
-        return model
 
     def create_task(self, request):
         new_task = Task()
@@ -100,20 +73,3 @@ class TaskService:
             task.type_task = "Ежемесячное ТО"
         task.save()
         self.send_message_telegram(task, f"Задача №{task.id} изменилась!")
-
-    def get_tg_chat_id(self):
-        return self.tg_chat_id
-
-    def set_tg_chat_id(self, chat_id):
-        self.tg_chat_id = chat_id
-
-    def get_token_tg_bot(self):
-        return self.token_tg_bot
-
-    def set_token_tg_bot(self, tg_bot):
-        self.token_tg_bot = tg_bot
-
-    def update_dict_task(self, dict_task):
-        dict_task["tg_chat_id"] = self.get_tg_chat_id()
-        dict_task["token_tg_bot"] = self.get_token_tg_bot()
-        return dict_task

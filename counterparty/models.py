@@ -11,8 +11,8 @@ class CounterpartyWarrantyObligations(models.Model):
         return f"Контрагент: {self.name} - Тип: {self.type}"
 
     class Meta:
-        verbose_name = "Контрагент: гарантийные обязательства"
-        verbose_name_plural = "Контрагенты: гарантийные обязательства"
+        verbose_name = "контрагент: гарантийные обязательства"
+        verbose_name_plural = "контрагенты: гарантийные обязательства"
 
 
 class CounterpartyTO(models.Model):
@@ -25,5 +25,5 @@ class CounterpartyTO(models.Model):
         return f"Контрагент: {self.name} - Тип: {self.type}"
 
     class Meta:
-        verbose_name = "Контрагент: техническое обслуживание"
-        verbose_name_plural = "Контрагенты: техническое обслуживание"
+        verbose_name = "контрагент: техническое обслуживание"
+        verbose_name_plural = "контрагенты: техническое обслуживание"

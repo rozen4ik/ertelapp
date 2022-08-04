@@ -5,7 +5,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Учет рабочего времени</title>
+    <title>История изменения примечания задачи</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
 </head>
 <body>
@@ -33,8 +33,8 @@
     </nav>
     <div class="container-fluid">
         <br>
-        <div style="text-align: center;"><h1>Учёт рабочего времени</h1></div>
-        <a class="btn btn-primary" href="{% url 'export-excel-work-task' %}" role="button">Экспортировать в Excel</a>
+        <div style="text-align: center;"><h1>История изменения примечания</h1></div>
+{#        <a class="btn btn-primary" href="{% url 'export-excel-work-task' %}" role="button">Экспортировать в Excel</a>#}
         <br>
         <hr>
         <form method="POST" action="create/" class="contact-form" id="tg">
@@ -44,25 +44,21 @@
                     <thead class="table-primary align-middle">
                         <tr>
                             <th scope="col"><label>№</label></th>
-                            <th scope="col"><label>Дата</label></th>
-                            <th scope="col"><label>Время</label></th>
+                            <th scope="col"><label>Дата и время</label></th>
+                            <th scope="col"><label>Примечание</label></th>
                             <th scope="col"><label>Исполнитель</label></th>
-                            <th scope="col"><label>Местонахождение</label></th>
                             <th scope="col"><label>№ задачи</label></th>
-                            <th scope="col"><label>Статус исполнителя</label></th>
                             <th scope="col"><label></label></th>
                         </tr>
                     </thead>
-                    {% for work in work_task_employee %}
+                    {% for work in history %}
                     <tbody>
                         <tr>
                             <th scope="row">{{ work.id }}</th>
-                            <td>{{ work.date_work_task }}</td>
-                            <td>{{ work.time_work_task }}</td>
-                            <td>{{ work.employee_work_task }}</td>
-                            <td>{{ work.address_work_task }}</td>
+                            <td>{{ work.datetime_history }}</td>
+                            <td>{{ work.note_history }}</td>
+                            <td>{{ work.employee_history }}</td>
                             <td>{{ work.task_id }}</td>
-                            <td>{{ work.status_work_task }}</td>
                             <td><a class="btn btn-outline-primary" href="{% url 'edit' work.task_id %}">Перейти к задаче</a></td>
                         </tr>
                     </tbody>

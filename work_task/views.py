@@ -1,25 +1,15 @@
-from django.http import HttpResponseRedirect, HttpResponseNotFound
+from django.http import HttpResponseNotFound
 from django.shortcuts import render
-from task.services.task_service import TaskService
+from service import Service
 from work_task.models import WorkTask
 
-task_service = TaskService()
+work_task_service = Service()
 
 
 # Create your views here.
 def index_bot(request):
-    work_task = task_service.get_objects_all(WorkTask)
+    work_task = work_task_service.get_objects_all(WorkTask)
     return render(request, "work_task/work_task.html", {"work_task": work_task})
-
-
-# Удаление записи в в разделе контроля выполнения работ
-def delete_work_task(request, id):
-    try:
-        work_task = task_service.get_detail_object(WorkTask, id)
-        work_task.delete()
-        return HttpResponseRedirect("/work_task/")
-    except WorkTask.DoesNotExist:
-        return HttpResponseNotFound("<h2>Task not found</h2>")
 
 
 def show_work_task_for_task(request, id):

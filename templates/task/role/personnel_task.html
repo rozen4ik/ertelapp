@@ -22,7 +22,9 @@
                         <th scope="col">Статус выполнения</th>
                         <th scope="col">Тип задачи</th>
                         <th scope="col">Отношение к командировке</th>
-                        <th scope="col">Редактирование</th>
+                        <th scope="col">Примечания</th>
+                        <th scope="col">Дата изменения</th>
+                        <th scope="col"></th>
                     </tr>
                 </thead>    
                 {% for tasks in page_m %}
@@ -39,7 +41,11 @@
                         <td class="{{ tasks.status_task }}">{{ tasks.status_task }}</td>
                         <td>{{ tasks.type_task }}</td>
                         <td>{{ tasks.business_trip }}</td>
+                        <td>{{ tasks.note_task }}</td>
+                        <td>{{ tasks.datetime_note_task }}</td>
                         <td>
+                            <p><a class="btn btn-outline-primary btn-sm" href="history_status_tasks/{{tasks.id}}">История статуса</a></p>
+                            <p><a class="btn btn-outline-primary btn-sm" href="history_note_tasks/{{tasks.id}}">История примечания</a></p>
                             <p><a class="btn btn-outline-primary btn-sm" href="work_tasks/{{ tasks.id }}">Контроль</a></p>
                             <p><a class="btn btn-outline-primary btn-sm" href="edit/{{tasks.id}}">Изменить</a></p>
                         </td>

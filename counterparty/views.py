@@ -7,7 +7,6 @@ from counterparty.services.counterparty_service import CounterpartyService
 
 counterparty_service = CounterpartyService()
 
-
 # Create your views here.
 def counterparty_to(request):
     page_number = request.GET.get("page")
@@ -46,7 +45,7 @@ def create_counterparty_warranty_obligations(request):
 # Изменение данных
 def edit_counterparty_to(request, id):
     try:
-        edit_counterparty_to = counterparty_service.get_detail_object(CounterpartyTO, id)
+        edit_counterparty_to = counterparty_service.get_object_deatil(CounterpartyTO, id)
         users = counterparty_service.get_objects_all(User).select_related('profile')
 
         data = {
@@ -66,7 +65,7 @@ def edit_counterparty_to(request, id):
 
 def edit_counterparty_warranty_obligations(request, id):
     try:
-        edit_counterparty_warranty_obligations = counterparty_service.get_detail_object(CounterpartyWarrantyObligations, id)
+        edit_counterparty_warranty_obligations = counterparty_service.get_object_deatil(CounterpartyWarrantyObligations, id)
         users = counterparty_service.get_objects_all(User).select_related('profile')
 
         data = {

@@ -14,7 +14,7 @@ class Command(BaseCommand):
 
 
 bot = telebot.TeleBot(settings.TOKEN_TG_BOT)
-bot_controller = BotService()
+bot_service = BotService()
 
 
 @bot.message_handler(commands=["start"])
@@ -32,10 +32,10 @@ def start_message(message):
 @bot.message_handler(content_types=["location"])
 def show_location(message):
     user = User.objects.get(profile__chat_id=message.chat.id)
-    tasks = bot_controller.get_tasks(user)
+    tasks = bot_service.get_tasks(user)
 
     if message.location is not None:
-        bot_controller.set_location(message)
+        bot_service.set_location(message)
 
         for task in tasks:
             loc_mark = telebot.types.InlineKeyboardMarkup()
@@ -44,7 +44,7 @@ def show_location(message):
             loc_btn3 = telebot.types.InlineKeyboardButton(text="Убыл с объекта", callback_data=f"loc:3:{task.id}")
             loc_mark.add(loc_btn1, loc_btn2)
             loc_mark.add(loc_btn3)
-            message_task = f"{bot_controller.get_message(task)}"
+            message_task = f"{bot_service.get_message(task)}"
             bot.send_message(user.profile.chat_id, text=message_task, parse_mode="HTML", reply_markup=loc_mark)
 
         @bot.callback_query_handler(func=lambda call: call.data.split(":")[0] == "loc")
@@ -56,38 +56,41 @@ def show_location(message):
             match location_code:
                 case "1":
                     msg_local = "Вы убыли на объект"
-                    bot_controller.create_work_task(task_id, "Убыл на объект")
+                    bot_service.create_work_task(task_id, "Убыл на объект")
                 case "2":
                     msg_local = "Вы прибыли на объект"
-                    bot_controller.create_work_task(task_id, "Прибыл на объект")
+                    bot_service.create_work_task(task_id, "Прибыл на объект")
                 case "3":
-                    msg_local = "Вы убыли с объекта"
-                    bot_controller.create_work_task(task_id, "Убыл с объекта")
+                    msg_local = "Вы убыли с объекта. Не забудьте поставить отметку выполнено.\n" \
+                                "Если задача не выполнена, а вы убываете с объекта, тогда напишите сообщение\n" \
+                                "почему вы убываете, сообщение должно начинаться со \"ЗАДАЧА Х\"\n" \
+                                "где X это номер задачи."
+                    bot_service.create_work_task(task_id, "Убыл с объекта")
                 case _:
                     bot.send_message(call.message.chat.id, text="Поступили неправильные данные")
 
-            bot.send_message(call.message.chat.id, msg_local)
+            bot.send_message(call.message.chat.id, msg_local, parse_mode="HTML")
 
         bot.send_message(message.chat.id, text=f"<b>Ваше местоположение:</b> "
-                                               f"{bot_controller.get_location()}\n<b>Время отправки "
-                                               f"сообщения:</b> {bot_controller.get_datetime()[0]} "
-                                               f"{bot_controller.get_datetime()[1]}", parse_mode="HTML")
+                                               f"{bot_service.get_location()}\n<b>Время отправки "
+                                               f"сообщения:</b> {bot_service.get_datetime()[0]} "
+                                               f"{bot_service.get_datetime()[1]}", parse_mode="HTML")
 
 
 @bot.message_handler(content_types=["text"])
 def edited_status_task(message):
     user = User.objects.get(profile__chat_id=message.chat.id)
-    tasks = bot_controller.get_tasks(user)
+    tasks = bot_service.get_tasks(user)
     match message.text:
         case "Выбрать задачу":
             for task in tasks:
                 status_mark = telebot.types.InlineKeyboardMarkup()
                 status_mark.add(
                     telebot.types.InlineKeyboardButton(text="Выполняется", callback_data=f"status:1:{task.id}"),
-                    telebot.types.InlineKeyboardButton(text="Выполнено", callback_data=f"status:2:{task.id}")
+                    telebot.types.InlineKeyboardButton(text="Выполнено", callback_data=f"status:2:{task.id}"),
                 )
 
-                message_task = f"{bot_controller.get_message(task)}"
+                message_task = f"{bot_service.get_message(task)}"
                 bot.send_message(user.profile.chat_id, text=message_task, parse_mode="HTML", reply_markup=status_mark)
 
             @bot.callback_query_handler(func=lambda call: call.data.split(":")[0] == "status")
@@ -104,16 +107,29 @@ def edited_status_task(message):
                     case _:
                         bot.send_message(user.profile.chat_id, text="Поступили неправильные данные")
 
-                task = bot_controller.get_find_task(data_id)
-                bot_controller.set_status_task(status, task)
-                message_updated_task = bot_controller.get_message(task)
+                task = bot_service.get_find_task(data_id)
+                bot_service.set_status_task(status, task)
+                bot_service.set_datetime_task(task)
+                bot_service.create_history_status_task(task, status)
+                message_updated_task = bot_service.get_message(task)
 
                 bot.send_message(call.message.chat.id, text=f"Статус задачи {task.id} изменен на\n<b>{status}</b>",
                                  parse_mode="HTML")
                 bot.send_message(call.message.chat.id, text=message_updated_task, parse_mode="HTML")
         case _:
-            msg = "Используйте кнопки для взаимодействия со мной!"
-            bot.send_message(user.profile.chat_id, text=msg)
+            msg = message.text.split()[0].lower()
+            number = message.text.split()[1]
+            if msg == "задача" and number.isdigit():
+                number = int(number)
+                msg = message.text.split(" ", 2)[2].capitalize()
+                task = bot_service.get_find_task(number)
+                bot_service.set_note_task(task, msg)
+                bot_service.set_datetime_task(task)
+                bot_service.create_history_note_task(task, msg)
+                bot.send_message(user.profile.chat_id, text="Данные записаны.")
+            else:
+                msg = "Используйте кнопки для взаимодействия со мной!"
+                bot.send_message(user.profile.chat_id, text=msg)
 
 
 bot.infinity_polling()

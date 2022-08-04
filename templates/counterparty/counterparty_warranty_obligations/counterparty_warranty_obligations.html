@@ -53,50 +53,52 @@
         </form>
     </div>
     <br>
-    <div class="table-responsive">
-        <table id="tag" class="table table-bordered table-sm align-middle table-hover">
-            <thead class="align-middle table-primary">
-            <tr>
-                <th scope="col">id</th>
-                <th scope="col">Название</th>
-                <th scope="col">Тип</th>
-                <th scope="col">Контракт</th>
-                <th scope="col">Адрес</th>
-                <th scope="col">Редактирование</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for co in page_m %}
+    <div class="container-fluid">
+        <div class="table-responsive">
+            <table id="tag" class="table table-bordered table-sm align-middle table-hover">
+                <thead class="align-middle table-primary">
                 <tr>
-                    <td scope="row">{{ co.id }}</td>
-                    <td>{{ co.name }}</td>
-                    <td>{{ co.type }}</td>
-                    <td>{{ co.contract }}</td>
-                    <td>{{ co.address }}</td>
-                    <td><p><a class="btn btn-outline-primary btn-sm" href="edit/{{co.id}}">Изменить</a></p></td>
+                    <th scope="col">id</th>
+                    <th scope="col">Название</th>
+                    <th scope="col">Тип</th>
+                    <th scope="col">Контракт</th>
+                    <th scope="col">Адрес</th>
+                    <th scope="col"></th>
                 </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-        <nav aria-label="Page navigation example">
-            <ul class="pagination justify-content-center">
-                {% if page_m.has_previous %}
-                    <li class="page-item"><a class="page-link" href="?cnhf=1">&laquo; Первая</a></li>
-                {% endif %}
-
-                {% for pa in page_m.paginator.page_range %}
-                    {% if pa == page_m.number %}
-                        <li class="page-item"><a class="page-link active" href="?page={{ pa }}">{{ pa }}</a></li>
-                    {% elif pa >= page_m.number|add:-2 and pa <= page_m.number|add:2 %}
-                        <li class="page-item"><a class="page-link" href="?page={{ pa }}">{{ pa }}</a></li>
-                    {% endif %}
+                </thead>
+                <tbody>
+                {% for co in page_m %}
+                    <tr>
+                        <td scope="row">{{ co.id }}</td>
+                        <td>{{ co.name }}</td>
+                        <td>{{ co.type }}</td>
+                        <td>{{ co.contract }}</td>
+                        <td>{{ co.address }}</td>
+                        <td><p><a class="btn btn-outline-primary btn-sm" href="edit/{{co.id}}">Изменить</a></p></td>
+                    </tr>
                 {% endfor %}
+                </tbody>
+            </table>
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+                    {% if page_m.has_previous %}
+                        <li class="page-item"><a class="page-link" href="?cnhf=1">&laquo; Первая</a></li>
+                    {% endif %}
 
-                {% if page_m.has_next %}
-                    <li class="page-item"><a class="page-link" href="?page={{ page_m.paginator.num_pages }}">Последняя &raquo;</a></li>
-                {% endif %}
-            </ul>
-        </nav>
+                    {% for pa in page_m.paginator.page_range %}
+                        {% if pa == page_m.number %}
+                            <li class="page-item"><a class="page-link active" href="?page={{ pa }}">{{ pa }}</a></li>
+                        {% elif pa >= page_m.number|add:-2 and pa <= page_m.number|add:2 %}
+                            <li class="page-item"><a class="page-link" href="?page={{ pa }}">{{ pa }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if page_m.has_next %}
+                        <li class="page-item"><a class="page-link" href="?page={{ page_m.paginator.num_pages }}">Последняя &raquo;</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js" integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.min.js" integrity="sha384-kjU+l4N0Yf4ZOJErLsIcvOU2qSb74wXpOhqTvwVx3OElZRweTnQ6d31fXEoRD1Jy" crossorigin="anonymous"></script>

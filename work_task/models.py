@@ -14,5 +14,5 @@ class WorkTask(models.Model):
         return f"Исполнитель: {self.employee_work_task} Место нахождение: {self.task}"
 
     class Meta:
-        verbose_name = "Учёт рабочего времени"
-        verbose_name_plural = "Учёт рабочего времени"
+        verbose_name = "учёт рабочего времени"
+        verbose_name_plural = "учёт рабочего времени"

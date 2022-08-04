@@ -2,24 +2,16 @@ import telebot
 import datetime
 from django.db.models import Q
 from ertelapp import settings
+from history.models import HistoryStatusTask, HistoryNoteTask
+from service import Service
 from task.models import Task
 from dadata import Dadata
 from work_task.models import WorkTask
 
 
-class BotService:
+class BotService(Service):
     bot = telebot.TeleBot(settings.TOKEN_TG_BOT)
     location_employee = "Местоположение"
-
-    # Формирование сообщения для отправки задачи исполнителю
-    def get_message(self, task: Task) -> str:
-        message_task = f"<b>Номер задачи:</b> {task.id}\n<b>Тип задачи:</b> {task.type_task}\n" \
-                       f"<b>{task.business_trip}</b>\n<b>Дата:</b> " \
-                       f"{task.date_task}\n<b>Время:</b> {task.time_task}\n<b>Кто поручил:</b> " \
-                       f"{task.author_task}\n<b>Статус задачи:</b> {task.status_task}\n<b>Задача:</b> " \
-                       f"{task.text_task}\n<b>Место выполнения:</b> {task.address_task}\n" \
-                       f"<b>Сроки выполнения:</b> {task.line_task}"
-        return message_task
 
     # Поиск задачи по id
     def get_find_task(self, task_id: int) -> Task:
@@ -36,6 +28,30 @@ class BotService:
     def set_status_task(self, status_task: str, task: Task):
         task.status_task = status_task
         task.save()
+
+    def set_datetime_task(self, task: Task):
+        task.datetime_note_task = datetime.datetime.now()
+        task.save()
+
+    def set_note_task(self, task: Task, msg: str):
+        task.note_task = msg
+        task.save()
+
+    def create_history_status_task(self, task, status):
+        history_status = HistoryStatusTask()
+        history_status.datetime_history = datetime.datetime.now()
+        history_status.status_history = status
+        history_status.employee_history = task.employee_task
+        history_status.task = task
+        history_status.save()
+
+    def create_history_note_task(self, task, note):
+        history_note = HistoryNoteTask()
+        history_note.datetime_history = datetime.datetime.now()
+        history_note.note_history = note
+        history_note.employee_history = task.employee_task
+        history_note.task = task
+        history_note.save()
 
     def set_location(self, location):
         self.location_employee = location

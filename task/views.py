@@ -7,8 +7,6 @@ from django.http import HttpResponseRedirect
 from django.http import HttpResponseNotFound
 from django.http import HttpResponse
 from counterparty.models import CounterpartyTO, CounterpartyWarrantyObligations
-from employee.models import Profile
-from ertelapp import settings
 from work_task.models import WorkTask
 from .services.task_service import TaskService
 from .forms import *
@@ -17,22 +15,6 @@ from .models import Task
 # Словарь полей, по которым фильтруются данные таблицы Task
 filter_task = {}
 task_service = TaskService()
-
-
-# Формирование показа страницы в зависимости от отдела
-def show_department_task(request, end_task, path_file, dict_task):
-    # проверка на наличие задач в отделе
-    if end_task is not None:
-        end_task_fullname = end_task.employee_task.split()
-        end_task_firstname = end_task_fullname[0]
-        end_task_lastname = end_task_fullname[1]
-        task_service.set_tg_chat_id(Profile.objects.get(user_id=User.objects.get(first_name=end_task_firstname,
-                                                                                 last_name=end_task_lastname)).chat_id)
-        task_service.set_token_tg_bot(settings.TOKEN_TG_BOT)
-        dict_task = task_service.update_dict_task(dict_task)
-        return render(request, path_file, dict_task)
-    else:
-        return render(request, path_file, dict_task)
 
 
 # Получение данных
@@ -87,37 +69,37 @@ def index(request):
             page_m = task_service.paginator(task, page_number)
             first_dict_task = {"task": task, "page_m": page_m}
             first_dict_task.update(dict_task)
-            return show_department_task(request, end_task, "task/tasks.html", first_dict_task)
+            return render(request, "task/tasks.html", first_dict_task)
         case eng_user.user.username:
             page_m = task_service.paginator(engineering_task, page_number)
             first_dict_task = {"engineering_task": engineering_task, "page_m": page_m}
             first_dict_task.update(dict_task)
-            return show_department_task(request, end_task, "task/role/engineering_task.html", first_dict_task)
+            return render(request, "task/role/engineering_task.html", first_dict_task)
         case sales_user.user.username:
             page_m = task_service.paginator(sales_task, page_number)
             first_dict_task = {"sales_task": sales_task, "page_m": page_m}
             first_dict_task.update(dict_task)
-            return show_department_task(request, end_task, "task/role/sales_task.html", first_dict_task)
+            return render(request, "task/role/sales_task.html", first_dict_task)
         case technical_user.user.username:
             page_m = task_service.paginator(technical_task, page_number)
             first_dict_task = {"technical_task": technical_task, "page_m": page_m}
             first_dict_task.update(dict_task)
-            return show_department_task(request, end_task, "task/role/technical_task.html", first_dict_task)
+            return render(request, "task/role/technical_task.html", first_dict_task)
         case accounting_user.user.username:
             page_m = task_service.paginator(accounting_task, page_number)
             first_dict_task = {"accounting_task": accounting_task, "page_m": page_m}
             first_dict_task.update(dict_task)
-            return show_department_task(request, end_task, "task/role/accounting_task.html", first_dict_task)
+            return render(request, "task/role/accounting_task.html", first_dict_task)
         case personnel_user.user.username:
             page_m = task_service.paginator(personnel_task, page_number)
             first_dict_task = {"personnel_task": personnel_task, "page_m": page_m}
             first_dict_task.update(dict_task)
-            return show_department_task(request, end_task, "task/role/personnel_task.html", first_dict_task)
+            return render(request, "task/role/personnel_task.html", first_dict_task)
         case storekeeper_user.user.username:
             page_m = task_service.paginator(storekeeper_task, page_number)
             first_dict_task = {"storekeeper_task": storekeeper_task, "page_m": page_m}
             first_dict_task.update(dict_task)
-            return show_department_task(request, end_task, "task/role/storekeeper_task.html", first_dict_task)
+            return render(request, "task/role/storekeeper_task.html", first_dict_task)
         case _:
             return render(request, "task/role/no_access.html")
 
@@ -132,10 +114,11 @@ def create(request):
 # Изменение данных
 def edit(request, id):
     try:
-        task = task_service.get_detail_object(Task, id)
-        users = User.objects.all().select_related('profile')
+        task = task_service.get_object_deatil(Task, id)
+        users = task_service.get_objects_all(User).select_related('profile')
         counterparty_to = task_service.get_objects_all(CounterpartyTO)
         countrparty_warranty_obligations = task_service.get_objects_all(CounterpartyWarrantyObligations)
+
         data = {
             "task": task,
             "users": users,
@@ -152,17 +135,6 @@ def edit(request, id):
         return HttpResponseNotFound("<h2>Task not found</h2>")
 
 
-# # Удаление данных
-# def delete(request, id):
-#     try:
-#         task = Task.objects.get(id=id)
-#         task.delete()
-#         return HttpResponseRedirect("/")
-#     except Task.DoesNotExist:
-#         return HttpResponseNotFound("<h2>Task not found</h2>")
-
-
-# Вывод раздела контроль выполнения работ
 # Реализация экспорта данных в excel таблицы WorkTask
 def export_excel_work_task(request):
     response = HttpResponse(content_type="applications/ms-excel")

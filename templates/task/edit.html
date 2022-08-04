@@ -51,7 +51,7 @@
                             <th scope="col">Статус выполнения</th>
                             <th scope="col">Тип задачи</th>
                             <th scope="col">Отношение к командировке</th>
-                            <th scope="col">Редактирование</th>
+                            <th scope="col"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -67,7 +67,11 @@
                             <td class="{{ task.status_task }}">{{ task.status_task }}</td>
                             <td>{{ task.type_task }}</td>
                             <td>{{ task.business_trip }}</td>
-                            <th><a class="btn btn-outline-primary btn-sm" href="{% url 'work' task.pk %}">Контроль</a></th>
+                            <th>
+                                <p><a class="btn btn-outline-primary btn-sm" href="{% url 'history_status_detail' task.pk %}">История статуса</a></p>
+                                <p><a class="btn btn-outline-primary btn-sm" href="{% url 'history_note_detail' task.pk %}">История примечания</a></p>
+                                <p><a class="btn btn-outline-primary btn" href="{% url 'work' task.pk %}">Контроль</a></p>
+                            </th>
                         </tr>
                     </tbody>
                 </table>

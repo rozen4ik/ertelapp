@@ -1,11 +1,7 @@
-from django.core.paginator import Paginator
+from service import Service
 
 
-class CounterpartyService:
-    def paginator(self, model, number):
-        page_model = Paginator(model, 10)
-        return page_model.get_page(number)
-
+class CounterpartyService(Service):
     def create_counterparty(self, request, model):
         new_counterparty = model()
         new_counterparty.name = request.POST.get("name")
@@ -20,11 +16,3 @@ class CounterpartyService:
         counterparty.contract = request.POST.get("contract")
         counterparty.address = request.POST.get("address")
         counterparty.save()
-
-    def get_objects_all(self, model):
-        model = model.objects.all().order_by("-id")
-        return model
-
-    def get_detail_object(self, model, id):
-        model = model.objects.get(id=id)
-        return model

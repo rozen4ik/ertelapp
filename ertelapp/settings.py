@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'counterparty.apps.CounterpartyConfig',
     'employee.apps.EmployeeConfig',
     'api.apps.ApiConfig',
+    'history.apps.HistoryConfig',
     'crispy_forms',
 ]
 

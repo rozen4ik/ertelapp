@@ -1,3 +1,4 @@
+import datetime
 from django.db import models
 
 
@@ -13,10 +14,12 @@ class Task(models.Model):
     status_task = models.CharField(max_length=150, default="Отдано в разработку")
     business_trip = models.CharField(max_length=150, default="Не командировка")
     type_task = models.CharField(max_length=150, default="Офис")
+    note_task = models.CharField(max_length=250, default="")
+    datetime_note_task = models.CharField(max_length=150, default="")
 
     def __str__(self):
         return f"id:{self.id} date: {self.date_task} time: {self.time_task} text: {self.text_task}"
 
     class Meta:
-        verbose_name = "Задача"
-        verbose_name_plural = 'Задачи'
+        verbose_name = "задача"
+        verbose_name_plural = 'задачи'

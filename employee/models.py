@@ -11,8 +11,8 @@ class Department(models.Model):
         return f"{self.name}"
 
     class Meta:
-        verbose_name = "Подразделение"
-        verbose_name_plural = "Подразделения"
+        verbose_name = "подразделение"
+        verbose_name_plural = "подразделения"
 
 
 class Position(models.Model):
@@ -23,8 +23,8 @@ class Position(models.Model):
         return f"{self.name} {self.department_id}"
 
     class Meta:
-        verbose_name = "Должность"
-        verbose_name_plural = "Должности"
+        verbose_name = "должность"
+        verbose_name_plural = "должности"
 
 
 # Таблица профиля связа с таблицей User
@@ -37,8 +37,8 @@ class Profile(models.Model):
         return f"{self.user.first_name} {self.user.last_name}"
 
     class Meta:
-        verbose_name = "Профиль"
-        verbose_name_plural = "Профили"
+        verbose_name = "профиль"
+        verbose_name_plural = "профили"
 
 
 @receiver(post_save, sender=User)

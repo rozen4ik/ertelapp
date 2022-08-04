@@ -30,29 +30,29 @@
       </div>
     </nav>
     <br>
-    <div class="table-responsive">
-        <table id="tag" class="table table-bordered table-sm align-middle table-hover">
-            <thead class="align-middle table-primary">
-            <tr>
-                <th scope="col">id</th>
-                <th scope="col">Название</th>
-                <th scope="col">Тип</th>
-                <th scope="col">Контракт</th>
-                <th scope="col">Адрес</th>
-            </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td scope="row">{{ edit_counterparty_warranty_obligations.id }}</td>
-                    <td>{{ edit_counterparty_warranty_obligations.name }}</td>
-                    <td>{{ edit_counterparty_warranty_obligations.type }}</td>
-                    <td>{{ edit_counterparty_warranty_obligations.contract }}</td>
-                    <td>{{ edit_counterparty_warranty_obligations.address }}</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
     <div class="container-fluid">
+        <div class="table-responsive">
+            <table id="tag" class="table table-bordered table-sm align-middle table-hover">
+                <thead class="align-middle table-primary">
+                <tr>
+                    <th scope="col">id</th>
+                    <th scope="col">Название</th>
+                    <th scope="col">Тип</th>
+                    <th scope="col">Контракт</th>
+                    <th scope="col">Адрес</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td scope="row">{{ edit_counterparty_warranty_obligations.id }}</td>
+                        <td>{{ edit_counterparty_warranty_obligations.name }}</td>
+                        <td>{{ edit_counterparty_warranty_obligations.type }}</td>
+                        <td>{{ edit_counterparty_warranty_obligations.contract }}</td>
+                        <td>{{ edit_counterparty_warranty_obligations.address }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
         <form class="row g-3" method="POST">
             {% csrf_token %}
             <div class="col-md-3">

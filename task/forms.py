@@ -7,6 +7,7 @@ employee = ["Михаил Розенберг", "Олег Буянов", "Евг�
 class TaskFilter(forms.Form):
     employee_task = forms.CharField(
         label="Исполнитель",
+        required=False,
         widget=forms.TextInput(
             attrs={
                 "class": "form-control"
@@ -16,6 +17,7 @@ class TaskFilter(forms.Form):
 
     status_task = forms.CharField(
         label="Статус задачи",
+        required=False,
         widget=forms.TextInput(
             attrs={
                 "class": "form-control"
@@ -25,6 +27,7 @@ class TaskFilter(forms.Form):
 
     type_task = forms.CharField(
         label="Тип задачи",
+        required=False,
         widget=forms.TextInput(
             attrs={
                 "class": "form-control"
@@ -34,6 +37,7 @@ class TaskFilter(forms.Form):
 
     business_trip = forms.CharField(
         label="Отношение к командировке",
+        required=False,
         widget=forms.TextInput(
             attrs={
                 "class": "form-control"

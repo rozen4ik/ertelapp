@@ -9,7 +9,10 @@ history_service = Service()
 def history_note_task_detail(request, id):
     try:
         history = HistoryNoteTask.objects.filter(task=id).order_by("-id")
-        return render(request, "history/history_note_task/history_note_task_employee.html", {"history": history})
+        data = {
+            "history": history
+        }
+        return render(request, "history/history_note_task/history_note_task_employee.html", data)
     except HistoryNoteTask.DoesNotExist:
         return HttpResponseNotFound("<h2>WorkTask not found</h2>")
 
@@ -17,6 +20,9 @@ def history_note_task_detail(request, id):
 def history_status_task_detail(request, id):
     try:
         history = HistoryStatusTask.objects.filter(task=id).order_by("-id")
-        return render(request, "history/history_status_task/history_status_task_employee.html", {"history": history})
+        data = {
+            "history": history
+        }
+        return render(request, "history/history_status_task/history_status_task_employee.html", data)
     except HistoryStatusTask.DoesNotExist:
         return HttpResponseNotFound("<h2>WorkTask not found</h2>")

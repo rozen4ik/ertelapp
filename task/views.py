@@ -1,4 +1,3 @@
-import datetime
 import xlwt
 from django.contrib.auth.models import User
 from django.db.models import Q
@@ -54,7 +53,6 @@ def index(request):
 
     global filter_task
     filter_task = form.cleaned_data
-    end_task = Task.objects.all().latest("id")
 
     dict_task = {
         "users": users,
@@ -67,37 +65,58 @@ def index(request):
     match request.user.username:
         case director_user.user.username:
             page_m = task_service.paginator(task, page_number)
-            first_dict_task = {"task": task, "page_m": page_m}
+            first_dict_task = {
+                "task": task,
+                "page_m": page_m
+            }
             first_dict_task.update(dict_task)
             return render(request, "task/tasks.html", first_dict_task)
         case eng_user.user.username:
             page_m = task_service.paginator(engineering_task, page_number)
-            first_dict_task = {"engineering_task": engineering_task, "page_m": page_m}
+            first_dict_task = {
+                "engineering_task": engineering_task,
+                "page_m": page_m
+            }
             first_dict_task.update(dict_task)
             return render(request, "task/role/engineering_task.html", first_dict_task)
         case sales_user.user.username:
             page_m = task_service.paginator(sales_task, page_number)
-            first_dict_task = {"sales_task": sales_task, "page_m": page_m}
+            first_dict_task = {
+                "sales_task": sales_task,
+                "page_m": page_m
+            }
             first_dict_task.update(dict_task)
             return render(request, "task/role/sales_task.html", first_dict_task)
         case technical_user.user.username:
             page_m = task_service.paginator(technical_task, page_number)
-            first_dict_task = {"technical_task": technical_task, "page_m": page_m}
+            first_dict_task = {
+                "technical_task": technical_task,
+                "page_m": page_m
+            }
             first_dict_task.update(dict_task)
             return render(request, "task/role/technical_task.html", first_dict_task)
         case accounting_user.user.username:
             page_m = task_service.paginator(accounting_task, page_number)
-            first_dict_task = {"accounting_task": accounting_task, "page_m": page_m}
+            first_dict_task = {
+                "accounting_task": accounting_task,
+                "page_m": page_m
+            }
             first_dict_task.update(dict_task)
             return render(request, "task/role/accounting_task.html", first_dict_task)
         case personnel_user.user.username:
             page_m = task_service.paginator(personnel_task, page_number)
-            first_dict_task = {"personnel_task": personnel_task, "page_m": page_m}
+            first_dict_task = {
+                "personnel_task": personnel_task,
+                "page_m": page_m
+            }
             first_dict_task.update(dict_task)
             return render(request, "task/role/personnel_task.html", first_dict_task)
         case storekeeper_user.user.username:
             page_m = task_service.paginator(storekeeper_task, page_number)
-            first_dict_task = {"storekeeper_task": storekeeper_task, "page_m": page_m}
+            first_dict_task = {
+                "storekeeper_task": storekeeper_task,
+                "page_m": page_m
+            }
             first_dict_task.update(dict_task)
             return render(request, "task/role/storekeeper_task.html", first_dict_task)
         case _:
@@ -202,7 +221,9 @@ def export_excel(request):
         "Сроки выполнения",
         "Статус задачи",
         "Тип задачи",
-        "Отношение к командировке"
+        "Отношение к командировке",
+        "Примечание",
+        "Дата изменения"
     ]
 
     for col_num in range(len(columns)):

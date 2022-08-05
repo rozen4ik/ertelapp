@@ -4,8 +4,8 @@ from django.shortcuts import render
 from counterparty.models import CounterpartyTO, CounterpartyWarrantyObligations
 from counterparty.services.counterparty_service import CounterpartyService
 
-
 counterparty_service = CounterpartyService()
+
 
 # Create your views here.
 def counterparty_to(request):
@@ -27,7 +27,8 @@ def counterparty_warranty_obligations(request):
         "counterparty": counterparty,
         "page_m": page_m
     }
-    return render(request, "counterparty/counterparty_warranty_obligations/counterparty_warranty_obligations.html", data)
+    return render(request, "counterparty/counterparty_warranty_obligations/counterparty_warranty_obligations.html",
+                  data)
 
 
 def create_counterparty_to(request):
@@ -65,7 +66,8 @@ def edit_counterparty_to(request, id):
 
 def edit_counterparty_warranty_obligations(request, id):
     try:
-        edit_counterparty_warranty_obligations = counterparty_service.get_object_deatil(CounterpartyWarrantyObligations, id)
+        edit_counterparty_warranty_obligations = counterparty_service.get_object_deatil(
+            CounterpartyWarrantyObligations, id)
         users = counterparty_service.get_objects_all(User).select_related('profile')
 
         data = {

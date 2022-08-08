@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     'api.apps.ApiConfig',
     'history.apps.HistoryConfig',
     'crispy_forms',
+    'spurl',
 ]
 
 MIDDLEWARE = [

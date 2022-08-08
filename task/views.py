@@ -1,18 +1,17 @@
+import datetime
 import xlwt
-from django.contrib.auth.models import User
 from django.db.models import Q
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.http import HttpResponseNotFound
 from django.http import HttpResponse
 from counterparty.models import CounterpartyTO, CounterpartyWarrantyObligations
-from work_task.models import WorkTask
 from .services.task_service import TaskService
 from .forms import *
 from .models import Task
 
 # Словарь полей, по которым фильтруются данные таблицы Task
-filter_task = {}
+filter_task = dict
 task_service = TaskService()
 
 
@@ -154,51 +153,6 @@ def edit(request, id):
         return HttpResponseNotFound("<h2>Task not found</h2>")
 
 
-# Реализация экспорта данных в excel таблицы WorkTask
-def export_excel_work_task(request):
-    response = HttpResponse(content_type="applications/ms-excel")
-    response["Content-Disposition"] = "attachment; filename=work_task" + str(datetime.datetime.now()) + ".xls"
-
-    wb = xlwt.Workbook(encoding="utf-8")
-    ws = wb.add_sheet("report")
-    row_num = 0
-    font_style = xlwt.XFStyle()
-    font_style.font.bold = True
-
-    columns = [
-        "#",
-        "Дата",
-        "Время",
-        "Исполнитель",
-        "Местонахождение",
-        "Номер задачи"
-    ]
-
-    for col_num in range(len(columns)):
-        ws.write(row_num, col_num, columns[col_num], font_style)
-
-    rows = WorkTask.objects.all().values_list(
-        "id",
-        "date_work_task",
-        "time_work_task",
-        "employee_work_task",
-        "address_work_task",
-        "user_id"
-    )
-
-    rows = rows.order_by("-id")
-
-    for row in rows:
-        row_num += 1
-
-        for col_num in range(len(row)):
-            ws.write(row_num, col_num, str(row[col_num]), font_style)
-
-    wb.save(response)
-
-    return response
-
-
 # Реализация экспорта данных в excel таблицы Task
 def export_excel(request):
     response = HttpResponse(content_type="applications/ms-excel")
@@ -229,44 +183,7 @@ def export_excel(request):
     for col_num in range(len(columns)):
         ws.write(row_num, col_num, columns[col_num], font_style)
 
-    if filter_task:
-        filter_employee = filter_task["employee_task"]
-        filter_status = filter_task["status_task"]
-        filter_type = filter_task["type_task"]
-        filter_business_trip = filter_task["business_trip"]
-        rows = Task.objects.filter(
-            employee_task=filter_employee,
-            status_task=filter_status,
-            type_task=filter_type,
-            business_trip=filter_business_trip
-        ).values_list(
-            'id',
-            'date_task',
-            'time_task',
-            'text_task',
-            'address_task',
-            'author_task',
-            'employee_task',
-            'line_task',
-            'status_task',
-            'type_task',
-            'business_trip'
-        )
-    else:
-        rows = Task.objects.all().values_list(
-            'id',
-            'date_task',
-            'time_task',
-            'text_task',
-            'address_task',
-            'author_task',
-            'employee_task',
-            'line_task',
-            'status_task',
-            'type_task',
-            'business_trip'
-        )
-
+    rows = task_service.find_filter_task(filter_task)
     rows = rows.order_by("-id")
 
     for row in rows:

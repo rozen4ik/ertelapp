@@ -73,3 +73,108 @@ class TaskService(Service):
             task.type_task = "Ежемесячное ТО"
         task.save()
         self.send_message_telegram(task, f"Задача №{task.id} изменилась!")
+
+    def find_filter_task(self, filter_task):
+        field_filter = (
+            filter_task["employee_task"],
+            filter_task["status_task"],
+            filter_task["type_task"],
+            filter_task["business_trip"]
+        )
+        employee_filter, status_filter, type_filter, business_filter = field_filter
+        if (employee_filter == "") and (status_filter == "") and (type_filter == "") and (business_filter == ""):
+            rows = Task.objects.all()
+        elif (employee_filter != "") and (status_filter == "") and (type_filter == "") and (business_filter == ""):
+            rows = Task.objects.filter(
+                employee_task=employee_filter
+            )
+        elif (employee_filter == "") and (status_filter != "") and (type_filter == "") and (business_filter == ""):
+            rows = Task.objects.filter(
+                status_task=status_filter
+            )
+        elif (employee_filter == "") and (status_filter == "") and (type_filter != "") and (business_filter == ""):
+            rows = Task.objects.filter(
+                type_task=type_filter
+            )
+        elif (employee_filter == "") and (status_filter == "") and (type_filter == "") and (business_filter != ""):
+            rows = Task.objects.filter(
+                business_trip=business_filter
+            )
+        elif (employee_filter != "") and (status_filter != "") and (type_filter == "") and (business_filter == ""):
+            rows = Task.objects.filter(
+                employee_task=employee_filter,
+                status_task=status_filter,
+            )
+        elif (employee_filter == "") and (status_filter != "") and (type_filter != "") and (business_filter == ""):
+            rows = Task.objects.filter(
+                status_task=status_filter,
+                type_task=type_filter
+            )
+        elif (employee_filter == "") and (status_filter == "") and (type_filter != "") and (business_filter != ""):
+            rows = Task.objects.filter(
+                type_task=type_filter,
+                business_trip=business_filter
+            )
+        elif (employee_filter != "") and (status_filter == "") and (type_filter != "") and (business_filter == ""):
+            rows = Task.objects.filter(
+                employee_task=employee_filter,
+                type_task=type_filter,
+            )
+        elif (employee_filter == "") and (status_filter != "") and (type_filter == "") and (business_filter != ""):
+            rows = Task.objects.filter(
+                status_task=status_filter,
+                business_trip=business_filter
+            )
+        elif (employee_filter != "") and (status_filter == "") and (type_filter == "") and (business_filter != ""):
+            rows = Task.objects.filter(
+                employee_task=employee_filter,
+                business_trip=business_filter
+            )
+        elif (employee_filter != "") and (status_filter != "") and (type_filter != "") and (business_filter == ""):
+            rows = Task.objects.filter(
+                employee_task=employee_filter,
+                status_task=status_filter,
+                type_task=type_filter,
+            )
+        elif (employee_filter != "") and (status_filter != "") and (type_filter == "") and (business_filter != ""):
+            rows = Task.objects.filter(
+                employee_task=employee_filter,
+                status_task=status_filter,
+                business_trip=business_filter
+            )
+        elif (employee_filter != "") and (status_filter == "") and (type_filter != "") and (business_filter != ""):
+            rows = Task.objects.filter(
+                employee_task=employee_filter,
+                type_task=type_filter,
+                business_trip=business_filter
+            )
+        elif (employee_filter == "") and (status_filter != "") and (type_filter != "") and (business_filter != ""):
+            rows = Task.objects.filter(
+                status_task=status_filter,
+                type_task=type_filter,
+                business_trip=business_filter
+            )
+        else:
+            rows = Task.objects.filter(
+                employee_task=employee_filter,
+                status_task=status_filter,
+                type_task=type_filter,
+                business_trip=business_filter
+            )
+
+        return rows.values_list(
+                'id',
+                'date_task',
+                'time_task',
+                'text_task',
+                'address_task',
+                'author_task',
+                'employee_task',
+                'line_task',
+                'status_task',
+                'type_task',
+                'business_trip',
+                'type_task',
+                'note_task',
+                'datetime_note_task'
+            )

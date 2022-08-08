@@ -7,7 +7,6 @@ urlpatterns = [
     path("create/", views.create),
     path("edit/<int:id>/", views.edit, name="edit"),
     path("export_excel", views.export_excel, name="export-excel"),
-    path("export_excel_work_task", views.export_excel_work_task, name="export-excel-work-task"),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

@@ -1,5 +1,6 @@
 {% extends 'task/base.html' %}
 {% load static %}
+{% load spurl %}
 {% block tasks %}
     {% if accounting_task.count > 0 %}
         <div style="text-align: center;"><h1>Список задач</h1></div>
@@ -43,7 +44,11 @@
                             <td>{{ tasks.type_task }}</td>
                             <td>{{ tasks.business_trip }}</td>
                             <td>{{ tasks.note_task }}</td>
-                            <td>{{ tasks.datetime_note_task }}</td>
+                            {% if tasks.datetime_note_task != None %}
+                                <td>{{ tasks.datetime_note_task }}</td>
+                            {% else %}
+                                <td></td>
+                            {% endif %}
                             <td>
                                 <p><a class="btn btn-outline-primary btn-sm" href="history_status_tasks/{{tasks.id}}">История статуса</a></p>
                                 <p><a class="btn btn-outline-primary btn-sm" href="history_note_tasks/{{tasks.id}}">История примечания</a></p>
@@ -57,19 +62,19 @@
             <nav aria-label="Page navigation example">
                 <ul class="pagination justify-content-center">
                     {% if page_m.has_previous %}
-                        <li class="page-item"><a class="page-link" href="?cnhf=1">&laquo; Первая</a></li>
+                        <li class="page-item"><a class="page-link" href="{% spurl query=request.GET set_query='page=1'%}">&laquo; Первая</a></li>
                     {% endif %}
 
                     {% for pa in page_m.paginator.page_range %}
                         {% if pa == page_m.number %}
-                            <li class="page-item"><a class="page-link active" href="?page={{ pa }}">{{ pa }}</a></li>
+                            <li class="page-item"><a class="page-link active" href="{% spurl query=request.GET set_query='page={{ pa }}'%}">{{ pa }}</a></li>
                         {% elif pa >= page_m.number|add:-2 and pa <= page_m.number|add:2 %}
-                            <li class="page-item"><a class="page-link" href="?page={{ pa }}">{{ pa }}</a></li>
+                            <li class="page-item"><a class="page-link" href="{% spurl query=request.GET set_query='page={{ pa }}'%}">{{ pa }}</a></li>
                         {% endif %}
                     {% endfor %}
 
                     {% if page_m.has_next %}
-                        <li class="page-item"><a class="page-link" href="?page={{ page_m.paginator.num_pages }}">Последняя &raquo;</a></li>
+                        <li class="page-item"><a class="page-link" href="{% spurl query=request.GET set_query='page={{ page_m.paginator.num_pages }}'%}">Последняя &raquo;</a></li>
                     {% endif %}
                 </ul>
             </nav>

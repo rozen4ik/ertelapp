@@ -1,5 +1,5 @@
 {% load static %}
-
+{% load spurl %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -34,7 +34,6 @@
     <div class="container-fluid">
         <br>
         <div style="text-align: center;"><h1>История изменения статуса</h1></div>
-{#        <a class="btn btn-primary" href="{% url 'export-excel-work-task' %}" role="button">Экспортировать в Excel</a>#}
         <br>
         <hr>
         <form method="POST" action="create/" class="contact-form" id="tg">
@@ -51,7 +50,7 @@
                             <th scope="col"><label></label></th>
                         </tr>
                     </thead>
-                    {% for work in history %}
+                    {% for work in page_m %}
                     <tbody>
                         <tr>
                             <th scope="row">{{ work.id }}</th>
@@ -59,11 +58,34 @@
                             <td>{{ work.status_history }}</td>
                             <td>{{ work.employee_history }}</td>
                             <td>{{ work.task_id }}</td>
-                            <td><a class="btn btn-outline-primary" href="{% url 'edit' work.task_id %}">Перейти к задаче</a></td>
+                            <td>
+                                <div class="btn-group-vertical btn-group-sm" role="group" aria-label="Basic outlined example">
+                                    <a class="btn btn-outline-primary" href="{% url 'edit' work.task_id %}">Перейти к задаче</a>
+                                </div>
+                            </td>
                         </tr>
                     </tbody>
                     {% endfor %}
                 </table>
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-center">
+                        {% if page_m.has_previous %}
+                            <li class="page-item"><a class="page-link" href="{% spurl query=request.GET set_query='page=1'%}">&laquo; Первая</a></li>
+                        {% endif %}
+
+                        {% for pa in page_m.paginator.page_range %}
+                            {% if pa == page_m.number %}
+                                <li class="page-item"><a class="page-link active" href="{% spurl query=request.GET set_query='page={{ pa }}'%}">{{ pa }}</a></li>
+                            {% elif pa >= page_m.number|add:-2 and pa <= page_m.number|add:2 %}
+                                <li class="page-item"><a class="page-link" href="{% spurl query=request.GET set_query='page={{ pa }}'%}">{{ pa }}</a></li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if page_m.has_next %}
+                            <li class="page-item"><a class="page-link" href="{% spurl query=request.GET set_query='page={{ page_m.paginator.num_pages }}'%}">Последняя &raquo;</a></li>
+                        {% endif %}
+                    </ul>
+                </nav>
             </div>
         </form>
     {% else %}

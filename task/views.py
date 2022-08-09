@@ -135,13 +135,13 @@ def edit(request, id):
         task = task_service.get_object_deatil(Task, id)
         users = task_service.get_objects_all(User).select_related('profile')
         counterparty_to = task_service.get_objects_all(CounterpartyTO)
-        countrparty_warranty_obligations = task_service.get_objects_all(CounterpartyWarrantyObligations)
+        counterparty_warranty_obligations = task_service.get_objects_all(CounterpartyWarrantyObligations)
 
         data = {
             "task": task,
             "users": users,
             "counterparty_to": counterparty_to,
-            "counterparty_warranty_obligations": countrparty_warranty_obligations
+            "counterparty_warranty_obligations": counterparty_warranty_obligations
         }
 
         if request.method == "POST":

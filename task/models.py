@@ -21,5 +21,5 @@ class Task(models.Model):
         return f"id:{self.id} date: {self.date_task} time: {self.time_task} text: {self.text_task}"
 
     class Meta:
-        verbose_name = "задача"
+        verbose_name = "задачу"
         verbose_name_plural = 'задачи'

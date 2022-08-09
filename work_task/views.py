@@ -10,14 +10,26 @@ work_task_service = Service()
 
 # Create your views here.
 def index_bot(request):
+    page_number = request.GET.get("page")
     work_task = work_task_service.get_objects_all(WorkTask)
-    return render(request, "work_task/work_task.html", {"work_task": work_task})
+    page_m = work_task_service.paginator(work_task, page_number)
+    data = {
+        "work_task": work_task,
+        "page_m": page_m
+    }
+    return render(request, "work_task/work_task.html", data)
 
 
 def show_work_task_for_task(request, id):
     try:
+        page_number = request.GET.get("page")
         work_task_employee = WorkTask.objects.filter(task=id).order_by("-id")
-        return render(request, "work_task/work_task_employee.html", {"work_task_employee": work_task_employee})
+        page_m = work_task_service.paginator(work_task_employee, page_number)
+        data = {
+            "work_task_employee": work_task_employee,
+            "page_m": page_m
+        }
+        return render(request, "work_task/work_task_employee.html", data)
     except WorkTask.DoesNotExist:
         return HttpResponseNotFound("<h2>WorkTask not found</h2>")
 

@@ -13,8 +13,8 @@ class HistoryStatusTask(models.Model):
         return f"{self.datetime_history} {self.status_history} {self.employee_history} {self.task}"
 
     class Meta:
-        verbose_name = "История изменения статуса задачи"
-        verbose_name_plural = "История изменения статуса задач"
+        verbose_name = "статус задачи"
+        verbose_name_plural = "статус задач"
 
 
 class HistoryNoteTask(models.Model):
@@ -27,5 +27,5 @@ class HistoryNoteTask(models.Model):
         return f"{self.datetime_history} {self.note_history} {self.employee_history} {self.task}"
 
     class Meta:
-        verbose_name = "История изменения примечания задачи"
-        verbose_name_plural = "История изменения примечаний задач"
+        verbose_name = "примечание задачи"
+        verbose_name_plural = "примечание задач"

@@ -68,9 +68,11 @@
                             <td>{{ task.type_task }}</td>
                             <td>{{ task.business_trip }}</td>
                             <th>
-                                <p><a class="btn btn-outline-primary btn-sm" href="{% url 'history_status_detail' task.pk %}">История статуса</a></p>
-                                <p><a class="btn btn-outline-primary btn-sm" href="{% url 'history_note_detail' task.pk %}">История примечания</a></p>
-                                <p><a class="btn btn-outline-primary btn" href="{% url 'work' task.pk %}">Контроль</a></p>
+                                <div class="btn-group-vertical btn-group-sm" role="group" aria-label="Basic outlined example">
+                                    <a class="btn btn-outline-primary" href="{% url 'history_status_detail' task.pk %}">История статуса</a>
+                                    <a class="btn btn-outline-primary" href="{% url 'history_note_detail' task.pk %}">История примечания</a>
+                                    <a class="btn btn-outline-primary" href="{% url 'work' task.pk %}">Контроль</a>
+                                </div>
                             </th>
                         </tr>
                     </tbody>

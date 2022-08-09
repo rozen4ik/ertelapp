@@ -49,10 +49,12 @@
                                 <td></td>
                             {% endif %}
                             <td>
-                                <p><a class="btn btn-outline-primary btn-sm" href="history_status_tasks/{{tasks.id}}">История статуса</a></p>
-                                <p><a class="btn btn-outline-primary btn-sm" href="history_note_tasks/{{tasks.id}}">История примечания</a></p>
-                                <p><a class="btn btn-outline-primary btn-sm" href="work_tasks/{{ tasks.id }}">Контроль</a></p>
-                                <p><a class="btn btn-outline-primary btn-sm" href="edit/{{tasks.id}}">Изменить</a></p>
+                                <div class="btn-group-vertical btn-group-sm" role="group" aria-label="Basic outlined example">
+                                    <a class="btn btn-outline-primary" href="history_status_tasks/{{tasks.id}}">История статуса</a>
+                                    <a class="btn btn-outline-primary" href="history_note_tasks/{{tasks.id}}">История примечания</a>
+                                    <a class="btn btn-outline-primary" href="work_tasks/{{ tasks.id }}">Контроль</a>
+                                    <a class="btn btn-outline-primary" href="edit/{{tasks.id}}">Изменить</a>
+                                </div>
                             </td>
                         </tr>
                     {% endfor %}

@@ -5,6 +5,7 @@ from employee.models import Profile
 from ertelapp import settings
 from service import Service
 from task.models import *
+from counterparty.models import *
 
 
 class TaskService(Service):
@@ -20,9 +21,10 @@ class TaskService(Service):
         new_task.date_task = request.POST.get("date_task")
         new_task.time_task = request.POST.get("time_task")
         new_task.text_task = request.POST.get("text_task")
-        new_task.address_task = request.POST.get("address_task")
+        new_task.object_task = request.POST.get("object_task")
         new_task.author_task = request.user.first_name + " " + request.user.last_name
         new_task.employee_task = request.POST.get("employee_task")
+        new_task.urgency_task = request.POST.get("urgency_task")
         new_task.line_task = request.POST.get("line_task")
         business_trip = request.POST.get("business_trip")
         if not business_trip:
@@ -32,10 +34,15 @@ class TaskService(Service):
         type_task = request.POST.get("type_task")
         if not type_task:
             new_task.type_task = "Офис"
+            new_task.address_obj_task = "Москва, Бумажный пр., д. 14, корп. 1, офис 313"
         elif type_task == "ГР":
             new_task.type_task = "Гарантийные работы"
+            address_obj_task = CounterpartyWarrantyObligations.objects.get(name=new_task.object_task)
+            new_task.address_obj_task = address_obj_task.address
         elif type_task == "ТО":
             new_task.type_task = "Ежемесячное ТО"
+            address_obj_task = CounterpartyTO.objects.get(name=new_task.object_task)
+            new_task.address_obj_task = address_obj_task.address
         new_task.save()
         self.send_message_telegram(new_task, "У вас новая задача!")
 
@@ -54,9 +61,10 @@ class TaskService(Service):
         task.date_task = request.POST.get("date_task")
         task.time_task = request.POST.get("time_task")
         task.text_task = request.POST.get("text_task")
-        task.address_task = request.POST.get("address_task")
+        task.object_task = request.POST.get("object_task")
         task.author_task = request.user.first_name + " " + request.user.last_name
         task.employee_task = request.POST.get("employee_task")
+        task.urgency_task = request.POST.get("urgency_task")
         task.line_task = request.POST.get("line_task")
         task.status_task = "Отдано в разработку"
         business_trip = request.POST.get("business_trip")
@@ -67,10 +75,16 @@ class TaskService(Service):
         type_task = request.POST.get("type_task")
         if not type_task:
             task.type_task = "Офис"
+            task.address_obj_task = "Москва, Бумажный пр., д. 14, корп. 1, офис 313"
+            task.object_task = "Офис Эртел"
         elif type_task == "ГР":
             task.type_task = "Гарантийные работы"
+            address_obj_task = CounterpartyWarrantyObligations.objects.get(name=task.object_task)
+            task.address_obj_task = address_obj_task.address
         elif type_task == "ТО":
             task.type_task = "Ежемесячное ТО"
+            address_obj_task = CounterpartyTO.objects.get(name=task.object_task)
+            task.address_obj_task = address_obj_task.address
         task.save()
         self.send_message_telegram(task, f"Задача №{task.id} изменилась!")
 
@@ -163,18 +177,19 @@ class TaskService(Service):
             )
 
         return rows.values_list(
-                'id',
-                'date_task',
-                'time_task',
-                'text_task',
-                'address_task',
-                'author_task',
-                'employee_task',
-                'line_task',
-                'status_task',
-                'type_task',
-                'business_trip',
-                'type_task',
-                'note_task',
-                'datetime_note_task'
+                "id",
+                "date_task",
+                "time_task",
+                "text_task",
+                "object_task",
+                "address_obj_task",
+                "employee_task",
+                "urgency_task",
+                "line_task",
+                "status_task",
+                "type_task",
+                "business_trip",
+                "type_task",
+                "note_task",
+                "datetime_note_task"
             )

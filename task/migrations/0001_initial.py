@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
                 ('date_task', models.DateField()),
                 ('time_task', models.TimeField()),
                 ('text_task', models.TextField()),
-                ('address_task', models.CharField(default='Офис Эртел', max_length=500)),
+                ('object_task', models.CharField(default='Офис Эртел', max_length=500)),
                 ('author_task', models.CharField(max_length=120)),
                 ('employee_task', models.CharField(max_length=120)),
                 ('line_task', models.DateField(max_length=150)),

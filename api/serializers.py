@@ -14,7 +14,7 @@ class TaskSerializer(serializers.ModelSerializer):
                 'date_task',
                 'time_task',
                 'text_task',
-                'address_task',
+                'object_task',
                 'author_task',
                 'employee_task',
                 'line_task',

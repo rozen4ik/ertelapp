@@ -58,9 +58,9 @@
                             <label for="inputText" class="form-label">Задача</label>
                             <textarea class="form-control" id="inputText" name="text_task" rows="1" cols="45" placeholder="Укажите что нужно сделать исполнителю"></textarea>
                         </div>
-                        <div class="col-md-4 inputAddress1">
-                            <label for="inputAddress" class="form-label">Объект</label>
-                            <select class="form-select" id="inputAddress" name="address_task">
+                        <div class="col-md-4 inputObject1">
+                            <label for="inputObject" class="form-label">Объект</label>
+                            <select class="form-select" id="inputObject" name="object_task">
                                 {% for address in counterparty_warranty_obligations %}
                                     <option value="{{ address.name }}">Название: {{ address.name }} - тип: {{ address.type }}</option>
                                 {% endfor %}
@@ -72,6 +72,15 @@
                                 {% for user in users %}
                                     <option value="{{ user.first_name }} {{ user.last_name }}">{{ user.first_name }} {{ user.last_name }}</option>
                                 {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="inputUrgency" class="form-label">Приоритет</label>
+                            <select class="form-select" id="inputUrgency" name="urgency_task">
+                                <option value="Срочно, важно">Срочно, важно</option>
+                                <option value="Срочно, не важно">Срочно, не важно</option>
+                                <option value="Не срочно, важно">Не срочно, важно</option>
+                                <option value="Не срочно, не важно">Не срочно, не важно</option>
                             </select>
                         </div>
                         <div class="col-md-2">
@@ -107,9 +116,9 @@
                             <label for="inputText" class="form-label">Задача</label>
                             <textarea class="form-control" id="inputText" name="text_task" rows="1" cols="45" placeholder="Укажите что нужно сделать исполнителю"></textarea>
                         </div>
-                        <div class="col-md-4 inputAddress2">
-                            <label for="inputAddress" class="form-label">Объект</label>
-                            <select class="form-select" id="inputAddress" name="address_task">
+                        <div class="col-md-4 inputObject2">
+                            <label for="inputObject" class="form-label">Объект</label>
+                            <select class="form-select" id="inputObject" name="object_task">
                                 {% for address in counterparty_to %}
                                     <option value="{{ address.name }}">Название: {{ address.name }} - тип: {{ address.type }}</option>
                                 {% endfor %}
@@ -121,6 +130,15 @@
                                 {% for user in users %}
                                     <option value="{{ user.first_name }} {{ user.last_name }}">{{ user.first_name }} {{ user.last_name }}</option>
                                 {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="inputUrgency" class="form-label">Приоритет</label>
+                            <select class="form-select" id="inputUrgency" name="urgency_task">
+                                <option value="Срочно, важно">Срочно, важно</option>
+                                <option value="Срочно, не важно">Срочно, не важно</option>
+                                <option value="Не срочно, важно">Не срочно, важно</option>
+                                <option value="Не срочно, не важно">Не срочно, не важно</option>
                             </select>
                         </div>
                         <div class="col-md-2">
@@ -162,6 +180,15 @@
                                 {% for user in users %}
                                     <option value="{{ user.first_name }} {{ user.last_name }}">{{ user.first_name }} {{ user.last_name }}</option>
                                 {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="inputUrgency" class="form-label">Приоритет</label>
+                            <select class="form-select" id="inputUrgency" name="urgency_task">
+                                <option value="Срочно, важно">Срочно, важно</option>
+                                <option value="Срочно, не важно">Срочно, не важно</option>
+                                <option value="Не срочно, важно">Не срочно, важно</option>
+                                <option value="Не срочно, не важно">Не срочно, не важно</option>
                             </select>
                         </div>
                         <div class="col-md-2">

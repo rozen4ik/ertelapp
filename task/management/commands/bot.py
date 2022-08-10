@@ -117,16 +117,20 @@ def edited_status_task(message):
                                  parse_mode="HTML")
                 bot.send_message(call.message.chat.id, text=message_updated_task, parse_mode="HTML")
         case _:
-            msg = message.text.split()[0].lower()
-            number = message.text.split()[1]
-            if msg == "задача" and number.isdigit():
-                number = int(number)
-                msg = message.text.split(" ", 2)[2].capitalize()
-                task = bot_service.get_find_task(number)
-                bot_service.set_note_task(task, msg)
-                bot_service.set_datetime_task(task)
-                bot_service.create_history_note_task(task, msg)
-                bot.send_message(user.profile.chat_id, text="Данные записаны.")
+            if message.text[0].lower() == "з":
+                msg = message.text.split()[0].lower()
+                number = message.text.split()[1]
+                if msg == "задача" and number.isdigit():
+                    number = int(number)
+                    msg = message.text.split(" ", 2)[2].capitalize()
+                    task = bot_service.get_find_task(number)
+                    bot_service.set_note_task(task, msg)
+                    bot_service.set_datetime_task(task)
+                    bot_service.create_history_note_task(task, msg)
+                    bot.send_message(user.profile.chat_id, text="Данные записаны.")
+                else:
+                    msg = "Используйте кнопки для взаимодействия со мной!"
+                    bot.send_message(user.profile.chat_id, text=msg)
             else:
                 msg = "Используйте кнопки для взаимодействия со мной!"
                 bot.send_message(user.profile.chat_id, text=msg)

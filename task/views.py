@@ -156,7 +156,7 @@ def edit(request, id):
 # Реализация экспорта данных в excel таблицы Task
 def export_excel(request):
     response = HttpResponse(content_type="applications/ms-excel")
-    response["Content-Disposition"] = "attachment; filename=report" + str(datetime.datetime.now()) + ".xls"
+    response["Content-Disposition"] = "attachment; filename=Task" + str(datetime.datetime.now()) + ".xls"
 
     wb = xlwt.Workbook(encoding="utf-8")
     ws = wb.add_sheet("report")
@@ -169,9 +169,11 @@ def export_excel(request):
         "Дата",
         "Время",
         "Задача",
-        "Адрес выполнения",
+        "Объект",
+        "Адрес",
         "Кто поручил",
         "Исполнитель",
+        "Приоритет",
         "Сроки выполнения",
         "Статус задачи",
         "Тип задачи",

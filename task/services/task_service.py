@@ -1,6 +1,5 @@
 import requests
 from django.contrib.auth.models import User
-from django.core.paginator import Paginator
 from employee.models import Profile
 from ertelapp import settings
 from service import Service
@@ -183,13 +182,13 @@ class TaskService(Service):
                 "text_task",
                 "object_task",
                 "address_obj_task",
+                "author_task",
                 "employee_task",
                 "urgency_task",
                 "line_task",
                 "status_task",
                 "type_task",
                 "business_trip",
-                "type_task",
                 "note_task",
                 "datetime_note_task"
-            )
+        )

@@ -31,8 +31,8 @@ def index(request):
     personnel_user = task_service.create_user_roles(13)
     storekeeper_user = task_service.create_user_roles(8)
 
-    engineering_task = Task.objects.filter(author_task=eng_user).order_by("-id")
-    sales_task = Task.objects.filter(author_task=sales_user).order_by("-id")
+    engineering_task = Task.objects.filter(Q(author_task=eng_user) | Q(author_task=technical_user))
+    sales_task = Task.objects.filter(author_task=sales_user)
     technical_task = Task.objects.filter(Q(author_task=technical_user) | Q(author_task=eng_user) |
                                          Q(author_task=storekeeper_user)).order_by("-id")
     accounting_task = Task.objects.filter(author_task=accounting_user).order_by("-id")

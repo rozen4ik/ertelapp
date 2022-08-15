@@ -176,19 +176,19 @@ class TaskService(Service):
             )
 
         return rows.values_list(
-                "id",
-                "date_task",
-                "time_task",
-                "text_task",
-                "object_task",
-                "address_obj_task",
-                "author_task",
-                "employee_task",
-                "urgency_task",
-                "line_task",
-                "status_task",
-                "type_task",
-                "business_trip",
-                "note_task",
-                "datetime_note_task"
+            "id",
+            "date_task",
+            "time_task",
+            "text_task",
+            "object_task",
+            "address_obj_task",
+            "author_task",
+            "employee_task",
+            "urgency_task",
+            "line_task",
+            "status_task",
+            "type_task",
+            "business_trip",
+            "note_task",
+            "datetime_note_task"
         )

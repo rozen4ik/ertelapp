@@ -40,7 +40,10 @@
             <div class="tabs__nav">
                 <button class="tabs__nav-btn" type="button" data-tab="#tab_1">Работы гарантийного обязательства</button>
                 <button class="tabs__nav-btn" type="button" data-tab="#tab_2">Ежемесячное техническое обслуживание</button>
-                <button class="tabs__nav-btn" type="button" data-tab="#tab_3">Работа в офисе</button>
+                <button class="tabs__nav-btn" type="button" data-tab="#tab_3">Монтажные работы</button>
+                <button class="tabs__nav-btn" type="button" data-tab="#tab_4">Работы по счёту</button>
+                <button class="tabs__nav-btn" type="button" data-tab="#tab_5">Пусконаладочные работы</button>
+                <button class="tabs__nav-btn" type="button" data-tab="#tab_6">Работа в офисе</button>
             </div>
             <div class="tabs__content">
                 <div class="tabs__item" id="tab_1">
@@ -160,6 +163,15 @@
                     </form>
                 </div>
                 <div class="tabs__item" id="tab_3">
+                    <h1>Монтажные работы</h1>
+                </div>
+                <div class="tabs__item" id="tab_4">
+                    <h1>Работы по счёту</h1>
+                </div>
+                <div class="tabs__item" id="tab_5">
+                    <h1>Пусконаладочные работы</h1>
+                </div>
+                <div class="tabs__item" id="tab_6">
                     <form class="row g-3" method="POST" action="create/" id="tg">
                         {% csrf_token %}
                         <div class="col-md-2">

@@ -1,0 +1,83 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Контрагенты</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+</head>
+<body>
+    <nav class="navbar navbar-fixed-top-top navbar-expand-lg navbar-dark bg-primary">
+      <div class="container-fluid">
+        <div class="navbar-collapse" id="navbarScroll">
+            <a class="btn btn-outline-light btn-sm" href="{% url 'logout' %}" role="button">Выйти - {{ user.first_name }} {{ user.last_name }} </a>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="/">Главная</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/work_tasks/">Контроль выполнения работ</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/counterparty_warranty_obligations/">Контрагенты (Гарантийные работы)</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/counterparty_to/">Контрагенты (Техническое обслуживание)</a>
+                </li>
+            </ul>
+        </div>
+      </div>
+    </nav>
+    <br>
+    <div class="container-fluid">
+        <div class="table-responsive">
+            <table id="tag" class="table table-bordered table-sm align-middle table-hover">
+                <thead class="align-middle table-primary">
+                <tr>
+                    <th scope="col">id</th>
+                    <th scope="col">Название</th>
+                    <th scope="col">Тип</th>
+                    <th scope="col">Контракт</th>
+                    <th scope="col">Адрес</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td scope="row">{{ counterparty.id }}</td>
+                        <td>{{ counterparty.name }}</td>
+                        <td>{{ counterparty.type }}</td>
+                        <td>{{ counterparty.contract }}</td>
+                        <td>{{ counterparty.address }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <form class="row g-3" method="POST">
+            {% csrf_token %}
+            <div class="col-md-3">
+                <label for="inputName" class="form-label">Название</label>
+                <input type="text" class="form-control" id="inputName" name="name" placeholder="Еврейская община">
+            </div>
+            <div class="col-md-3">
+                <label for="inputType" class="form-label">Тип</label>
+                <input type="text" class="form-control" id="inputType" name="type" placeholder="Парковки">
+            </div>
+            <div class="col-md-3">
+                <label for="inputContract" class="form-label">Контракт</label>
+                <input type="text" class="form-control" id="inputContract" name="contract" placeholder="ТО-03/19-31">
+            </div>
+            <div class="col-md-3">
+                <label for="inputAddress" class="form-label">Адрес</label>
+                <input type="text" class="form-control" id="inputAddress" name="address" placeholder="Москва, Образцова д. 19">
+            </div>
+            <div class="col-12">
+                <input type="submit" name="sun" class="btn btn-outline-primary contact-form__button" value="Сохранить" >
+            </div>
+        </form>
+    </div>
+    <br>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js" integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.min.js" integrity="sha384-kjU+l4N0Yf4ZOJErLsIcvOU2qSb74wXpOhqTvwVx3OElZRweTnQ6d31fXEoRD1Jy" crossorigin="anonymous"></script>
+</body>
+</html>

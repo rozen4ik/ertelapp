@@ -4,7 +4,7 @@ from employee.models import Profile
 from ertelapp import settings
 from service import Service
 from task.models import *
-from counterparty.models import *
+from counterparty.models import Counterparty
 
 
 class TaskService(Service):
@@ -34,13 +34,26 @@ class TaskService(Service):
         if not type_task:
             new_task.type_task = "Офис"
             new_task.address_obj_task = "Москва, Бумажный пр., д. 14, корп. 1, офис 313"
+            new_task.object_task = "Офис Эртел"
         elif type_task == "ГР":
             new_task.type_task = "Гарантийные работы"
-            address_obj_task = CounterpartyWarrantyObligations.objects.get(name=new_task.object_task)
+            address_obj_task = Counterparty.objects.get(name=new_task.object_task)
             new_task.address_obj_task = address_obj_task.address
         elif type_task == "ТО":
             new_task.type_task = "Ежемесячное ТО"
-            address_obj_task = CounterpartyTO.objects.get(name=new_task.object_task)
+            address_obj_task = Counterparty.objects.get(name=new_task.object_task)
+            new_task.address_obj_task = address_obj_task.address
+        elif type_task == "МР":
+            new_task.type_task = "Монтажные работы"
+            address_obj_task = Counterparty.objects.get(name=new_task.object_task)
+            new_task.address_obj_task = address_obj_task.address
+        elif type_task == "РПС":
+            new_task.type_task = "Работы по счёту"
+            address_obj_task = Counterparty.objects.get(name=new_task.object_task)
+            new_task.address_obj_task = address_obj_task.address
+        elif type_task == "ПНР":
+            new_task.type_task = "Пусконаладочные работы"
+            address_obj_task = Counterparty.objects.get(name=new_task.object_task)
             new_task.address_obj_task = address_obj_task.address
         new_task.save()
         self.send_message_telegram(new_task, "У вас новая задача!")
@@ -78,11 +91,23 @@ class TaskService(Service):
             task.object_task = "Офис Эртел"
         elif type_task == "ГР":
             task.type_task = "Гарантийные работы"
-            address_obj_task = CounterpartyWarrantyObligations.objects.get(name=task.object_task)
+            address_obj_task = Counterparty.objects.get(name=task.object_task)
             task.address_obj_task = address_obj_task.address
         elif type_task == "ТО":
             task.type_task = "Ежемесячное ТО"
-            address_obj_task = CounterpartyTO.objects.get(name=task.object_task)
+            address_obj_task = Counterparty.objects.get(name=task.object_task)
+            task.address_obj_task = address_obj_task.address
+        elif type_task == "МР":
+            task.type_task = "Монтажные работы"
+            address_obj_task = Counterparty.objects.get(name=task.object_task)
+            task.address_obj_task = address_obj_task.address
+        elif type_task == "РПС":
+            task.type_task = "Работы по счёту"
+            address_obj_task = Counterparty.objects.get(name=task.object_task)
+            task.address_obj_task = address_obj_task.address
+        elif type_task == "ПНР":
+            task.type_task = "Пусконаладочные работы"
+            address_obj_task = Counterparty.objects.get(name=task.object_task)
             task.address_obj_task = address_obj_task.address
         task.save()
         self.send_message_telegram(task, f"Задача №{task.id} изменилась!")

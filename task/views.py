@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.http import HttpResponseNotFound
 from django.http import HttpResponse
-from counterparty.models import CounterpartyTO, CounterpartyWarrantyObligations
+from counterparty.models import Counterparty
 from .services.task_service import TaskService
 from .forms import *
 from .models import Task
@@ -19,8 +19,7 @@ task_service = TaskService()
 def index(request):
     page_number = request.GET.get("page")
     task = task_service.get_objects_all(Task)
-    counterparty_to = task_service.get_objects_all(CounterpartyTO)
-    counterparty_warranty_obligations = task_service.get_objects_all(CounterpartyWarrantyObligations)
+    counterparty = task_service.get_objects_all(Counterparty)
     users = task_service.get_objects_all(User).select_related('profile')
 
     director_user = task_service.create_user_roles(1)
@@ -56,8 +55,7 @@ def index(request):
     dict_task = {
         "users": users,
         "form": form,
-        "counterparty_to": counterparty_to,
-        "counterparty_warranty_obligations": counterparty_warranty_obligations
+        "counterparty": counterparty
     }
 
     # Показ задач в зависимости от должности
@@ -134,14 +132,12 @@ def edit(request, id):
     try:
         task = task_service.get_object_deatil(Task, id)
         users = task_service.get_objects_all(User).select_related('profile')
-        counterparty_to = task_service.get_objects_all(CounterpartyTO)
-        counterparty_warranty_obligations = task_service.get_objects_all(CounterpartyWarrantyObligations)
+        counterparty = task_service.get_objects_all(Counterparty)
 
         data = {
             "task": task,
             "users": users,
-            "counterparty_to": counterparty_to,
-            "counterparty_warranty_obligations": counterparty_warranty_obligations
+            "counterparty": counterparty
         }
 
         if request.method == "POST":

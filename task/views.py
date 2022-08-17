@@ -30,8 +30,8 @@ def index(request):
     personnel_user = task_service.create_user_roles(13)
     storekeeper_user = task_service.create_user_roles(8)
 
-    engineering_task = Task.objects.filter(Q(author_task=eng_user) | Q(author_task=technical_user))
-    sales_task = Task.objects.filter(author_task=sales_user)
+    engineering_task = Task.objects.filter(Q(author_task=eng_user) | Q(author_task=technical_user)).order_by("-id")
+    sales_task = Task.objects.filter(author_task=sales_user).order_by("-id")
     technical_task = Task.objects.filter(Q(author_task=technical_user) | Q(author_task=eng_user) |
                                          Q(author_task=storekeeper_user)).order_by("-id")
     accounting_task = Task.objects.filter(author_task=accounting_user).order_by("-id")
@@ -42,12 +42,36 @@ def index(request):
     if form.is_valid():
         if form.cleaned_data["employee_task"]:
             task = task.filter(employee_task=form.cleaned_data["employee_task"])
+            engineering_task = engineering_task.filter(employee_task=form.cleaned_data["employee_task"])
+            sales_task = sales_task.filter(employee_task=form.cleaned_data["employee_task"])
+            technical_task = technical_task.filter(employee_task=form.cleaned_data["employee_task"])
+            accounting_task = accounting_task.filter(employee_task=form.cleaned_data["employee_task"])
+            personnel_task = personnel_task.filter(employee_task=form.cleaned_data["employee_task"])
+            storekeeper_task = storekeeper_task.filter(employee_task=form.cleaned_data["employee_task"])
         if form.cleaned_data["status_task"]:
             task = task.filter(status_task=form.cleaned_data["status_task"])
+            engineering_task = engineering_task.filter(status_task=form.cleaned_data["status_task"])
+            sales_task = sales_task.filter(status_task=form.cleaned_data["status_task"])
+            technical_task = technical_task.filter(status_task=form.cleaned_data["status_task"])
+            accounting_task = accounting_task.filter(status_task=form.cleaned_data["status_task"])
+            personnel_task = personnel_task.filter(status_task=form.cleaned_data["status_task"])
+            storekeeper_task = storekeeper_task.filter(status_task=form.cleaned_data["status_task"])
         if form.cleaned_data["type_task"]:
             task = task.filter(type_task=form.cleaned_data["type_task"])
+            engineering_task = engineering_task.filter(type_task=form.cleaned_data["type_task"])
+            sales_task = sales_task.filter(type_task=form.cleaned_data["type_task"])
+            technical_task = technical_task.filter(type_task=form.cleaned_data["type_task"])
+            accounting_task = accounting_task.filter(type_task=form.cleaned_data["type_task"])
+            personnel_task = personnel_task.filter(type_task=form.cleaned_data["type_task"])
+            storekeeper_task = storekeeper_task.filter(type_task=form.cleaned_data["type_task"])
         if form.cleaned_data["business_trip"]:
             task = task.filter(business_trip=form.cleaned_data["business_trip"])
+            engineering_task = engineering_task.filter(business_trip=form.cleaned_data["business_trip"])
+            sales_task = sales_task.filter(business_trip=form.cleaned_data["business_trip"])
+            technical_task = technical_task.filter(business_trip=form.cleaned_data["business_trip"])
+            accounting_task = accounting_task.filter(business_trip=form.cleaned_data["business_trip"])
+            personnel_task = personnel_task.filter(business_trip=form.cleaned_data["business_trip"])
+            storekeeper_task = storekeeper_task.filter(business_trip=form.cleaned_data["business_trip"])
 
     global filter_task
     filter_task = form.cleaned_data

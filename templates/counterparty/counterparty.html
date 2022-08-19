@@ -32,14 +32,18 @@
         <form class="row g-3" method="POST" action="create/">
             {% csrf_token %}
             <div class="col-md-3">
-                <label for="inputName" class="form-label">Название</label>
+                <label for="inputName" class="form-label">Юридическое название</label>
                 <input type="text" class="form-control" id="inputName" name="name" placeholder="Еврейская община">
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
+                <label for="inputWorkName" class="form-label">Рабочее название</label>
+                <input type="text" class="form-control" id="inputWorkName" name="work_name" placeholder="Евреи">
+            </div>
+            <div class="col-md-2">
                 <label for="inputType" class="form-label">Тип</label>
                 <input type="text" class="form-control" id="inputType" name="type" placeholder="Парковки">
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label for="inputContract" class="form-label">Контракт</label>
                 <input type="text" class="form-control" id="inputContract" name="contract" placeholder="ТО-03/19-31">
             </div>
@@ -59,7 +63,8 @@
                 <thead class="align-middle table-primary">
                 <tr>
                     <th scope="col">id</th>
-                    <th scope="col">Название</th>
+                    <th scope="col">Юридическое название</th>
+                    <th scope="col">Рабочее название</th>
                     <th scope="col">Тип</th>
                     <th scope="col">Контракт</th>
                     <th scope="col">Адрес</th>
@@ -71,6 +76,7 @@
                     <tr>
                         <td scope="row">{{ co.id }}</td>
                         <td>{{ co.name }}</td>
+                        <td>{{ co.work_name }}</td>
                         <td>{{ co.type }}</td>
                         <td>{{ co.contract }}</td>
                         <td>{{ co.address }}</td>

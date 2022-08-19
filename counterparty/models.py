@@ -3,6 +3,7 @@ from django.db import models
 
 class Counterparty(models.Model):
     name = models.CharField(max_length=250)
+    work_name = models.CharField(max_length=250)
     type = models.CharField(max_length=150)
     contract = models.CharField(max_length=150)
     address = models.CharField(max_length=150)

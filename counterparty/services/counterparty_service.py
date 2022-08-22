@@ -2,17 +2,16 @@ from service import Service
 
 
 class CounterpartyService(Service):
-    def create_counterparty(self, request, model):
-        new_counterparty = model()
-        new_counterparty.name = request.POST.get("name")
-        new_counterparty.type = request.POST.get("type")
-        new_counterparty.contract = request.POST.get("contract")
-        new_counterparty.address = request.POST.get("address")
-        new_counterparty.save()
-
-    def edit_counterparty(self, request, counterparty):
+    def counterparty_layout(self, request, counterparty):
         counterparty.name = request.POST.get("name")
         counterparty.type = request.POST.get("type")
         counterparty.contract = request.POST.get("contract")
         counterparty.address = request.POST.get("address")
         counterparty.save()
+
+    def create_counterparty(self, request, model):
+        new_counterparty = model()
+        self.counterparty_layout(request, new_counterparty)
+
+    def edit_counterparty(self, request, counterparty):
+        self.counterparty_layout(request, counterparty)

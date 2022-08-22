@@ -1,10 +1,11 @@
 import requests
 from django.contrib.auth.models import User
+
+from counterparty.models import Counterparty
 from employee.models import Profile
 from ertelapp import settings
 from service import Service
 from task.models import *
-from counterparty.models import Counterparty
 
 
 class TaskService(Service):
@@ -15,61 +16,7 @@ class TaskService(Service):
         result = Profile.objects.get(position_dep_id_id=dep_id)
         return result
 
-    def create_task(self, request):
-        new_task = Task()
-        new_task.date_task = request.POST.get("date_task")
-        new_task.time_task = request.POST.get("time_task")
-        new_task.text_task = request.POST.get("text_task")
-        new_task.object_task = request.POST.get("object_task")
-        new_task.author_task = request.user.first_name + " " + request.user.last_name
-        new_task.employee_task = request.POST.get("employee_task")
-        new_task.urgency_task = request.POST.get("urgency_task")
-        new_task.line_task = request.POST.get("line_task")
-        business_trip = request.POST.get("business_trip")
-        if not business_trip:
-            new_task.business_trip = "Не командировка"
-        elif business_trip:
-            new_task.business_trip = "Командировка"
-        type_task = request.POST.get("type_task")
-        if not type_task:
-            new_task.type_task = "Офис"
-            new_task.address_obj_task = "Москва, Бумажный пр., д. 14, корп. 1, офис 313"
-            new_task.object_task = "Офис Эртел"
-        elif type_task == "ГР":
-            new_task.type_task = "Гарантийные работы"
-            address_obj_task = Counterparty.objects.get(name=new_task.object_task)
-            new_task.address_obj_task = address_obj_task.address
-        elif type_task == "ТО":
-            new_task.type_task = "Ежемесячное ТО"
-            address_obj_task = Counterparty.objects.get(name=new_task.object_task)
-            new_task.address_obj_task = address_obj_task.address
-        elif type_task == "МР":
-            new_task.type_task = "Монтажные работы"
-            address_obj_task = Counterparty.objects.get(name=new_task.object_task)
-            new_task.address_obj_task = address_obj_task.address
-        elif type_task == "РПС":
-            new_task.type_task = "Работы по счёту"
-            address_obj_task = Counterparty.objects.get(name=new_task.object_task)
-            new_task.address_obj_task = address_obj_task.address
-        elif type_task == "ПНР":
-            new_task.type_task = "Пусконаладочные работы"
-            address_obj_task = Counterparty.objects.get(name=new_task.object_task)
-            new_task.address_obj_task = address_obj_task.address
-        new_task.save()
-        self.send_message_telegram(new_task, "У вас новая задача!")
-
-    def send_message_telegram(self, task, msg):
-        url = settings.URL_API
-        em_pr = task.employee_task.split()
-        user = User.objects.get(first_name=em_pr[0], last_name=em_pr[1])
-        em_pr = Profile.objects.get(user=user)
-        chat_id = em_pr.chat_id
-        text = self.get_message(task)
-        data = {"chat_id": chat_id, "text": text, "parse_mode": "HTML"}
-        requests.post(url, data={"chat_id": chat_id, "text": msg})
-        requests.post(url, data=data)
-
-    def edit_task(self, request, task):
+    def task_layout(self, request, task):
         task.date_task = request.POST.get("date_task")
         task.time_task = request.POST.get("time_task")
         task.text_task = request.POST.get("text_task")
@@ -91,26 +38,45 @@ class TaskService(Service):
             task.object_task = "Офис Эртел"
         elif type_task == "ГР":
             task.type_task = "Гарантийные работы"
-            address_obj_task = Counterparty.objects.get(name=task.object_task)
+            address_obj_task = Counterparty.objects.get(name=task.object_task.split("/")[0].strip())
             task.address_obj_task = address_obj_task.address
         elif type_task == "ТО":
             task.type_task = "Ежемесячное ТО"
-            address_obj_task = Counterparty.objects.get(name=task.object_task)
+            address_obj_task = Counterparty.objects.get(name=task.object_task.split("/")[0].strip())
             task.address_obj_task = address_obj_task.address
         elif type_task == "МР":
             task.type_task = "Монтажные работы"
-            address_obj_task = Counterparty.objects.get(name=task.object_task)
+            address_obj_task = Counterparty.objects.get(name=task.object_task.split("/")[0].strip())
             task.address_obj_task = address_obj_task.address
         elif type_task == "РПС":
             task.type_task = "Работы по счёту"
-            address_obj_task = Counterparty.objects.get(name=task.object_task)
+            address_obj_task = Counterparty.objects.get(name=task.object_task.split("/")[0].strip())
             task.address_obj_task = address_obj_task.address
         elif type_task == "ПНР":
             task.type_task = "Пусконаладочные работы"
-            address_obj_task = Counterparty.objects.get(name=task.object_task)
+            address_obj_task = Counterparty.objects.get(name=task.object_task.split("/")[0].strip())
             task.address_obj_task = address_obj_task.address
         task.save()
+
+    def create_task(self, request):
+        new_task = Task()
+        self.task_layout(request, new_task)
+        self.send_message_telegram(new_task, "У вас новая задача!")
+
+    def edit_task(self, request, task):
+        self.task_layout(request, task)
         self.send_message_telegram(task, f"Задача №{task.id} изменилась!")
+
+    def send_message_telegram(self, task, msg):
+        url = settings.URL_API
+        em_pr = task.employee_task.split()
+        user = User.objects.get(first_name=em_pr[0], last_name=em_pr[1])
+        em_pr = Profile.objects.get(user=user)
+        chat_id = em_pr.chat_id
+        text = self.get_message(task)
+        data = {"chat_id": chat_id, "text": text, "parse_mode": "HTML"}
+        requests.post(url, data={"chat_id": chat_id, "text": msg})
+        requests.post(url, data=data)
 
     def find_filter_task(self, filter_task):
         field_filter = (

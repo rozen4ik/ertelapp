@@ -1,14 +1,16 @@
 import datetime
+
 import xlwt
 from django.db.models import Q
-from django.shortcuts import render
-from django.http import HttpResponseRedirect
-from django.http import HttpResponseNotFound
 from django.http import HttpResponse
+from django.http import HttpResponseNotFound
+from django.http import HttpResponseRedirect
+from django.shortcuts import render
+
 from counterparty.models import Counterparty
-from .services.task_service import TaskService
 from .forms import *
 from .models import Task
+from .services.task_service import TaskService
 
 # Словарь полей, по которым фильтруются данные таблицы Task
 filter_task = dict
@@ -29,14 +31,22 @@ def index(request):
     accounting_user = task_service.create_user_roles(11)
     personnel_user = task_service.create_user_roles(13)
     storekeeper_user = task_service.create_user_roles(8)
+    dispatcher_user = task_service.create_user_roles(10)
 
-    engineering_task = Task.objects.filter(Q(author_task=eng_user) | Q(author_task=technical_user)).order_by("-id")
+    engineering_task = Task.objects.filter(Q(author_task=eng_user) |
+                                           Q(author_task=technical_user) |
+                                           Q(author_task=dispatcher_user)).order_by("-id")
     sales_task = Task.objects.filter(author_task=sales_user).order_by("-id")
-    technical_task = Task.objects.filter(Q(author_task=technical_user) | Q(author_task=eng_user) |
-                                         Q(author_task=storekeeper_user)).order_by("-id")
+    technical_task = Task.objects.filter(Q(author_task=technical_user) |
+                                         Q(author_task=eng_user) |
+                                         Q(author_task=storekeeper_user) |
+                                         Q(author_task=dispatcher_user)).order_by("-id")
     accounting_task = Task.objects.filter(author_task=accounting_user).order_by("-id")
     personnel_task = Task.objects.filter(author_task=personnel_user).order_by("-id")
     storekeeper_task = Task.objects.filter(author_task=storekeeper_user).order_by("-id")
+    dispatcher_task = Task.objects.filter(Q(author_task=technical_user) |
+                                          Q(author_task=eng_user) |
+                                          Q(author_task=storekeeper_user)).order_by("-id")
 
     form = TaskFilter(request.GET)
     if form.is_valid():
@@ -48,6 +58,7 @@ def index(request):
             accounting_task = accounting_task.filter(employee_task=form.cleaned_data["employee_task"])
             personnel_task = personnel_task.filter(employee_task=form.cleaned_data["employee_task"])
             storekeeper_task = storekeeper_task.filter(employee_task=form.cleaned_data["employee_task"])
+            dispatcher_task = dispatcher_task.filter(employee_task=form.cleaned_data["employee_task"])
         if form.cleaned_data["status_task"]:
             task = task.filter(status_task=form.cleaned_data["status_task"])
             engineering_task = engineering_task.filter(status_task=form.cleaned_data["status_task"])
@@ -56,6 +67,7 @@ def index(request):
             accounting_task = accounting_task.filter(status_task=form.cleaned_data["status_task"])
             personnel_task = personnel_task.filter(status_task=form.cleaned_data["status_task"])
             storekeeper_task = storekeeper_task.filter(status_task=form.cleaned_data["status_task"])
+            dispatcher_task = dispatcher_task.filter(status_task=form.cleaned_data["status_task"])
         if form.cleaned_data["type_task"]:
             task = task.filter(type_task=form.cleaned_data["type_task"])
             engineering_task = engineering_task.filter(type_task=form.cleaned_data["type_task"])
@@ -64,6 +76,7 @@ def index(request):
             accounting_task = accounting_task.filter(type_task=form.cleaned_data["type_task"])
             personnel_task = personnel_task.filter(type_task=form.cleaned_data["type_task"])
             storekeeper_task = storekeeper_task.filter(type_task=form.cleaned_data["type_task"])
+            dispatcher_task = dispatcher_task.filter(type_task=form.cleaned_data["type_task"])
         if form.cleaned_data["business_trip"]:
             task = task.filter(business_trip=form.cleaned_data["business_trip"])
             engineering_task = engineering_task.filter(business_trip=form.cleaned_data["business_trip"])
@@ -72,6 +85,7 @@ def index(request):
             accounting_task = accounting_task.filter(business_trip=form.cleaned_data["business_trip"])
             personnel_task = personnel_task.filter(business_trip=form.cleaned_data["business_trip"])
             storekeeper_task = storekeeper_task.filter(business_trip=form.cleaned_data["business_trip"])
+            dispatcher_task = dispatcher_task.filter(business_trip=form.cleaned_data["business_trip"])
 
     global filter_task
     filter_task = form.cleaned_data
@@ -86,60 +100,68 @@ def index(request):
     match request.user.username:
         case director_user.user.username:
             page_m = task_service.paginator(task, page_number)
-            first_dict_task = {
+            data_task = {
                 "task": task,
                 "page_m": page_m
             }
-            first_dict_task.update(dict_task)
-            return render(request, "task/tasks.html", first_dict_task)
+            data_task.update(dict_task)
+            return render(request, "task/tasks.html", data_task)
         case eng_user.user.username:
             page_m = task_service.paginator(engineering_task, page_number)
-            first_dict_task = {
+            data_task = {
                 "engineering_task": engineering_task,
                 "page_m": page_m
             }
-            first_dict_task.update(dict_task)
-            return render(request, "task/role/engineering_task.html", first_dict_task)
+            data_task.update(dict_task)
+            return render(request, "task/role/engineering_task.html", data_task)
         case sales_user.user.username:
             page_m = task_service.paginator(sales_task, page_number)
-            first_dict_task = {
+            data_task = {
                 "sales_task": sales_task,
                 "page_m": page_m
             }
-            first_dict_task.update(dict_task)
-            return render(request, "task/role/sales_task.html", first_dict_task)
+            data_task.update(dict_task)
+            return render(request, "task/role/sales_task.html", data_task)
         case technical_user.user.username:
             page_m = task_service.paginator(technical_task, page_number)
-            first_dict_task = {
+            data_task = {
                 "technical_task": technical_task,
                 "page_m": page_m
             }
-            first_dict_task.update(dict_task)
-            return render(request, "task/role/technical_task.html", first_dict_task)
+            data_task.update(dict_task)
+            return render(request, "task/role/technical_task.html", data_task)
         case accounting_user.user.username:
             page_m = task_service.paginator(accounting_task, page_number)
-            first_dict_task = {
+            data_task = {
                 "accounting_task": accounting_task,
                 "page_m": page_m
             }
-            first_dict_task.update(dict_task)
-            return render(request, "task/role/accounting_task.html", first_dict_task)
+            data_task.update(dict_task)
+            return render(request, "task/role/accounting_task.html", data_task)
         case personnel_user.user.username:
             page_m = task_service.paginator(personnel_task, page_number)
-            first_dict_task = {
+            data_task = {
                 "personnel_task": personnel_task,
                 "page_m": page_m
             }
-            first_dict_task.update(dict_task)
-            return render(request, "task/role/personnel_task.html", first_dict_task)
+            data_task.update(dict_task)
+            return render(request, "task/role/personnel_task.html", data_task)
         case storekeeper_user.user.username:
             page_m = task_service.paginator(storekeeper_task, page_number)
-            first_dict_task = {
+            data_task = {
                 "storekeeper_task": storekeeper_task,
                 "page_m": page_m
             }
-            first_dict_task.update(dict_task)
-            return render(request, "task/role/storekeeper_task.html", first_dict_task)
+            data_task.update(dict_task)
+            return render(request, "task/role/storekeeper_task.html", data_task)
+        case dispatcher_user.user.username:
+            page_m = task_service.paginator(dispatcher_task, page_number)
+            data_task = {
+                "dispatcher_task": dispatcher_task,
+                "page_m": page_m
+            }
+            data_task.update(dict_task)
+            return render(request, "task/role/dispatcher_task.html", data_task)
         case _:
             return render(request, "task/role/no_access.html")
 

@@ -410,6 +410,14 @@
                 <label for="{{ form.business_trip.id_for_label }}">Отношение к командировке</label>
                 {{ form.business_trip }}
             </div>
+            <div class="col-md-3">
+                <label for="{{ form.start_date.id_for_label }}">Начало периода даты постановки задач</label>
+                {{ form.start_date }}
+            </div>
+            <div class="col-md-3">
+                <label for="{{ form.end_date.id_for_label }}">Конец периода даты постановки задач</label>
+                {{ form.end_date }}
+            </div>
             <div class="col-12">
                 <input type="submit" name="sun" class="btn btn-outline-primary contact-form__button" value="Поиск" >
             </div>

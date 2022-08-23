@@ -1,6 +1,5 @@
 import requests
 from django.contrib.auth.models import User
-
 from counterparty.models import Counterparty
 from employee.models import Profile
 from ertelapp import settings
@@ -83,76 +82,166 @@ class TaskService(Service):
             filter_task["employee_task"],
             filter_task["status_task"],
             filter_task["type_task"],
-            filter_task["business_trip"]
+            filter_task["business_trip"],
+            filter_task["start_date"],
+            filter_task["end_date"]
         )
-        employee_filter, status_filter, type_filter, business_filter = field_filter
-        if (employee_filter == "") and (status_filter == "") and (type_filter == "") and (business_filter == ""):
+
+        employee_filter, status_filter, type_filter, business_filter, start_date, end_date = field_filter
+
+        if (employee_filter == "") and (status_filter == "") and (type_filter == "") and (business_filter == "") and \
+                (start_date is None) and (end_date is None):
             rows = Task.objects.all()
-        elif (employee_filter != "") and (status_filter == "") and (type_filter == "") and (business_filter == ""):
+        elif (employee_filter != "") and (status_filter == "") and (type_filter == "") and (business_filter == "") and \
+                (start_date is None) and (end_date is None):
             rows = Task.objects.filter(
                 employee_task=employee_filter
             )
-        elif (employee_filter == "") and (status_filter != "") and (type_filter == "") and (business_filter == ""):
+        elif (employee_filter == "") and (status_filter != "") and (type_filter == "") and (business_filter == "") and \
+                (start_date is None) and (end_date is None):
             rows = Task.objects.filter(
                 status_task=status_filter
             )
-        elif (employee_filter == "") and (status_filter == "") and (type_filter != "") and (business_filter == ""):
+        elif (employee_filter == "") and (status_filter == "") and (type_filter != "") and (business_filter == "") and \
+                (start_date is None) and (end_date is None):
             rows = Task.objects.filter(
                 type_task=type_filter
             )
-        elif (employee_filter == "") and (status_filter == "") and (type_filter == "") and (business_filter != ""):
+        elif (employee_filter == "") and (status_filter == "") and (type_filter == "") and (business_filter != "") and \
+                (start_date is None) and (end_date is None):
             rows = Task.objects.filter(
                 business_trip=business_filter
             )
-        elif (employee_filter != "") and (status_filter != "") and (type_filter == "") and (business_filter == ""):
+        elif (employee_filter == "") and (status_filter == "") and (type_filter == "") and (business_filter == "") and \
+                start_date and end_date:
+            rows = Task.objects.filter(
+                date_task__range=(start_date, end_date)
+            )
+        elif (employee_filter != "") and (status_filter != "") and (type_filter == "") and (business_filter == "") and \
+                (start_date is None) and (end_date is None):
             rows = Task.objects.filter(
                 employee_task=employee_filter,
                 status_task=status_filter,
             )
-        elif (employee_filter == "") and (status_filter != "") and (type_filter != "") and (business_filter == ""):
+        elif (employee_filter != "") and (status_filter == "") and (type_filter == "") and (business_filter == "") and \
+                start_date and end_date:
+            rows = Task.objects.filter(
+                employee_task=employee_filter,
+                date_task__range=(start_date, end_date),
+            )
+        elif (employee_filter == "") and (status_filter != "") and (type_filter != "") and (business_filter == "") and \
+                (start_date is None) and (end_date is None):
             rows = Task.objects.filter(
                 status_task=status_filter,
                 type_task=type_filter
             )
-        elif (employee_filter == "") and (status_filter == "") and (type_filter != "") and (business_filter != ""):
+        elif (employee_filter == "") and (status_filter != "") and (type_filter == "") and (business_filter == "") and \
+                start_date and end_date:
+            rows = Task.objects.filter(
+                status_task=status_filter,
+                date_task__range=(start_date, end_date)
+            )
+        elif (employee_filter == "") and (status_filter == "") and (type_filter != "") and (business_filter != "") and \
+                (start_date is None) and (end_date is None):
             rows = Task.objects.filter(
                 type_task=type_filter,
                 business_trip=business_filter
             )
-        elif (employee_filter != "") and (status_filter == "") and (type_filter != "") and (business_filter == ""):
+        elif (employee_filter == "") and (status_filter == "") and (type_filter != "") and (business_filter == "") and \
+                start_date and end_date:
+            rows = Task.objects.filter(
+                type_task=type_filter,
+                date_task__range=(start_date, end_date)
+            )
+        elif (employee_filter == "") and (status_filter == "") and (type_filter == "") and (business_filter != "") and \
+                start_date and end_date:
+            rows = Task.objects.filter(
+                business_trip=business_filter,
+                date_task__range=(start_date, end_date)
+            )
+        elif (employee_filter != "") and (status_filter == "") and (type_filter != "") and (business_filter == "") and \
+                (start_date is None) and (end_date is None):
             rows = Task.objects.filter(
                 employee_task=employee_filter,
                 type_task=type_filter,
             )
-        elif (employee_filter == "") and (status_filter != "") and (type_filter == "") and (business_filter != ""):
+        elif (employee_filter == "") and (status_filter != "") and (type_filter == "") and (business_filter != "") and \
+                (start_date is None) and (end_date is None):
             rows = Task.objects.filter(
                 status_task=status_filter,
                 business_trip=business_filter
             )
-        elif (employee_filter != "") and (status_filter == "") and (type_filter == "") and (business_filter != ""):
+        elif (employee_filter != "") and (status_filter == "") and (type_filter == "") and (business_filter != "") and \
+                (start_date is None) and (end_date is None):
             rows = Task.objects.filter(
                 employee_task=employee_filter,
                 business_trip=business_filter
             )
-        elif (employee_filter != "") and (status_filter != "") and (type_filter != "") and (business_filter == ""):
+        elif (employee_filter != "") and (status_filter != "") and (type_filter != "") and (business_filter == "") and \
+                (start_date is None) and (end_date is None):
             rows = Task.objects.filter(
                 employee_task=employee_filter,
                 status_task=status_filter,
                 type_task=type_filter,
             )
-        elif (employee_filter != "") and (status_filter != "") and (type_filter == "") and (business_filter != ""):
+        elif (employee_filter != "") and (status_filter != "") and (type_filter == "") and (business_filter == "") and \
+                start_date and end_date:
+            rows = Task.objects.filter(
+                employee_task=employee_filter,
+                status_task=status_filter,
+                date_task__range=(start_date, end_date),
+            )
+        elif (employee_filter != "") and (status_filter == "") and (type_filter == "") and (business_filter != "") and \
+                (start_date is None) and (end_date is None):
+            rows = Task.objects.filter(
+                employee_task=employee_filter,
+                date_task__range=(start_date, end_date),
+                business_trip=business_filter
+            )
+        elif (employee_filter != "") and (status_filter == "") and (type_filter != "") and (business_filter == "") and \
+                start_date and end_date:
+            rows = Task.objects.filter(
+                employee_task=employee_filter,
+                date_task__range=(start_date, end_date),
+                type_task=type_filter,
+            )
+        elif (employee_filter == "") and (status_filter != "") and (type_filter != "") and (business_filter == "") and \
+                start_date and end_date:
+            rows = Task.objects.filter(
+                date_task__range=(start_date, end_date),
+                status_task=status_filter,
+                type_task=type_filter,
+            )
+        elif (employee_filter == "") and (status_filter != "") and (type_filter == "") and (business_filter != "") and \
+                start_date and end_date:
+            rows = Task.objects.filter(
+                status_task=status_filter,
+                business_trip=business_filter,
+                date_task__range=(start_date, end_date)
+            )
+        elif (employee_filter == "") and (status_filter == "") and (type_filter != "") and (business_filter != "") and \
+                start_date and end_date:
+            rows = Task.objects.filter(
+                type_task=type_filter,
+                business_trip=business_filter,
+                date_task__range=(start_date, end_date)
+            )
+        elif (employee_filter != "") and (status_filter != "") and (type_filter == "") and (business_filter != "") and \
+                (start_date is None) and (end_date is None):
             rows = Task.objects.filter(
                 employee_task=employee_filter,
                 status_task=status_filter,
                 business_trip=business_filter
             )
-        elif (employee_filter != "") and (status_filter == "") and (type_filter != "") and (business_filter != ""):
+        elif (employee_filter != "") and (status_filter == "") and (type_filter != "") and (business_filter != "") and \
+                (start_date is None) and (end_date is None):
             rows = Task.objects.filter(
                 employee_task=employee_filter,
                 type_task=type_filter,
                 business_trip=business_filter
             )
-        elif (employee_filter == "") and (status_filter != "") and (type_filter != "") and (business_filter != ""):
+        elif (employee_filter == "") and (status_filter != "") and (type_filter != "") and (business_filter != "") and \
+                (start_date is None) and (end_date is None):
             rows = Task.objects.filter(
                 status_task=status_filter,
                 type_task=type_filter,
@@ -163,7 +252,8 @@ class TaskService(Service):
                 employee_task=employee_filter,
                 status_task=status_filter,
                 type_task=type_filter,
-                business_trip=business_filter
+                business_trip=business_filter,
+                date_task__range=(start_date, end_date)
             )
 
         return rows.values_list(

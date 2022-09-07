@@ -72,7 +72,7 @@ def index(request):
             personnel_task = personnel_task.filter(status_task=form.cleaned_data["status_task"])
             storekeeper_task = storekeeper_task.filter(status_task=form.cleaned_data["status_task"])
             dispatcher_task = dispatcher_task.filter(status_task=form.cleaned_data["status_task"])
-            director_tts_task = director_tts_task.filter(employee_task=form.cleaned_data["status_task"])
+            director_tts_task = director_tts_task.filter(status_task=form.cleaned_data["status_task"])
         if form.cleaned_data["type_task"]:
             task = task.filter(type_task=form.cleaned_data["type_task"])
             engineering_task = engineering_task.filter(type_task=form.cleaned_data["type_task"])
@@ -82,7 +82,7 @@ def index(request):
             personnel_task = personnel_task.filter(type_task=form.cleaned_data["type_task"])
             storekeeper_task = storekeeper_task.filter(type_task=form.cleaned_data["type_task"])
             dispatcher_task = dispatcher_task.filter(type_task=form.cleaned_data["type_task"])
-            director_tts_task = director_tts_task.filter(employee_task=form.cleaned_data["type_task"])
+            director_tts_task = director_tts_task.filter(type_task=form.cleaned_data["type_task"])
         if form.cleaned_data["business_trip"]:
             task = task.filter(business_trip=form.cleaned_data["business_trip"])
             engineering_task = engineering_task.filter(business_trip=form.cleaned_data["business_trip"])
@@ -92,7 +92,7 @@ def index(request):
             personnel_task = personnel_task.filter(business_trip=form.cleaned_data["business_trip"])
             storekeeper_task = storekeeper_task.filter(business_trip=form.cleaned_data["business_trip"])
             dispatcher_task = dispatcher_task.filter(business_trip=form.cleaned_data["business_trip"])
-            director_tts_task = director_tts_task.filter(employee_task=form.cleaned_data["business_trip"])
+            director_tts_task = director_tts_task.filter(business_trip=form.cleaned_data["business_trip"])
         if form.cleaned_data["start_date"] and form.cleaned_data["end_date"]:
             task = task.filter(date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
             engineering_task = engineering_task.filter(date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))

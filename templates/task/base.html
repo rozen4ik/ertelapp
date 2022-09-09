@@ -8,6 +8,7 @@
     <title>Задачи</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
     <link rel="stylesheet" href="{% static 'css/tabs.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/drop.css' %}" type="text/css">
 </head>
 <body>
 {% if user.is_authenticated %}
@@ -60,11 +61,12 @@
                         </div>
                         <div class="col-md-4 inputObject1">
                             <label for="inputObject" class="form-label">Объект</label>
-                            <select class="form-select" id="inputObject" name="object_task">
+                            <input id="inputObject" list="character" class="form-control" name="object_task">
+                            <datalist id="character">
                                 {% for address in counterparty %}
                                     <option value="{{ address.name }} / ({{ address.work_name }})">Название: {{ address.name }} ({{ address.work_name }}) - тип: {{ address.type }}</option>
                                 {% endfor %}
-                            </select>
+                            </datalist>
                         </div>
                         <div class="col-md-2">
                             <label for="inputEmployee" class="form-label">Исполнитель</label>
@@ -118,11 +120,12 @@
                         </div>
                         <div class="col-md-4 inputObject2">
                             <label for="inputObject" class="form-label">Объект</label>
-                            <select class="form-select" id="inputObject" name="object_task">
+                            <input id="inputObject" list="character" class="form-control" name="object_task">
+                            <datalist id="character">
                                 {% for address in counterparty %}
                                     <option value="{{ address.name }} / ({{ address.work_name }})">Название: {{ address.name }} ({{ address.work_name }}) - тип: {{ address.type }}</option>
                                 {% endfor %}
-                            </select>
+                            </datalist>
                         </div>
                         <div class="col-md-2">
                             <label for="inputEmployee" class="form-label">Исполнитель</label>
@@ -174,13 +177,14 @@
                             <label for="inputText" class="form-label">Задача</label>
                             <textarea class="form-control" id="inputText" name="text_task" rows="1" cols="45" placeholder="Укажите что нужно сделать исполнителю"></textarea>
                         </div>
-                        <div class="col-md-4 inputObject1">
+                        <div class="col-md-4 inputObject3">
                             <label for="inputObject" class="form-label">Объект</label>
-                            <select class="form-select" id="inputObject" name="object_task">
+                            <input id="inputObject" list="character" class="form-control" name="object_task">
+                            <datalist id="character">
                                 {% for address in counterparty %}
                                     <option value="{{ address.name }} / ({{ address.work_name }})">Название: {{ address.name }} ({{ address.work_name }}) - тип: {{ address.type }}</option>
                                 {% endfor %}
-                            </select>
+                            </datalist>
                         </div>
                         <div class="col-md-2">
                             <label for="inputEmployee" class="form-label">Исполнитель</label>
@@ -232,13 +236,14 @@
                             <label for="inputText" class="form-label">Задача</label>
                             <textarea class="form-control" id="inputText" name="text_task" rows="1" cols="45" placeholder="Укажите что нужно сделать исполнителю"></textarea>
                         </div>
-                        <div class="col-md-4 inputObject1">
+                        <div class="col-md-4 inputObject4">
                             <label for="inputObject" class="form-label">Объект</label>
-                            <select class="form-select" id="inputObject" name="object_task">
+                            <input id="inputObject" list="character" class="form-control" name="object_task">
+                            <datalist id="character">
                                 {% for address in counterparty %}
                                     <option value="{{ address.name }} / ({{ address.work_name }})">Название: {{ address.name }} ({{ address.work_name }}) - тип: {{ address.type }}</option>
                                 {% endfor %}
-                            </select>
+                            </datalist>
                         </div>
                         <div class="col-md-2">
                             <label for="inputEmployee" class="form-label">Исполнитель</label>
@@ -290,13 +295,14 @@
                             <label for="inputText" class="form-label">Задача</label>
                             <textarea class="form-control" id="inputText" name="text_task" rows="1" cols="45" placeholder="Укажите что нужно сделать исполнителю"></textarea>
                         </div>
-                        <div class="col-md-4 inputObject1">
+                        <div class="col-md-4 inputObject5">
                             <label for="inputObject" class="form-label">Объект</label>
-                            <select class="form-select" id="inputObject" name="object_task">
+                            <input id="inputObject" list="character" class="form-control" name="object_task">
+                            <datalist id="character">
                                 {% for address in counterparty %}
                                     <option value="{{ address.name }} / ({{ address.work_name }})">Название: {{ address.name }} ({{ address.work_name }}) - тип: {{ address.type }}</option>
                                 {% endfor %}
-                            </select>
+                            </datalist>
                         </div>
                         <div class="col-md-2">
                             <label for="inputEmployee" class="form-label">Исполнитель</label>
@@ -432,6 +438,7 @@
     {% block content %}
     {% endblock content %}
     <script src="{% static "js/autho_size_textarea.js" %}"></script>
+    <script src="{% static "js/drop.js" %}"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js" integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.min.js" integrity="sha384-kjU+l4N0Yf4ZOJErLsIcvOU2qSb74wXpOhqTvwVx3OElZRweTnQ6d31fXEoRD1Jy" crossorigin="anonymous"></script>
     </div>

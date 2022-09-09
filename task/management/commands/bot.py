@@ -33,6 +33,7 @@ def start_message(message):
 def show_location(message):
     user = User.objects.get(profile__chat_id=message.chat.id)
     tasks = bot_service.get_tasks(user)
+    count_task = tasks.count()
 
     if message.location is not None:
         bot_service.set_location(message)
@@ -46,6 +47,8 @@ def show_location(message):
             loc_mark.add(loc_btn3)
             message_task = f"{bot_service.get_message(task)}"
             bot.send_message(user.profile.chat_id, text=message_task, parse_mode="HTML", reply_markup=loc_mark)
+
+        bot.send_message(user.profile.chat_id, text=f"Всего задач: {count_task}")
 
         @bot.callback_query_handler(func=lambda call: call.data.split(":")[0] == "loc")
         def show_tasks(call):
@@ -81,6 +84,7 @@ def show_location(message):
 def edited_status_task(message):
     user = User.objects.get(profile__chat_id=message.chat.id)
     tasks = bot_service.get_tasks(user)
+    count_task = tasks.count()
     match message.text:
         case "Выбрать задачу":
             for task in tasks:
@@ -92,6 +96,8 @@ def edited_status_task(message):
 
                 message_task = f"{bot_service.get_message(task)}"
                 bot.send_message(user.profile.chat_id, text=message_task, parse_mode="HTML", reply_markup=status_mark)
+
+            bot.send_message(user.profile.chat_id, text=f"Всего задач: {count_task}")
 
             @bot.callback_query_handler(func=lambda call: call.data.split(":")[0] == "status")
             def show_tasks(call):

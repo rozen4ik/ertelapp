@@ -3,4 +3,4 @@
 "python manage.py runserver" и "python manage.py bot" 
 для запуска сервера Django и запуска телеграмм бота.
 
-Версия python = 3.10.5
+Версия python = 3.10.7

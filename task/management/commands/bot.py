@@ -4,6 +4,7 @@ from telebot import types
 from django.core.management.base import BaseCommand
 from ertelapp import settings
 from task.services.bot_service import BotService
+from dadata import Dadata
 
 
 class Command(BaseCommand):
@@ -37,6 +38,19 @@ def show_location(message):
 
     if message.location is not None:
         bot_service.set_location(message)
+        my_location = message
+
+        match my_location:
+            case "Местоположение":
+                my_location = "Местоположение не определено"
+            case _:
+                token_dadata = settings.TOKEN_DADATA
+                dadata = Dadata(token_dadata)
+                result = dadata.geolocate(name="address", lat=my_location.location.latitude,
+                                          lon=my_location.location.longitude, count=1)
+                result = result[0]
+                result = result["value"]
+                my_location = result
 
         for task in tasks:
             loc_mark = telebot.types.InlineKeyboardMarkup()
@@ -75,7 +89,7 @@ def show_location(message):
             bot.send_message(call.message.chat.id, msg_local, parse_mode="HTML")
 
         bot.send_message(message.chat.id, text=f"<b>Ваше местоположение:</b> "
-                                               f"{bot_service.get_location()}\n<b>Время отправки "
+                                               f"{my_location}\n<b>Время отправки "
                                                f"сообщения:</b> {bot_service.get_datetime()[0]} "
                                                f"{bot_service.get_datetime()[1]}", parse_mode="HTML")
 

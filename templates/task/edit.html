@@ -101,11 +101,12 @@
         </div>
         <div class="col-md-2">
             <label for="inputType" class="form-label">Тип работы</label>
-            <select class="form-select" id="inputType" name="type_task">
+            <input id="inputType" list="type_task" class="form-control" name="type_task">
+            <datalist id="type_task">
                 {% for work in type_work %}
                     <option value="{{ work.name }}">{{ work.name }}</option>
                 {% endfor %}
-            </select>
+            </datalist>
         </div>
         <div class="col-md-4 inputObject1">
             <label for="inputObject" class="form-label">Объект</label>

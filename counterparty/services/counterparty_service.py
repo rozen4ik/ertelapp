@@ -4,6 +4,7 @@ from service import Service
 class CounterpartyService(Service):
     def counterparty_layout(self, request, counterparty):
         counterparty.name = request.POST.get("name")
+        counterparty.work_name = request.POST.get("work_name")
         counterparty.type = request.POST.get("type")
         counterparty.contract = request.POST.get("contract")
         counterparty.address = request.POST.get("address")

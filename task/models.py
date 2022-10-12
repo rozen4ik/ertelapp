@@ -24,3 +24,14 @@ class Task(models.Model):
     class Meta:
         verbose_name = "задачу"
         verbose_name_plural = 'задачи'
+
+
+class TypeWork(models.Model):
+    name = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "тип работы"
+        verbose_name_plural = "тип работ"

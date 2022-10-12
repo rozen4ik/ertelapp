@@ -57,23 +57,23 @@
             {% csrf_token %}
             <div class="col-md-3">
                 <label for="inputName" class="form-label">Юридическое название</label>
-                <input type="text" class="form-control" id="inputName" name="name" placeholder="Еврейская община">
+                <input type="text" class="form-control" id="inputName" name="name" placeholder="Еврейская община" required>
             </div>
             <div class="col-md-2">
                 <label for="inputWorkName" class="form-label">Рабочее название</label>
-                <input type="text" class="form-control" id="inputWorkName" name="work_name" placeholder="Евреи">
+                <input type="text" class="form-control" id="inputWorkName" name="work_name" placeholder="Евреи" required>
             </div>
             <div class="col-md-2">
                 <label for="inputType" class="form-label">Тип</label>
-                <input type="text" class="form-control" id="inputType" name="type" placeholder="Парковки">
+                <input type="text" class="form-control" id="inputType" name="type" placeholder="Парковки" required>
             </div>
             <div class="col-md-2">
                 <label for="inputContract" class="form-label">Контракт</label>
-                <input type="text" class="form-control" id="inputContract" name="contract" placeholder="ТО-03/19-31">
+                <input type="text" class="form-control" id="inputContract" name="contract" placeholder="ТО-03/19-31" required>
             </div>
             <div class="col-md-3">
                 <label for="inputAddress" class="form-label">Адрес</label>
-                <input type="text" class="form-control" id="inputAddress" name="address" placeholder="Москва, Образцова д. 19">
+                <input type="text" class="form-control" id="inputAddress" name="address" placeholder="Москва, Образцова д. 19" required>
             </div>
             <div class="col-12">
                 <input type="submit" name="sun" class="btn btn-outline-primary contact-form__button" value="Сохранить" >

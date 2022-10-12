@@ -38,3 +38,16 @@ class TaskAdmin(admin.ModelAdmin):
         "note_task",
         "datetime_note_task"
     )
+
+
+@admin.register(TypeWork)
+class TypeWorkAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "name"
+    )
+
+    list_display_links = (
+        "id",
+        "name"
+    )

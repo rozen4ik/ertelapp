@@ -3,442 +3,153 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Задачи</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
     <link rel="stylesheet" href="{% static 'css/tabs.css' %}" type="text/css">
 </head>
 <body>
 {% if user.is_authenticated %}
     <nav class="navbar navbar-fixed-top-top navbar-expand-lg navbar-dark bg-primary">
-      <div class="container-fluid">
-        <div class="navbar-collapse" id="navbarScroll">
-            <a class="btn btn-outline-light btn-sm" href="{% url 'logout' %}" role="button">Выйти - {{ user.first_name }} {{ user.last_name }} </a>
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="/">Главная</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" href="/work_tasks/">Контроль выполнения работ</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" href="/counterparty/">Контрагенты</a>
-                </li>
-            </ul>
+        <div class="container-fluid">
+            <div class="navbar-collapse" id="navbarScroll">
+                <a class="btn btn-outline-light btn-sm" href="{% url 'logout' %}" role="button">Выйти
+                    - {{ user.first_name }} {{ user.last_name }} </a>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/">Главная</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/work_tasks/">Контроль выполнения работ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/counterparty/">Контрагенты</a>
+                    </li>
+                </ul>
+            </div>
         </div>
-      </div>
     </nav>
     <div class="container-fluid">
-        <br>
-        <div style="text-align: center;"><h1>Постановка задач</h1></div>
-        <br>
-        <div class="tabs">
-            <div class="tabs__nav">
-                <button class="tabs__nav-btn" type="button" data-tab="#tab_1">Работы гарантийного обязательства</button>
-                <button class="tabs__nav-btn" type="button" data-tab="#tab_2">Ежемесячное техническое обслуживание</button>
-                <button class="tabs__nav-btn" type="button" data-tab="#tab_3">Монтажные работы</button>
-                <button class="tabs__nav-btn" type="button" data-tab="#tab_4">Работы по счёту</button>
-                <button class="tabs__nav-btn" type="button" data-tab="#tab_5">Пусконаладочные работы</button>
-                <button class="tabs__nav-btn" type="button" data-tab="#tab_6">Работа в офисе</button>
-            </div>
-            <div class="tabs__content">
-                <div class="tabs__item" id="tab_1">
-                    <form class="row g-3" method="POST" action="create/" id="tg">
-                        {% csrf_token %}
-                        <div class="col-md-2">
-                            <label for="inputDate" class="form-label">Дата</label>
-                            <input type="date" class="form-control" id="inputDate" name="date_task">
-                        </div>
-                        <div class="col-md-2">
-                            <label for="inputTime" class="form-label">Время</label>
-                            <input type="time" class="form-control" id="inputTime" name="time_task">
-                        </div>
-                        <div class="col-md-7">
-                            <label for="inputText" class="form-label">Задача</label>
-                            <textarea class="form-control" id="inputText" name="text_task" rows="1" cols="45" placeholder="Укажите что нужно сделать исполнителю"></textarea>
-                        </div>
-                        <div class="col-md-4 inputObject1">
-                            <label for="inputObject" class="form-label">Объект</label>
-                            <input id="inputObject" list="character" class="form-control" name="object_task">
-                            <datalist id="character">
-                                {% for address in counterparty %}
-                                    <option value="{{ address.name }} / ({{ address.work_name }})">Название: {{ address.name }} ({{ address.work_name }}) - тип: {{ address.type }}</option>
-                                {% endfor %}
-                            </datalist>
-                        </div>
-                        <div class="col-md-2">
-                            <label for="inputEmployee" class="form-label">Исполнитель</label>
-                            <select class="form-select" id="inputEmployee" name="employee_task">
-                                {% for user in users %}
-                                    <option value="{{ user.first_name }} {{ user.last_name }}">{{ user.first_name }} {{ user.last_name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label for="inputUrgency" class="form-label">Приоритет</label>
-                            <select class="form-select" id="inputUrgency" name="urgency_task">
-                                <option value="Срочно, важно">Срочно, важно</option>
-                                <option value="Срочно, не важно">Срочно, не важно</option>
-                                <option value="Не срочно, важно">Не срочно, важно</option>
-                                <option value="Не срочно, не важно">Не срочно, не важно</option>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label for="inputLine" class="form-label">Сроки выполнения</label>
-                            <input type="date" class="form-control" id="inputLine" name="line_task">
-                        </div>
-                        <div class="col-md-8 form-check form-switch">
-                            <label for="inputBusinessTrip" class="form-label">Командировка</label>
-                            <input type="checkbox" class="form-check-input" id="inputBusinessTrip" onchange="checkFluency1()" name="business_trip" value="Не командировка">
-                        </div>
-                        <script src="{% static "js/switch_busines_trip.js" %}"></script>
-                        <div class="col-md-2" style="display: none">
-                            <label for="inputType" class="form-label">Тип работы</label>
-                            <input type="text" class="form-control" id="inputType" name="type_task" value="ГР">
-                        </div>
-                        <div class="col-12">
-                            <input type="submit" name="sun" class="btn btn-outline-primary contact-form__button" value="Сохранить" >
-                        </div>
-                    </form>
-                </div>
-                <div class="tabs__item" id="tab_2">
-                    <form class="row g-3" method="POST" action="create/" id="tg">
-                        {% csrf_token %}
-                        <div class="col-md-2">
-                            <label for="inputDate" class="form-label">Дата</label>
-                            <input type="date" class="form-control" id="inputDate" name="date_task">
-                        </div>
-                        <div class="col-md-2">
-                            <label for="inputTime" class="form-label">Время</label>
-                            <input type="time" class="form-control" id="inputTime" name="time_task">
-                        </div>
-                        <div class="col-md-7">
-                            <label for="inputText" class="form-label">Задача</label>
-                            <textarea class="form-control" id="inputText" name="text_task" rows="1" cols="45" placeholder="Укажите что нужно сделать исполнителю"></textarea>
-                        </div>
-                        <div class="col-md-4 inputObject2">
-                            <label for="inputObject" class="form-label">Объект</label>
-                            <input id="inputObject" list="character" class="form-control" name="object_task">
-                            <datalist id="character">
-                                {% for address in counterparty %}
-                                    <option value="{{ address.name }} / ({{ address.work_name }})">Название: {{ address.name }} ({{ address.work_name }}) - тип: {{ address.type }}</option>
-                                {% endfor %}
-                            </datalist>
-                        </div>
-                        <div class="col-md-2">
-                            <label for="inputEmployee" class="form-label">Исполнитель</label>
-                            <select class="form-select" id="inputEmployee" name="employee_task">
-                                {% for user in users %}
-                                    <option value="{{ user.first_name }} {{ user.last_name }}">{{ user.first_name }} {{ user.last_name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label for="inputUrgency" class="form-label">Приоритет</label>
-                            <select class="form-select" id="inputUrgency" name="urgency_task">
-                                <option value="Срочно, важно">Срочно, важно</option>
-                                <option value="Срочно, не важно">Срочно, не важно</option>
-                                <option value="Не срочно, важно">Не срочно, важно</option>
-                                <option value="Не срочно, не важно">Не срочно, не важно</option>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label for="inputLine" class="form-label">Сроки выполнения</label>
-                            <input type="date" class="form-control" id="inputLine" name="line_task">
-                        </div>
-                        <div class="col-md-8 form-check form-switch">
-                            <label for="inputBusinessTrip2" class="form-label">Командировка</label>
-                            <input type="checkbox" class="form-check-input" id="inputBusinessTrip2" onchange="checkFluency2()" name="business_trip" value="Не командировка">
-                        </div>
-                        <script src="{% static "js/switch_busines_trip.js" %}"></script>
-                        <div class="col-md-2" style="display: none">
-                            <label for="inputType" class="form-label">Тип работы</label>
-                            <input type="text" class="form-control" id="inputType" name="type_task" value="ТО">
-                        </div>
-                        <div class="col-12">
-                            <input type="submit" name="sun" class="btn btn-outline-primary contact-form__button" value="Сохранить" >
-                        </div>
-                    </form>
-                </div>
-                <div class="tabs__item" id="tab_3">
-                    <form class="row g-3" method="POST" action="create/" id="tg">
-                        {% csrf_token %}
-                        <div class="col-md-2">
-                            <label for="inputDate" class="form-label">Дата</label>
-                            <input type="date" class="form-control" id="inputDate" name="date_task">
-                        </div>
-                        <div class="col-md-2">
-                            <label for="inputTime" class="form-label">Время</label>
-                            <input type="time" class="form-control" id="inputTime" name="time_task">
-                        </div>
-                        <div class="col-md-7">
-                            <label for="inputText" class="form-label">Задача</label>
-                            <textarea class="form-control" id="inputText" name="text_task" rows="1" cols="45" placeholder="Укажите что нужно сделать исполнителю"></textarea>
-                        </div>
-                        <div class="col-md-4 inputObject3">
-                            <label for="inputObject" class="form-label">Объект</label>
-                            <input id="inputObject" list="character" class="form-control" name="object_task">
-                            <datalist id="character">
-                                {% for address in counterparty %}
-                                    <option value="{{ address.name }} / ({{ address.work_name }})">Название: {{ address.name }} ({{ address.work_name }}) - тип: {{ address.type }}</option>
-                                {% endfor %}
-                            </datalist>
-                        </div>
-                        <div class="col-md-2">
-                            <label for="inputEmployee" class="form-label">Исполнитель</label>
-                            <select class="form-select" id="inputEmployee" name="employee_task">
-                                {% for user in users %}
-                                    <option value="{{ user.first_name }} {{ user.last_name }}">{{ user.first_name }} {{ user.last_name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label for="inputUrgency" class="form-label">Приоритет</label>
-                            <select class="form-select" id="inputUrgency" name="urgency_task">
-                                <option value="Срочно, важно">Срочно, важно</option>
-                                <option value="Срочно, не важно">Срочно, не важно</option>
-                                <option value="Не срочно, важно">Не срочно, важно</option>
-                                <option value="Не срочно, не важно">Не срочно, не важно</option>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label for="inputLine" class="form-label">Сроки выполнения</label>
-                            <input type="date" class="form-control" id="inputLine" name="line_task">
-                        </div>
-                        <div class="col-md-8 form-check form-switch">
-                            <label for="inputBusinessTrip" class="form-label">Командировка</label>
-                            <input type="checkbox" class="form-check-input" id="inputBusinessTrip" onchange="checkFluency1()" name="business_trip" value="Не командировка">
-                        </div>
-                        <script src="{% static "js/switch_busines_trip.js" %}"></script>
-                        <div class="col-md-2" style="display: none">
-                            <label for="inputType" class="form-label">Тип работы</label>
-                            <input type="text" class="form-control" id="inputType" name="type_task" value="МР">
-                        </div>
-                        <div class="col-12">
-                            <input type="submit" name="sun" class="btn btn-outline-primary contact-form__button" value="Сохранить" >
-                        </div>
-                    </form>
-                </div>
-                <div class="tabs__item" id="tab_4">
-                    <form class="row g-3" method="POST" action="create/" id="tg">
-                        {% csrf_token %}
-                        <div class="col-md-2">
-                            <label for="inputDate" class="form-label">Дата</label>
-                            <input type="date" class="form-control" id="inputDate" name="date_task">
-                        </div>
-                        <div class="col-md-2">
-                            <label for="inputTime" class="form-label">Время</label>
-                            <input type="time" class="form-control" id="inputTime" name="time_task">
-                        </div>
-                        <div class="col-md-7">
-                            <label for="inputText" class="form-label">Задача</label>
-                            <textarea class="form-control" id="inputText" name="text_task" rows="1" cols="45" placeholder="Укажите что нужно сделать исполнителю"></textarea>
-                        </div>
-                        <div class="col-md-4 inputObject4">
-                            <label for="inputObject" class="form-label">Объект</label>
-                            <input id="inputObject" list="character" class="form-control" name="object_task">
-                            <datalist id="character">
-                                {% for address in counterparty %}
-                                    <option value="{{ address.name }} / ({{ address.work_name }})">Название: {{ address.name }} ({{ address.work_name }}) - тип: {{ address.type }}</option>
-                                {% endfor %}
-                            </datalist>
-                        </div>
-                        <div class="col-md-2">
-                            <label for="inputEmployee" class="form-label">Исполнитель</label>
-                            <select class="form-select" id="inputEmployee" name="employee_task">
-                                {% for user in users %}
-                                    <option value="{{ user.first_name }} {{ user.last_name }}">{{ user.first_name }} {{ user.last_name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label for="inputUrgency" class="form-label">Приоритет</label>
-                            <select class="form-select" id="inputUrgency" name="urgency_task">
-                                <option value="Срочно, важно">Срочно, важно</option>
-                                <option value="Срочно, не важно">Срочно, не важно</option>
-                                <option value="Не срочно, важно">Не срочно, важно</option>
-                                <option value="Не срочно, не важно">Не срочно, не важно</option>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label for="inputLine" class="form-label">Сроки выполнения</label>
-                            <input type="date" class="form-control" id="inputLine" name="line_task">
-                        </div>
-                        <div class="col-md-8 form-check form-switch">
-                            <label for="inputBusinessTrip" class="form-label">Командировка</label>
-                            <input type="checkbox" class="form-check-input" id="inputBusinessTrip" onchange="checkFluency1()" name="business_trip" value="Не командировка">
-                        </div>
-                        <script src="{% static "js/switch_busines_trip.js" %}"></script>
-                        <div class="col-md-2" style="display: none">
-                            <label for="inputType" class="form-label">Тип работы</label>
-                            <input type="text" class="form-control" id="inputType" name="type_task" value="РПС">
-                        </div>
-                        <div class="col-12">
-                            <input type="submit" name="sun" class="btn btn-outline-primary contact-form__button" value="Сохранить" >
-                        </div>
-                    </form>
-                </div>
-                <div class="tabs__item" id="tab_5">
-                    <form class="row g-3" method="POST" action="create/" id="tg">
-                        {% csrf_token %}
-                        <div class="col-md-2">
-                            <label for="inputDate" class="form-label">Дата</label>
-                            <input type="date" class="form-control" id="inputDate" name="date_task">
-                        </div>
-                        <div class="col-md-2">
-                            <label for="inputTime" class="form-label">Время</label>
-                            <input type="time" class="form-control" id="inputTime" name="time_task">
-                        </div>
-                        <div class="col-md-7">
-                            <label for="inputText" class="form-label">Задача</label>
-                            <textarea class="form-control" id="inputText" name="text_task" rows="1" cols="45" placeholder="Укажите что нужно сделать исполнителю"></textarea>
-                        </div>
-                        <div class="col-md-4 inputObject5">
-                            <label for="inputObject" class="form-label">Объект</label>
-                            <input id="inputObject" list="character" class="form-control" name="object_task">
-                            <datalist id="character">
-                                {% for address in counterparty %}
-                                    <option value="{{ address.name }} / ({{ address.work_name }})">Название: {{ address.name }} ({{ address.work_name }}) - тип: {{ address.type }}</option>
-                                {% endfor %}
-                            </datalist>
-                        </div>
-                        <div class="col-md-2">
-                            <label for="inputEmployee" class="form-label">Исполнитель</label>
-                            <select class="form-select" id="inputEmployee" name="employee_task">
-                                {% for user in users %}
-                                    <option value="{{ user.first_name }} {{ user.last_name }}">{{ user.first_name }} {{ user.last_name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label for="inputUrgency" class="form-label">Приоритет</label>
-                            <select class="form-select" id="inputUrgency" name="urgency_task">
-                                <option value="Срочно, важно">Срочно, важно</option>
-                                <option value="Срочно, не важно">Срочно, не важно</option>
-                                <option value="Не срочно, важно">Не срочно, важно</option>
-                                <option value="Не срочно, не важно">Не срочно, не важно</option>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label for="inputLine" class="form-label">Сроки выполнения</label>
-                            <input type="date" class="form-control" id="inputLine" name="line_task">
-                        </div>
-                        <div class="col-md-8 form-check form-switch">
-                            <label for="inputBusinessTrip" class="form-label">Командировка</label>
-                            <input type="checkbox" class="form-check-input" id="inputBusinessTrip" onchange="checkFluency1()" name="business_trip" value="Не командировка">
-                        </div>
-                        <script src="{% static "js/switch_busines_trip.js" %}"></script>
-                        <div class="col-md-2" style="display: none">
-                            <label for="inputType" class="form-label">Тип работы</label>
-                            <input type="text" class="form-control" id="inputType" name="type_task" value="ПНР">
-                        </div>
-                        <div class="col-12">
-                            <input type="submit" name="sun" class="btn btn-outline-primary contact-form__button" value="Сохранить" >
-                        </div>
-                    </form>
-                </div>
-                <div class="tabs__item" id="tab_6">
-                    <form class="row g-3" method="POST" action="create/" id="tg">
-                        {% csrf_token %}
-                        <div class="col-md-2">
-                            <label for="inputDate" class="form-label">Дата</label>
-                            <input type="date" class="form-control" id="inputDate" name="date_task">
-                        </div>
-                        <div class="col-md-2">
-                            <label for="inputTime" class="form-label">Время</label>
-                            <input type="time" class="form-control" id="inputTime" name="time_task">
-                        </div>
-                        <div class="col-md-7">
-                            <label for="inputText" class="form-label">Задача</label>
-                            <textarea class="form-control" id="inputText" name="text_task" rows="1" cols="45" placeholder="Укажите что нужно сделать исполнителю"></textarea>
-                        </div>
-                        <div class="col-md-2">
-                            <label for="inputEmployee" class="form-label">Исполнитель</label>
-                            <select class="form-select" id="inputEmployee" name="employee_task">
-                                {% for user in users %}
-                                    <option value="{{ user.first_name }} {{ user.last_name }}">{{ user.first_name }} {{ user.last_name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label for="inputUrgency" class="form-label">Приоритет</label>
-                            <select class="form-select" id="inputUrgency" name="urgency_task">
-                                <option value="Срочно, важно">Срочно, важно</option>
-                                <option value="Срочно, не важно">Срочно, не важно</option>
-                                <option value="Не срочно, важно">Не срочно, важно</option>
-                                <option value="Не срочно, не важно">Не срочно, не важно</option>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label for="inputLine" class="form-label">Сроки выполнения</label>
-                            <input type="date" class="form-control" id="inputLine" name="line_task">
-                        </div>
-                        <div class="col-md-8 form-check form-switch" style="display: none">
-                            <label for="inputBusinessTrip2" class="form-label">Командировка</label>
-                            <input type="checkbox" class="form-check-input" id="inputBusinessTrip2" onchange="checkFluency3()" name="business_trip" value="Не командировка">
-                        </div>
-                        <script src="{% static "js/switch_busines_trip.js" %}"></script>
-                        <div class="col-md-2" style="display: none">
-                            <label for="inputType" class="form-label">Тип работы</label>
-                            <input type="text" class="form-control" id="inputType" name="type_task" value="">
-                        </div>
-                        <div class="col-md-2" style="display: none">
-                            <label for="inputAddress" class="form-label">Тип работы</label>
-                            <input type="text" class="form-control" id="inputAddress" name="address_task" value="Офис ЭРТЕЛ">
-                        </div>
-                        <div class="col-12">
-                            <input type="submit" name="sun" class="btn btn-outline-primary contact-form__button" value="Сохранить" >
-                        </div>
-                    </form>
-                </div>
-            </div>
+    <br>
+    <div style="text-align: center;"><h1>Постановка задач</h1></div>
+    <br>
+    <form class="row g-3" method="POST" action="create/" id="tg">
+        {% csrf_token %}
+        <div class="col-md-2">
+            <label for="inputDate" class="form-label">Дата</label>
+            <input type="date" class="form-control" id="inputDate" name="date_task">
         </div>
-        <script src="{% static "js/tabs.js" %}"></script>
-        <br>
-        <hr>
-        <div style="text-align: center;"><h1>Фильтр данных</h1></div>
-        <form class="row g-3" method="get" action="">
-            <div class="col-md-3">
-                <label for="{{ form.employee_task.id_for_label }}">Исполнитель</label>
-                {{ form.employee_task }}
-            </div>
-            <div class="col-md-3">
-                <label for="{{ form.status_task.id_for_label }}">Статус выполнения</label>
-                {{ form.status_task }}
-            </div>
-            <div class="col-md-3">
-                <label for="{{ form.type_task.id_for_label }}">Тип задачи</label>
-                {{ form.type_task }}
-            </div>
-            <div class="col-md-3">
-                <label for="{{ form.business_trip.id_for_label }}">Отношение к командировке</label>
-                {{ form.business_trip }}
-            </div>
-            <div class="col-md-3">
-                <label for="{{ form.start_date.id_for_label }}">Начало периода даты постановки задач</label>
-                {{ form.start_date }}
-            </div>
-            <div class="col-md-3">
-                <label for="{{ form.end_date.id_for_label }}">Конец периода даты постановки задач</label>
-                {{ form.end_date }}
-            </div>
-            <div class="col-12">
-                <input type="submit" name="sun" class="btn btn-outline-primary contact-form__button" value="Поиск" >
-            </div>
-        </form>
-        <hr>
-        {% block tasks %}
-        {% endblock %}
-    {% else %}
-            <p>Войдите в систему</p>
-            <a class="btn btn-outline-primary" href="{% url 'login' %}" role="button">Войти</a>
-    {% endif %}
-    {% block content %}
-    {% endblock content %}
-    <script src="{% static "js/autho_size_textarea.js" %}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js" integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.min.js" integrity="sha384-kjU+l4N0Yf4ZOJErLsIcvOU2qSb74wXpOhqTvwVx3OElZRweTnQ6d31fXEoRD1Jy" crossorigin="anonymous"></script>
-    </div>
+        <div class="col-md-2">
+            <label for="inputTime" class="form-label">Время</label>
+            <input type="time" class="form-control" id="inputTime" name="time_task">
+        </div>
+        <div class="col-md-4">
+            <label for="inputText" class="form-label">Задача</label>
+            <textarea class="form-control" id="inputText" name="text_task" rows="1" cols="45"
+                      placeholder="Укажите что нужно сделать исполнителю"></textarea>
+        </div>
+        <div class="col-md-2">
+            <label for="inputType" class="form-label">Тип работы</label>
+            <select class="form-select" id="inputType" name="type_task">
+                {% for work in type_work %}
+                    <option value="{{ work.name }}">{{ work.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-4 inputObject1">
+            <label for="inputObject" class="form-label">Объект</label>
+            <input id="inputObject" list="character" class="form-control" name="object_task">
+            <datalist id="character">
+                {% for address in counterparty %}
+                    <option value="{{ address.name }} / ({{ address.work_name }})">Название: {{ address.name }}
+                        ({{ address.work_name }}) - тип: {{ address.type }}</option>
+                {% endfor %}
+            </datalist>
+        </div>
+        <div class="col-md-2">
+            <label for="inputEmployee" class="form-label">Исполнитель</label>
+            <select class="form-select" id="inputEmployee" name="employee_task">
+                {% for user in users %}
+                    <option value="{{ user.first_name }} {{ user.last_name }}">{{ user.first_name }} {{ user.last_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label for="inputUrgency" class="form-label">Приоритет</label>
+            <select class="form-select" id="inputUrgency" name="urgency_task">
+                <option value="Срочно, важно">Срочно, важно</option>
+                <option value="Срочно, не важно">Срочно, не важно</option>
+                <option value="Не срочно, важно">Не срочно, важно</option>
+                <option value="Не срочно, не важно">Не срочно, не важно</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label for="inputLine" class="form-label">Сроки выполнения</label>
+            <input type="date" class="form-control" id="inputLine" name="line_task">
+        </div>
+        <div class="col-md-8 form-check form-switch">
+            <label for="inputBusinessTrip" class="form-label">Командировка</label>
+            <input type="checkbox" class="form-check-input" id="inputBusinessTrip" onchange="checkFluency1()"
+                   name="business_trip" value="Не командировка">
+        </div>
+        <script src="{% static "js/switch_busines_trip.js" %}"></script>
+        <div class="col-12">
+            <input type="submit" name="sun" class="btn btn-outline-primary contact-form__button" value="Сохранить">
+        </div>
+    </form>
+    <script src="{% static "js/tabs.js" %}"></script>
+    <br>
+    <hr>
+    <div style="text-align: center;"><h1>Фильтр данных</h1></div>
+    <form class="row g-3" method="get" action="">
+        <div class="col-md-3">
+            <label for="{{ form.employee_task.id_for_label }}">Исполнитель</label>
+            {{ form.employee_task }}
+        </div>
+        <div class="col-md-3">
+            <label for="{{ form.status_task.id_for_label }}">Статус выполнения</label>
+            {{ form.status_task }}
+        </div>
+        <div class="col-md-3">
+            <label for="{{ form.type_task.id_for_label }}">Тип задачи</label>
+            {{ form.type_task }}
+        </div>
+        <div class="col-md-3">
+            <label for="{{ form.business_trip.id_for_label }}">Отношение к командировке</label>
+            {{ form.business_trip }}
+        </div>
+        <div class="col-md-3">
+            <label for="{{ form.start_date.id_for_label }}">Начало периода даты постановки задач</label>
+            {{ form.start_date }}
+        </div>
+        <div class="col-md-3">
+            <label for="{{ form.end_date.id_for_label }}">Конец периода даты постановки задач</label>
+            {{ form.end_date }}
+        </div>
+        <div class="col-12">
+            <input type="submit" name="sun" class="btn btn-outline-primary contact-form__button" value="Поиск">
+        </div>
+    </form>
+    <hr>
+    {% block tasks %}
+    {% endblock %}
+{% else %}
+    <div class="container-fluid">
+    <p>Войдите в систему</p>
+    <a class="btn btn-outline-primary" href="{% url 'login' %}" role="button">Войти</a>
+{% endif %}
+{% block content %}
+{% endblock content %}
+</div>
+<script src="{% static "js/autho_size_textarea.js" %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js"
+        integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.min.js"
+        integrity="sha384-kjU+l4N0Yf4ZOJErLsIcvOU2qSb74wXpOhqTvwVx3OElZRweTnQ6d31fXEoRD1Jy"
+        crossorigin="anonymous"></script>
+</div>
 </body>
 </html>

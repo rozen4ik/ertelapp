@@ -30,31 +30,7 @@ class TaskService(Service):
             task.business_trip = "Не командировка"
         elif business_trip:
             task.business_trip = "Командировка"
-        type_task = request.POST.get("type_task")
-        if not type_task:
-            task.type_task = "Офис"
-            task.address_obj_task = "Москва, Бумажный пр., д. 14, корп. 1, офис 313"
-            task.object_task = "Офис Эртел"
-        elif type_task == "ГР":
-            task.type_task = "Гарантийные работы"
-            address_obj_task = Counterparty.objects.get(name=task.object_task.split("/")[0].strip())
-            task.address_obj_task = address_obj_task.address
-        elif type_task == "ТО":
-            task.type_task = "Ежемесячное ТО"
-            address_obj_task = Counterparty.objects.get(name=task.object_task.split("/")[0].strip())
-            task.address_obj_task = address_obj_task.address
-        elif type_task == "МР":
-            task.type_task = "Монтажные работы"
-            address_obj_task = Counterparty.objects.get(name=task.object_task.split("/")[0].strip())
-            task.address_obj_task = address_obj_task.address
-        elif type_task == "РПС":
-            task.type_task = "Работы по счёту"
-            address_obj_task = Counterparty.objects.get(name=task.object_task.split("/")[0].strip())
-            task.address_obj_task = address_obj_task.address
-        elif type_task == "ПНР":
-            task.type_task = "Пусконаладочные работы"
-            address_obj_task = Counterparty.objects.get(name=task.object_task.split("/")[0].strip())
-            task.address_obj_task = address_obj_task.address
+        task.type_task = request.POST.get("type_task")
         task.save()
 
     def create_task(self, request):

@@ -9,7 +9,7 @@ from django.shortcuts import render
 
 from counterparty.models import Counterparty
 from .forms import *
-from .models import Task
+from .models import Task, TypeWork
 from .services.task_service import TaskService
 
 # Словарь полей, по которым фильтруются данные таблицы Task
@@ -21,6 +21,7 @@ task_service = TaskService()
 def index(request):
     page_number = request.GET.get("page")
     task = task_service.get_objects_all(Task)
+    type_work = task_service.get_objects_all(TypeWork)
     counterparty = task_service.get_objects_all(Counterparty)
     users = task_service.get_objects_all(User).select_related('profile')
 
@@ -53,7 +54,7 @@ def index(request):
                                           Q(author_task=storekeeper_user) |
                                           Q(author_task=dispatcher_user)).order_by("-id")
     director_tts_task = Task.objects.filter(author_task=director_tts_user).order_by("-id")
-    manage_task= Task.objects.filter(author_task=manage_user).order_by("-id")
+    manage_task = Task.objects.filter(author_task=manage_user).order_by("-id")
 
     form = TaskFilter(request.GET)
     if form.is_valid():
@@ -120,7 +121,8 @@ def index(request):
     dict_task = {
         "users": users,
         "form": form,
-        "counterparty": counterparty
+        "counterparty": counterparty,
+        "type_work": type_work
     }
 
     # Показ задач в зависимости от должности
@@ -222,11 +224,13 @@ def edit(request, id):
         task = task_service.get_object_deatil(Task, id)
         users = task_service.get_objects_all(User).select_related('profile')
         counterparty = task_service.get_objects_all(Counterparty)
+        type_work = task_service.get_objects_all(TypeWork)
 
         data = {
             "task": task,
             "users": users,
-            "counterparty": counterparty
+            "counterparty": counterparty,
+            "type_work": type_work
         }
 
         if request.method == "POST":

@@ -33,6 +33,7 @@ def index(request):
     storekeeper_user = task_service.create_user_roles(8)
     dispatcher_user = task_service.create_user_roles(10)
     director_tts_user = task_service.create_user_roles(15)
+    manage_user = task_service.create_user_roles(4)
 
     engineering_task = Task.objects.filter(Q(author_task=eng_user) |
                                            Q(author_task=technical_user) |
@@ -52,6 +53,7 @@ def index(request):
                                           Q(author_task=storekeeper_user) |
                                           Q(author_task=dispatcher_user)).order_by("-id")
     director_tts_task = Task.objects.filter(author_task=director_tts_user).order_by("-id")
+    manage_task= Task.objects.filter(author_task=manage_user).order_by("-id")
 
     form = TaskFilter(request.GET)
     if form.is_valid():
@@ -65,6 +67,7 @@ def index(request):
             storekeeper_task = storekeeper_task.filter(employee_task=form.cleaned_data["employee_task"])
             dispatcher_task = dispatcher_task.filter(employee_task=form.cleaned_data["employee_task"])
             director_tts_task = director_tts_task.filter(employee_task=form.cleaned_data["employee_task"])
+            manage_task = manage_task.filter(employee_task=form.cleaned_data["employee_task"])
         if form.cleaned_data["status_task"]:
             task = task.filter(status_task=form.cleaned_data["status_task"])
             engineering_task = engineering_task.filter(status_task=form.cleaned_data["status_task"])
@@ -75,6 +78,7 @@ def index(request):
             storekeeper_task = storekeeper_task.filter(status_task=form.cleaned_data["status_task"])
             dispatcher_task = dispatcher_task.filter(status_task=form.cleaned_data["status_task"])
             director_tts_task = director_tts_task.filter(status_task=form.cleaned_data["status_task"])
+            manage_task = manage_task.filter(employee_task=form.cleaned_data["status_task"])
         if form.cleaned_data["type_task"]:
             task = task.filter(type_task=form.cleaned_data["type_task"])
             engineering_task = engineering_task.filter(type_task=form.cleaned_data["type_task"])
@@ -85,6 +89,7 @@ def index(request):
             storekeeper_task = storekeeper_task.filter(type_task=form.cleaned_data["type_task"])
             dispatcher_task = dispatcher_task.filter(type_task=form.cleaned_data["type_task"])
             director_tts_task = director_tts_task.filter(type_task=form.cleaned_data["type_task"])
+            manage_task = manage_task.filter(employee_task=form.cleaned_data["type_task"])
         if form.cleaned_data["business_trip"]:
             task = task.filter(business_trip=form.cleaned_data["business_trip"])
             engineering_task = engineering_task.filter(business_trip=form.cleaned_data["business_trip"])
@@ -95,6 +100,7 @@ def index(request):
             storekeeper_task = storekeeper_task.filter(business_trip=form.cleaned_data["business_trip"])
             dispatcher_task = dispatcher_task.filter(business_trip=form.cleaned_data["business_trip"])
             director_tts_task = director_tts_task.filter(business_trip=form.cleaned_data["business_trip"])
+            manage_task = manage_task.filter(employee_task=form.cleaned_data["business_trip"])
         if form.cleaned_data["start_date"] and form.cleaned_data["end_date"]:
             task = task.filter(date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
             engineering_task = engineering_task.filter(date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
@@ -105,6 +111,7 @@ def index(request):
             storekeeper_task = storekeeper_task.filter(date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
             dispatcher_task = dispatcher_task.filter(date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
             director_tts_task = director_tts_task.filter(date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
+            manage_task = manage_task.filter(date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
 
     global filter_task
     filter_task = form.cleaned_data
@@ -190,6 +197,14 @@ def index(request):
             }
             data_task.update(dict_task)
             return render(request, "task/role/director_tts_task.html", data_task)
+        case manage_user.user.username:
+            page_m = task_service.paginator(manage_task, page_number)
+            data_task = {
+                "manage_task": manage_task,
+                "page_m": page_m
+            }
+            data_task.update(dict_task)
+            return render(request, "task/role/manage_task.html", data_task)
         case _:
             return render(request, "task/role/no_access.html")
 

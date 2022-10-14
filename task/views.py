@@ -119,7 +119,6 @@ def index(request):
     print(filter_task)
 
     dict_task = {
-        "users": users,
         "form": form,
         "counterparty": counterparty,
         "type_work": type_work
@@ -129,81 +128,112 @@ def index(request):
     match request.user.username:
         case director_user.user.username:
             page_m = task_service.paginator(task, page_number)
+            users = task_service.get_objects_all(User).select_related('profile')
             data_task = {
                 "task": task,
-                "page_m": page_m
+                "page_m": page_m,
+                "users": users,
             }
             data_task.update(dict_task)
             return render(request, "task/tasks.html", data_task)
         case eng_user.user.username:
             page_m = task_service.paginator(engineering_task, page_number)
+            users = User.objects.filter(Q(profile__position_dep_id=3) | Q(profile__position_dep_id=5) |
+                                        Q(profile__position_dep_id=6) | Q(profile__position_dep_id=7) |
+                                        Q(profile__position_dep_id=10) | Q(profile__position_dep_id=12) |
+                                        Q(profile__position_dep_id=16) | Q(profile__position_dep_id=8))
             data_task = {
                 "engineering_task": engineering_task,
-                "page_m": page_m
+                "page_m": page_m,
+                "users": users
             }
             data_task.update(dict_task)
             return render(request, "task/role/engineering_task.html", data_task)
         case sales_user.user.username:
             page_m = task_service.paginator(sales_task, page_number)
+            users = User.objects.filter(Q(profile__position_dep_id=2) | Q(profile__position_dep_id=4) |
+                                        Q(profile__position_dep_id=8) | Q(profile__position_dep_id=9))
             data_task = {
                 "sales_task": sales_task,
-                "page_m": page_m
+                "page_m": page_m,
+                "users": users
             }
             data_task.update(dict_task)
             return render(request, "task/role/sales_task.html", data_task)
         case technical_user.user.username:
             page_m = task_service.paginator(technical_task, page_number)
+            users = User.objects.filter(Q(profile__position_dep_id=3) | Q(profile__position_dep_id=5) |
+                                        Q(profile__position_dep_id=6) | Q(profile__position_dep_id=7) |
+                                        Q(profile__position_dep_id=10) | Q(profile__position_dep_id=12) |
+                                        Q(profile__position_dep_id=16) | Q(profile__position_dep_id=8))
             data_task = {
                 "technical_task": technical_task,
-                "page_m": page_m
+                "page_m": page_m,
+                "users": users
             }
             data_task.update(dict_task)
             return render(request, "task/role/technical_task.html", data_task)
         case accounting_user.user.username:
             page_m = task_service.paginator(accounting_task, page_number)
+            users = User.objects.all().select_related('profile')
             data_task = {
                 "accounting_task": accounting_task,
-                "page_m": page_m
+                "page_m": page_m,
+                "users": users
             }
             data_task.update(dict_task)
             return render(request, "task/role/accounting_task.html", data_task)
         case personnel_user.user.username:
             page_m = task_service.paginator(personnel_task, page_number)
+            users = User.objects.all().select_related('profile')
             data_task = {
                 "personnel_task": personnel_task,
-                "page_m": page_m
+                "page_m": page_m,
+                "users": users
             }
             data_task.update(dict_task)
             return render(request, "task/role/personnel_task.html", data_task)
         case storekeeper_user.user.username:
             page_m = task_service.paginator(storekeeper_task, page_number)
+            users = User.objects.all().select_related('profile')
             data_task = {
                 "storekeeper_task": storekeeper_task,
-                "page_m": page_m
+                "page_m": page_m,
+                "users": users
             }
             data_task.update(dict_task)
             return render(request, "task/role/storekeeper_task.html", data_task)
         case dispatcher_user.user.username:
             page_m = task_service.paginator(dispatcher_task, page_number)
+            users = User.objects.filter(Q(profile__position_dep_id=3) | Q(profile__position_dep_id=5) |
+                                        Q(profile__position_dep_id=6) | Q(profile__position_dep_id=7) |
+                                        Q(profile__position_dep_id=10) | Q(profile__position_dep_id=12) |
+                                        Q(profile__position_dep_id=16) | Q(profile__position_dep_id=8))
             data_task = {
                 "dispatcher_task": dispatcher_task,
-                "page_m": page_m
+                "page_m": page_m,
+                "users": users
             }
             data_task.update(dict_task)
             return render(request, "task/role/dispatcher_task.html", data_task)
         case director_tts_user.user.username:
             page_m = task_service.paginator(director_tts_task, page_number)
+            users = User.objects.all().select_related('profile')
             data_task = {
                 "director_tts_task": director_tts_task,
-                "page_m": page_m
+                "page_m": page_m,
+                "users": users
             }
             data_task.update(dict_task)
             return render(request, "task/role/director_tts_task.html", data_task)
         case manage_user.user.username:
             page_m = task_service.paginator(manage_task, page_number)
+            users = User.objects.filter(Q(profile__position_dep_id=2) | Q(profile__position_dep_id=4) |
+                                        Q(profile__position_dep_id=8) | Q(profile__position_dep_id=9))
             data_task = {
                 "manage_task": manage_task,
-                "page_m": page_m
+                "page_m": page_m,
+                "users": users
             }
             data_task.update(dict_task)
             return render(request, "task/role/manage_task.html", data_task)

@@ -1,12 +1,23 @@
 from django import forms
 from django.contrib.auth.models import User
-
+from counterparty.models import Counterparty
+from task.models import TypeWork
 
 u = User.objects.all()
+ty = TypeWork.objects.all()
+ct = Counterparty.objects.all()
 full_name_t = [("", "")]
+type_t = [("", "")]
+counterparty_t = [("", "")]
 
 for f in u:
     full_name_t.append((f"{f.first_name} {f.last_name}", f"{f.first_name} {f.last_name}"))
+
+for t in ty:
+    type_t.append((f"{t.name}", f"{t.name}"))
+
+for c in ct:
+    counterparty_t.append((f"{c.name} / ({c.work_name})", f"{c.name} / ({c.work_name})"))
 
 status_t = [
     ("", ""),
@@ -14,15 +25,7 @@ status_t = [
     ("Выполняется", "Выполняется"),
     ("Выполнено", "Выполнено")
 ]
-type_t = [
-    ("", ""),
-    ("Гарантийные работы", "Гарантийные работы"),
-    ("Ежемесячное ТО", "Ежемесячное ТО"),
-    ("Монтажные работы", "Монтажные работы"),
-    ("Работы по счёту", "Работы по счёту"),
-    ("Пусконаладочные работы", "Пусконаладочные работы"),
-    ("Офис", "Офис")
-]
+
 business_t = [
     ("", ""),
     ("Не командировка", "Не командировка"),
@@ -59,6 +62,16 @@ class TaskFilter(forms.Form):
             }
         ),
         choices=type_t
+    )
+
+    object_task = forms.ChoiceField(
+        required=False,
+        widget=forms.Select(
+            attrs={
+                "class": "form-select"
+            }
+        ),
+        choices=counterparty_t
     )
 
     business_trip = forms.ChoiceField(

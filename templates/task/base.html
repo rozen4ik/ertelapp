@@ -118,6 +118,10 @@
             {{ form.type_task }}
         </div>
         <div class="col-md-3">
+            <label for="{{ form.object_task.id_for_label }}">Контрагент</label>
+            {{ form.object_task }}
+        </div>
+        <div class="col-md-3">
             <label for="{{ form.business_trip.id_for_label }}">Отношение к командировке</label>
             {{ form.business_trip }}
         </div>

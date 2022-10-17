@@ -92,6 +92,7 @@ def index(request):
             director_tts_task = director_tts_task.filter(type_task=form.cleaned_data["type_task"])
             manage_task = manage_task.filter(type_task=form.cleaned_data["type_task"])
         if form.cleaned_data["object_task"]:
+            task = task.filter(object_task=form.cleaned_data["object_task"])
             engineering_task = engineering_task.filter(object_task=form.cleaned_data["object_task"])
             sales_task = sales_task.filter(object_task=form.cleaned_data["object_task"])
             technical_task = technical_task.filter(object_task=form.cleaned_data["object_task"])

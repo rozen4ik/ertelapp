@@ -38,15 +38,23 @@
     <div style="text-align: center;"><h1>Сформировать отчёты</h1></div>
     <br>
     <div class="container-fluid">
-{#    <a href="{% url 'reports_emp' %}" class="btn btn-primary">Выбрать для отчёта по сотрудникам</a>#}
-{#    <br>#}
-{#    <br>#}
+    <a href="{% url 'reports' %}" class="btn btn-primary">Выбрать для отчёта по контрагентам</a>
+    <br>
+    <br>
     <form class="row g-3" method="get" action="">
         {% csrf_token %}
-        <h3>Выбрать для отчёта по контрагентам</h3>
+        <h3>Выбрать для отчёта по сотрудникам</h3>
         <div class="col-md-3">
-            <label for="{{ reports_form.object_task.id_for_label }}">Контрагент</label>
-            {{ reports_form.object_task }}
+            <label for="{{ rep_emp_form.employee_task.id_for_label }}">Сотрудник</label>
+            {{ rep_emp_form.employee_task }}
+        </div>
+        <div class="col-md-3">
+            <label for="{{ rep_emp_form.start_date.id_for_label }}">Начало периода даты постановки задач</label>
+            {{ rep_emp_form.start_date }}
+        </div>
+        <div class="col-md-3">
+            <label for="{{ rep_emp_form.end_date.id_for_label }}">Конец периода даты постановки задач</label>
+            {{ rep_emp_form.end_date }}
         </div>
         <div class="col-12">
             <input type="submit" name="sun" class="btn btn-outline-primary contact-form__button"
@@ -54,11 +62,11 @@
         </div>
     </form>
     <br>
-    {% if fo != "yes" %}
-        <div id="cont" style="display: none">
+    {% if em != yes %}
+        <div id="em" style="display: none">
     {% else %}
-        <div id="cont">
-            {% block con %}
+        <div id="em">
+            {% block emp %}
             {% endblock %}
         </div>
     {% endif %}

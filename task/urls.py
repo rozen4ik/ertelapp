@@ -6,7 +6,8 @@ urlpatterns = [
     path("", views.index),
     path("create/", views.create),
     path("edit/<int:id>/", views.edit, name="edit"),
-    path("reports/", views.reports),
+    path("reports/", views.reports, name="reports"),
+    path("reports_emp/", views.rep_emp, name="reports_emp"),
     path("export_excel", views.export_employee, name="export-employee"),
     path("export_counterparty", views.export_counterparty, name="export-counterparty")
 ]

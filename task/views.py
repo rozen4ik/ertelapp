@@ -5,6 +5,8 @@ from django.http import HttpResponse
 from django.http import HttpResponseNotFound
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+
+from work_task.models import WorkTask
 from .forms import *
 from .models import Task, TypeWork
 from .services.task_service import TaskService
@@ -296,12 +298,15 @@ def reports(request):
     counterparty = Counterparty.objects.all()
     users = User.objects.all().select_related('profile')
     fo = ""
+    em = ""
     global filter_cont
     print(filter_cont)
 
     reports_form = ReportsContFilter(request.GET)
+    rep_emp_form = ReportsEmployFilter(request.GET)
 
     task_cont = Task.objects.all().order_by("-id")
+
     if reports_form.is_valid():
         if reports_form.cleaned_data["object_task"]:
             print(reports_form.cleaned_data["object_task"])
@@ -322,6 +327,37 @@ def reports(request):
         }
 
         return render(request, "task/rep/counterparty.html", data)
+
+
+def rep_emp(request):
+    rep_emp_form = ReportsEmployFilter(request.GET)
+    users = User.objects.all().select_related('profile')
+    task_emp = Task.objects.all()
+    work = WorkTask.objects.all()
+    up_work = WorkTask.objects.all()
+    start_d = ""
+    end_d = ""
+    if rep_emp_form.is_valid():
+        if rep_emp_form.cleaned_data["employee_task"]:
+            task_emp = task_emp.filter(employee_task=rep_emp_form.cleaned_data["employee_task"])
+        if rep_emp_form.cleaned_data["start_date"] and rep_emp_form.cleaned_data["end_date"]:
+            start_d = rep_emp_form.cleaned_data["start_date"]
+            end_d = rep_emp_form.cleaned_data["end_date"]
+
+        task_emp = task_emp.filter(date_task__range=(start_d, end_d))
+
+        # for w in work:
+        #     for t in task_emp:
+        #         pass
+
+        em = "yes"
+        data = {
+            "rep_emp_form": rep_emp_form,
+            "users": users,
+            "em": em
+        }
+
+        return render(request, "task/reports_epm.html", data)
 
 
 # Реализация экспорта данных в excel таблицы Task

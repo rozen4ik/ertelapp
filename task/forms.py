@@ -103,3 +103,15 @@ class TaskFilter(forms.Form):
             },
         )
     )
+
+
+class ReportsContFilter(forms.Form):
+    object_task = forms.ChoiceField(
+        required=False,
+        widget=forms.Select(
+            attrs={
+                "class": "form-select"
+            }
+        ),
+        choices=counterparty_t
+    )

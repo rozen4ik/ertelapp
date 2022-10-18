@@ -3,17 +3,19 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Учет рабочего времени</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
 </head>
 <body>
 {% if user.is_authenticated %}
     <nav class="navbar navbar-fixed-top-top navbar-expand-lg navbar-dark bg-primary">
         <div class="container-fluid">
             <div class="navbar-collapse" id="navbarScroll">
-                <a class="btn btn-outline-light btn-sm" href="{% url 'logout' %}" role="button">Выйти - {{ user.first_name }} {{ user.last_name }} </a>
+                <a class="btn btn-outline-light btn-sm" href="{% url 'logout' %}" role="button">Выйти
+                    - {{ user.first_name }} {{ user.last_name }} </a>
                 <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="/">Главная</a>
@@ -24,79 +26,94 @@
                     <li class="nav-item">
                         <a class="nav-link active" href="/counterparty/">Контрагенты</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/reports/">Отчёты</a>
+                    </li>
                 </ul>
             </div>
         </div>
     </nav>
     <div class="container-fluid">
-        <br>
-        <div style="text-align: center;"><h1>Учёт рабочего времени</h1></div>
-        <a class="btn btn-primary" href="{% url 'export-excel-work-task' %}" role="button">Экспортировать в Excel</a>
-        <br>
-        <hr>
-        <form method="POST" action="create/" class="contact-form" id="tg">
-            {% csrf_token %}
-            <div class="table-responsive">
-                <table class="table table-bordered table-sm align-middle table-hover">
-                    <thead class="table-primary align-middle">
-                        <tr>
-                            <th scope="col"><label>№</label></th>
-                            <th scope="col"><label>Дата</label></th>
-                            <th scope="col"><label>Время</label></th>
-                            <th scope="col"><label>Исполнитель</label></th>
-                            <th scope="col"><label>Местонахождение</label></th>
-                            <th scope="col"><label>№ задачи</label></th>
-                            <th scope="col"><label>Статус исполнителя</label></th>
-                            <th scope="col"><label></label></th>
-                        </tr>
-                    </thead>
-                    {% for work in page_m %}
+    <br>
+    <div style="text-align: center;"><h1>Учёт рабочего времени</h1></div>
+    <a class="btn btn-primary" href="{% url 'export-excel-work-task' %}" role="button">Экспортировать в Excel</a>
+    <br>
+    <hr>
+    <form method="POST" action="create/" class="contact-form" id="tg">
+        {% csrf_token %}
+        <div class="table-responsive">
+            <table class="table table-bordered table-sm align-middle table-hover">
+                <thead class="table-primary align-middle">
+                <tr>
+                    <th scope="col"><label>№</label></th>
+                    <th scope="col"><label>Дата</label></th>
+                    <th scope="col"><label>Время</label></th>
+                    <th scope="col"><label>Исполнитель</label></th>
+                    <th scope="col"><label>Местонахождение</label></th>
+                    <th scope="col"><label>№ задачи</label></th>
+                    <th scope="col"><label>Статус исполнителя</label></th>
+                    <th scope="col"><label></label></th>
+                </tr>
+                </thead>
+                {% for work in page_m %}
                     <tbody>
-                        <tr>
-                            <th scope="row">{{ work.id }}</th>
-                            <td>{{ work.date_work_task }}</td>
-                            <td>{{ work.time_work_task }}</td>
-                            <td>{{ work.employee_work_task }}</td>
-                            <td>{{ work.address_work_task }}</td>
-                            <td>{{ work.task_id }}</td>
-                            <td>{{ work.status_work_task }}</td>
-                            <td>
-                                <div class="btn-group-vertical btn-group-sm" role="group" aria-label="Basic outlined example">
-                                    <a class="btn btn-outline-primary" href="{% url 'edit' work.task_id %}">Перейти к задаче</a>
-                                </div>
-                            </td>
-                        </tr>
+                    <tr>
+                        <th scope="row">{{ work.id }}</th>
+                        <td>{{ work.date_work_task }}</td>
+                        <td>{{ work.time_work_task }}</td>
+                        <td>{{ work.employee_work_task }}</td>
+                        <td>{{ work.address_work_task }}</td>
+                        <td>{{ work.task_id }}</td>
+                        <td>{{ work.status_work_task }}</td>
+                        <td>
+                            <div class="btn-group-vertical btn-group-sm" role="group"
+                                 aria-label="Basic outlined example">
+                                <a class="btn btn-outline-primary" href="{% url 'edit' work.task_id %}">Перейти к
+                                    задаче</a>
+                            </div>
+                        </td>
+                    </tr>
                     </tbody>
+                {% endfor %}
+            </table>
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+                    {% if page_m.has_previous %}
+                        <li class="page-item"><a class="page-link"
+                                                 href="{% spurl query=request.GET set_query='page=1' %}">&laquo;
+                            Первая</a></li>
+                    {% endif %}
+
+                    {% for pa in page_m.paginator.page_range %}
+                        {% if pa == page_m.number %}
+                            <li class="page-item"><a class="page-link active"
+                                                     href="{% spurl query=request.GET set_query='page={{ pa }}' %}">{{ pa }}</a>
+                            </li>
+                        {% elif pa >= page_m.number|add:-2 and pa <= page_m.number|add:2 %}
+                            <li class="page-item"><a class="page-link"
+                                                     href="{% spurl query=request.GET set_query='page={{ pa }}' %}">{{ pa }}</a>
+                            </li>
+                        {% endif %}
                     {% endfor %}
-                </table>
-                <nav aria-label="Page navigation example">
-                    <ul class="pagination justify-content-center">
-                        {% if page_m.has_previous %}
-                            <li class="page-item"><a class="page-link" href="{% spurl query=request.GET set_query='page=1'%}">&laquo; Первая</a></li>
-                        {% endif %}
 
-                        {% for pa in page_m.paginator.page_range %}
-                            {% if pa == page_m.number %}
-                                <li class="page-item"><a class="page-link active" href="{% spurl query=request.GET set_query='page={{ pa }}'%}">{{ pa }}</a></li>
-                            {% elif pa >= page_m.number|add:-2 and pa <= page_m.number|add:2 %}
-                                <li class="page-item"><a class="page-link" href="{% spurl query=request.GET set_query='page={{ pa }}'%}">{{ pa }}</a></li>
-                            {% endif %}
-                        {% endfor %}
-
-                        {% if page_m.has_next %}
-                            <li class="page-item"><a class="page-link" href="{% spurl query=request.GET set_query='page={{ page_m.paginator.num_pages }}'%}">Последняя &raquo;</a></li>
-                        {% endif %}
-                    </ul>
-                </nav>
-            </div>
-        </form>
-    {% else %}
-            <p>Войдите в систему</p>
-            <a class="btn btn-outline-primary" href="{% url 'login' %}" role="button">Войти</a>
-    {% endif %}
-    {% block content %}
-    {% endblock content %}
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+                    {% if page_m.has_next %}
+                        <li class="page-item"><a class="page-link"
+                                                 href="{% spurl query=request.GET set_query='page={{ page_m.paginator.num_pages }}' %}">Последняя
+                            &raquo;</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </form>
+{% else %}
+    <p>Войдите в систему</p>
+    <a class="btn btn-outline-primary" href="{% url 'login' %}" role="button">Войти</a>
+{% endif %}
+{% block content %}
+{% endblock content %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
+        crossorigin="anonymous"></script>
 </div>
 </body>
 </html>

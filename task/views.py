@@ -1,13 +1,10 @@
 import datetime
-
 import xlwt
 from django.db.models import Q
 from django.http import HttpResponse
 from django.http import HttpResponseNotFound
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-
-from counterparty.models import Counterparty
 from .forms import *
 from .models import Task, TypeWork
 from .services.task_service import TaskService
@@ -92,6 +89,7 @@ def index(request):
             director_tts_task = director_tts_task.filter(type_task=form.cleaned_data["type_task"])
             manage_task = manage_task.filter(type_task=form.cleaned_data["type_task"])
         if form.cleaned_data["object_task"]:
+            task = task.filter(object_task=form.cleaned_data["object_task"])
             engineering_task = engineering_task.filter(object_task=form.cleaned_data["object_task"])
             sales_task = sales_task.filter(object_task=form.cleaned_data["object_task"])
             technical_task = technical_task.filter(object_task=form.cleaned_data["object_task"])
@@ -114,15 +112,24 @@ def index(request):
             manage_task = manage_task.filter(business_trip=form.cleaned_data["business_trip"])
         if form.cleaned_data["start_date"] and form.cleaned_data["end_date"]:
             task = task.filter(date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
-            engineering_task = engineering_task.filter(date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
-            sales_task = sales_task.filter(date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
-            technical_task = technical_task.filter(date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
-            accounting_task = accounting_task.filter(date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
-            personnel_task = personnel_task.filter(date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
-            storekeeper_task = storekeeper_task.filter(date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
-            dispatcher_task = dispatcher_task.filter(date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
-            director_tts_task = director_tts_task.filter(date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
-            manage_task = manage_task.filter(date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
+            engineering_task = engineering_task.filter(
+                date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
+            sales_task = sales_task.filter(
+                date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
+            technical_task = technical_task.filter(
+                date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
+            accounting_task = accounting_task.filter(
+                date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
+            personnel_task = personnel_task.filter(
+                date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
+            storekeeper_task = storekeeper_task.filter(
+                date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
+            dispatcher_task = dispatcher_task.filter(
+                date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
+            director_tts_task = director_tts_task.filter(
+                date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
+            manage_task = manage_task.filter(
+                date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
 
     global filter_task
     filter_task = form.cleaned_data
@@ -282,8 +289,82 @@ def edit(request, id):
         return HttpResponseNotFound("<h2>Task not found</h2>")
 
 
+filter_cont = dict
+
+
+def reports(request):
+    counterparty = Counterparty.objects.all()
+    users = User.objects.all().select_related('profile')
+    fo = ""
+    global filter_cont
+    print(filter_cont)
+
+    reports_form = ReportsContFilter(request.GET)
+
+    task_cont = Task.objects.all().order_by("-id")
+    if reports_form.is_valid():
+        if reports_form.cleaned_data["object_task"]:
+            print(reports_form.cleaned_data["object_task"])
+            task_cont = Task.objects.filter(object_task=reports_form.cleaned_data["object_task"]).order_by("-id")
+
+        filter_cont = reports_form.cleaned_data
+        print(filter_cont)
+
+        if filter_cont != {'object_task': ''}:
+            fo = "yes"
+
+        data = {
+            "reports_form": reports_form,
+            "counterparty": counterparty,
+            "task_cont": task_cont,
+            "users": users,
+            "fo": fo
+        }
+
+        return render(request, "task/rep/counterparty.html", data)
+
+
 # Реализация экспорта данных в excel таблицы Task
-def export_excel(request):
+def export_counterparty(request):
+    response = HttpResponse(content_type="applications/ms-excel")
+    response["Content-Disposition"] = "attachment; filename=Task" + str(datetime.datetime.now()) + ".xls"
+
+    wb = xlwt.Workbook(encoding="utf-8")
+    ws = wb.add_sheet("report")
+    row_num = 0
+    font_style = xlwt.XFStyle()
+    font_style.font.bold = True
+
+    columns = [
+        "#",
+        "Контрагент",
+        "Тип работ",
+        "Задача",
+        "Исполнитель",
+        "Когда поставлена",
+        "Статус",
+        "Комментарий"
+    ]
+
+    for col_num in range(len(columns)):
+        ws.write(row_num, col_num, columns[col_num], font_style)
+
+    rows = task_service.find_reports_cont_filter(filter_cont)
+    rows = rows.order_by("-id")
+    print(rows)
+
+    for row in rows:
+        row_num += 1
+        print(row)
+        for col_num in range(len(row)):
+            ws.write(row_num, col_num, str(row[col_num]), font_style)
+
+    wb.save(response)
+
+    return response
+
+
+def export_employee(request):
     response = HttpResponse(content_type="applications/ms-excel")
     response["Content-Disposition"] = "attachment; filename=Task" + str(datetime.datetime.now()) + ".xls"
 

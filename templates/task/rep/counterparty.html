@@ -16,6 +16,7 @@
                 <th scope="col">Задача</th>
                 <th scope="col">Исполнитель</th>
                 <th scope="col">Дата постановки задачи</th>
+                <th scope="col">Дата окончания задачи</th>
                 <th scope="col">Статус выполнения</th>
                 <th scope="col">Примечания</th>
             </tr>
@@ -29,6 +30,7 @@
                     <td>{{ tasks.text_task }}</td>
                     <td>{{ tasks.employee_task }}</td>
                     <td>{{ tasks.date_task }}</td>
+                    <td>{{ tasks.line_task }}</td>
                     <td class="{{ tasks.status_task }}">{{ tasks.status_task }}</td>
                     <td>{{ tasks.note_task }}</td>
                 </tr>

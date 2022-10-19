@@ -74,6 +74,7 @@ class TaskService(Service):
             "text_task",
             "employee_task",
             "date_task",
+            "line_task",
             "status_task",
             "note_task",
         )

@@ -298,22 +298,17 @@ def reports(request):
     counterparty = Counterparty.objects.all()
     users = User.objects.all().select_related('profile')
     fo = ""
-    em = ""
     global filter_cont
-    print(filter_cont)
 
     reports_form = ReportsContFilter(request.GET)
-    rep_emp_form = ReportsEmployFilter(request.GET)
 
     task_cont = Task.objects.all().order_by("-id")
 
     if reports_form.is_valid():
         if reports_form.cleaned_data["object_task"]:
-            print(reports_form.cleaned_data["object_task"])
             task_cont = Task.objects.filter(object_task=reports_form.cleaned_data["object_task"]).order_by("-id")
 
         filter_cont = reports_form.cleaned_data
-        print(filter_cont)
 
         if filter_cont != {'object_task': ''}:
             fo = "yes"
@@ -378,6 +373,7 @@ def export_counterparty(request):
         "Задача",
         "Исполнитель",
         "Дата постановки задачи",
+        "Дата окончания задачи",
         "Статус",
         "Комментарий"
     ]

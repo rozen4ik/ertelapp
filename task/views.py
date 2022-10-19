@@ -351,28 +351,67 @@ def rep_emp(request):
         print(range_days)
         print(task_emp)
 
+        start_time = ""
+        end_time = ""
+        ub_time = ""
+        res_to_obj = ""
+        res_on_obj = ""
+
+        print("|   Дата   | Исполнитель  | Время до объекта | Время нахождения на объекте")
         for i in range(range_days):
-            print("|   Дата   | Исполнитель  |")
-            print(f"|{start_d}|{emp}|")
+            ms = f"|{start_d}|{emp}|"
             work = work.filter(employee_work_task=emp)
             for w in work:
                 if w.date_work_task == start_d:
-                    print(f"{w.status_work_task}: #: {w.task.id} {w.time_work_task}")
+                    if w.status_work_task == "Убыл на объект":
+                        start_time = w.time_work_task
+                    elif w.status_work_task == "Прибыл на объект":
+                        end_time = w.time_work_task
+                    elif w.status_work_task == "Убыл с объекта":
+                        ub_time = w.time_work_task
+                    if (start_time != "") and (end_time != ""):
+                        res_to_obj = datetime.timedelta(
+                            hours=int(str(end_time).split(":")[0]),
+                            minutes=int(str(end_time).split(":")[1]),
+                            seconds=int(str(end_time).split(":")[2])
+                        ) - datetime.timedelta(
+                            hours=int(str(start_time).split(":")[0]),
+                            minutes=int(str(start_time).split(":")[1]),
+                            seconds=int(str(start_time).split(":")[2])
+                        )
+                        # end_time = ""
+                        start_time = ""
+                        ub_time = ""
+                        ms += f"|{res_to_obj}"
+                        # print(f"|                           {res_to_obj}")
+                        res_to_obj = ""
+                    elif (end_time != "") and (ub_time != ""):
+                        res_on_obj = datetime.timedelta(
+                            hours=int(str(ub_time).split(":")[0]),
+                            minutes=int(str(ub_time).split(":")[1]),
+                            seconds=int(str(ub_time).split(":")[2])
+                        ) - datetime.timedelta(
+                            hours=int(str(end_time).split(":")[0]),
+                            minutes=int(str(end_time).split(":")[1]),
+                            seconds=int(str(end_time).split(":")[2])
+                        )
+                        end_time = ""
+                        ub_time = ""
+                        ms += f"|{res_on_obj}|"
+                        res_on_obj = ""
+            print(ms)
+            ms = ""
             one_d = datetime.timedelta(1)
             start_d += one_d
 
-        # for w in work:
-        #     for t in task_emp:
-        #         pass
+    em = "yes"
+    data = {
+        "rep_emp_form": rep_emp_form,
+        "users": users,
+        "em": em
+    }
 
-        em = "yes"
-        data = {
-            "rep_emp_form": rep_emp_form,
-            "users": users,
-            "em": em
-        }
-
-        return render(request, "task/reports_epm.html", data)
+    return render(request, "task/reports_epm.html", data)
 
 
 # Реализация экспорта данных в excel таблицы Task

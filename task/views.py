@@ -332,14 +332,34 @@ def rep_emp(request):
     up_work = WorkTask.objects.all()
     start_d = ""
     end_d = ""
+    emp = ""
+    range_days = 0
+
     if rep_emp_form.is_valid():
         if rep_emp_form.cleaned_data["employee_task"]:
             task_emp = task_emp.filter(employee_task=rep_emp_form.cleaned_data["employee_task"])
+            emp = rep_emp_form.cleaned_data["employee_task"]
         if rep_emp_form.cleaned_data["start_date"] and rep_emp_form.cleaned_data["end_date"]:
             start_d = rep_emp_form.cleaned_data["start_date"]
             end_d = rep_emp_form.cleaned_data["end_date"]
+            task_emp = task_emp.filter(date_task__range=(start_d, end_d))
 
-        task_emp = task_emp.filter(date_task__range=(start_d, end_d))
+            ed = f"{end_d:%j}"
+            sd = f"{start_d:%j}"
+            range_days = int(ed) - int(sd)
+
+        print(range_days)
+        print(task_emp)
+
+        for i in range(range_days):
+            print("|   Дата   | Исполнитель  |")
+            print(f"|{start_d}|{emp}|")
+            work = work.filter(employee_work_task=emp)
+            for w in work:
+                if w.date_work_task == start_d:
+                    print(f"{w.status_work_task}: #: {w.task.id} {w.time_work_task}")
+            one_d = datetime.timedelta(1)
+            start_d += one_d
 
         # for w in work:
         #     for t in task_emp:

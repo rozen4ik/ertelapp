@@ -1,7 +1,7 @@
-{% extends 'task/reports.html' %}
+{% extends 'task/reports_epm.html' %}
 {% load static %}
 {% load spurl %}
-{% block epm %}
+{% block emp %}
     <div class="table-responsive">
         <table id="tag" class="table table-bordered table-sm align-middle table-hover">
             <form method="POST">
@@ -10,27 +10,19 @@
             </form>
             <thead class="align-middle table-primary">
             <tr>
-                <th scope="col">id</th>
-                <th scope="col">Объект</th>
-                <th scope="col">Тип задачи</th>
-                <th scope="col">Задача</th>
-                <th scope="col">Исполнитель</th>
                 <th scope="col">Дата</th>
-                <th scope="col">Статус выполнения</th>
-                <th scope="col">Примечания</th>
+                <th scope="col">Исполнитель</th>
+                <th scope="col">Время до объекта</th>
+                <th scope="col">Время нахождения на объекте</th>
             </tr>
             </thead>
             <tbody>
-            {% for tasks in task_cont %}
-                <tr class="{% if tasks.status_task == 'Выполнено' %}table-success{% elif tasks.status_task == 'Отдано в разработку' %}table-danger{% else %}table-warning{% endif %}">
-                    <td scope="row">{{ tasks.id }}</td>
-                    <td>{{ tasks.object_task }}</td>
-                    <td>{{ tasks.type_task }}</td>
-                    <td>{{ tasks.text_task }}</td>
-                    <td>{{ tasks.employee_task }}</td>
-                    <td>{{ tasks.date_task }}</td>
-                    <td class="{{ tasks.status_task }}">{{ tasks.status_task }}</td>
-                    <td>{{ tasks.note_task }}</td>
+            {% for best in best_emp %}
+                <tr>
+                    <td scope="row">{{ best.date_be }}</td>
+                    <td>{{ best.employee_be }}</td>
+                    <td>{{ best.time_do_object }}</td>
+                    <td>{{ best.time_on_object }}</td>
                 </tr>
             {% endfor %}
             </tbody>

@@ -38,7 +38,7 @@ class TypeWork(models.Model):
 
 
 class BestEmployee(models.Model):
-    date_be = models.DateField()
+    date_be = models.DateField(blank=True, null=True)
     employee_be = models.CharField(max_length=120)
-    time_do_object = models.CharField(max_length=200)
-    time_on_object = models.CharField(max_length=200)
+    time_do_object = models.CharField(max_length=200, default="00:00:00")
+    time_on_object = models.CharField(max_length=200, default="00:00:00")

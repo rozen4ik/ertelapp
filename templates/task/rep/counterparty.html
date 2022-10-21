@@ -1,0 +1,41 @@
+{% extends 'task/reports.html' %}
+{% load static %}
+{% load spurl %}
+{% block con %}
+    <div class="table-responsive">
+        <table id="tag" class="table table-bordered table-sm align-middle table-hover">
+            <form method="POST">
+                <a class="btn btn-primary" href="{% url 'export-counterparty' %}" role="button">Скачать отчёт</a>
+                <p></p>
+            </form>
+            <thead class="align-middle table-primary">
+            <tr>
+                <th scope="col">id</th>
+                <th scope="col">Объект</th>
+                <th scope="col">Тип задачи</th>
+                <th scope="col">Задача</th>
+                <th scope="col">Исполнитель</th>
+                <th scope="col">Дата постановки задачи</th>
+                <th scope="col">Дата окончания задачи</th>
+                <th scope="col">Статус выполнения</th>
+                <th scope="col">Примечания</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for tasks in task_cont %}
+                <tr class="{% if tasks.status_task == 'Выполнено' %}table-success{% elif tasks.status_task == 'Отдано в разработку' %}table-danger{% else %}table-warning{% endif %}">
+                    <td scope="row">{{ tasks.id }}</td>
+                    <td>{{ tasks.object_task }}</td>
+                    <td>{{ tasks.type_task }}</td>
+                    <td>{{ tasks.text_task }}</td>
+                    <td>{{ tasks.employee_task }}</td>
+                    <td>{{ tasks.date_task }}</td>
+                    <td>{{ tasks.line_task }}</td>
+                    <td class="{{ tasks.status_task }}">{{ tasks.status_task }}</td>
+                    <td>{{ tasks.note_task }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

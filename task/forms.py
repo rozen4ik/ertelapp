@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from counterparty.models import Counterparty
-from task.models import TypeWork
+from task.models import TypeWork, Task
 
 u = User.objects.all()
 ty = TypeWork.objects.all()
@@ -82,6 +82,50 @@ class TaskFilter(forms.Form):
             },
         ),
         choices=business_t
+    )
+
+    start_date = forms.DateField(
+        required=False,
+        widget=forms.DateInput(
+            attrs={
+                "class": "form-control datetimepicker-input",
+                "type": "date"
+            },
+        )
+    )
+
+    end_date = forms.DateField(
+        required=False,
+        widget=forms.DateInput(
+            attrs={
+                "class": "form-control datetimepicker-input",
+                "type": "date"
+            },
+        )
+    )
+
+
+class ReportsContFilter(forms.Form):
+    object_task = forms.ChoiceField(
+        required=False,
+        widget=forms.Select(
+            attrs={
+                "class": "form-select"
+            }
+        ),
+        choices=counterparty_t
+    )
+
+
+class ReportsEmployFilter(forms.Form):
+    employee_task = forms.ChoiceField(
+        required=False,
+        widget=forms.Select(
+            attrs={
+                "class": "form-select"
+            }
+        ),
+        choices=full_name_t,
     )
 
     start_date = forms.DateField(

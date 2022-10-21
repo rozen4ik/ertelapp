@@ -1,0 +1,31 @@
+{% extends 'task/reports_epm.html' %}
+{% load static %}
+{% load spurl %}
+{% block emp %}
+    <div class="table-responsive">
+        <table id="tag" class="table table-bordered table-sm align-middle table-hover">
+            <form method="POST">
+                <a class="btn btn-primary" href="{% url 'export-employee' %}" role="button">Скачать отчёт</a>
+                <p></p>
+            </form>
+            <thead class="align-middle table-primary">
+            <tr>
+                <th scope="col">Дата</th>
+                <th scope="col">Исполнитель</th>
+                <th scope="col">Время до объекта</th>
+                <th scope="col">Время нахождения на объекте</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for best in best_emp %}
+                <tr>
+                    <td scope="row">{{ best.date_be }}</td>
+                    <td>{{ best.employee_be }}</td>
+                    <td>{{ best.time_do_object }}</td>
+                    <td>{{ best.time_on_object }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

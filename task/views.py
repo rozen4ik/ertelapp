@@ -1,5 +1,4 @@
 import datetime
-
 import xlwt
 from django.db.models import Q
 from django.http import HttpResponse
@@ -7,9 +6,9 @@ from django.http import HttpResponseNotFound
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
-from counterparty.models import Counterparty
+from work_task.models import WorkTask
 from .forms import *
-from .models import Task, TypeWork
+from .models import Task, TypeWork, BestEmployee
 from .services.task_service import TaskService
 
 # Словарь полей, по которым фильтруются данные таблицы Task
@@ -115,15 +114,24 @@ def index(request):
             manage_task = manage_task.filter(business_trip=form.cleaned_data["business_trip"])
         if form.cleaned_data["start_date"] and form.cleaned_data["end_date"]:
             task = task.filter(date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
-            engineering_task = engineering_task.filter(date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
-            sales_task = sales_task.filter(date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
-            technical_task = technical_task.filter(date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
-            accounting_task = accounting_task.filter(date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
-            personnel_task = personnel_task.filter(date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
-            storekeeper_task = storekeeper_task.filter(date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
-            dispatcher_task = dispatcher_task.filter(date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
-            director_tts_task = director_tts_task.filter(date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
-            manage_task = manage_task.filter(date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
+            engineering_task = engineering_task.filter(
+                date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
+            sales_task = sales_task.filter(
+                date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
+            technical_task = technical_task.filter(
+                date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
+            accounting_task = accounting_task.filter(
+                date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
+            personnel_task = personnel_task.filter(
+                date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
+            storekeeper_task = storekeeper_task.filter(
+                date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
+            dispatcher_task = dispatcher_task.filter(
+                date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
+            director_tts_task = director_tts_task.filter(
+                date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
+            manage_task = manage_task.filter(
+                date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
 
     global filter_task
     filter_task = form.cleaned_data
@@ -283,8 +291,174 @@ def edit(request, id):
         return HttpResponseNotFound("<h2>Task not found</h2>")
 
 
+filter_cont = dict
+
+
+def reports(request):
+    counterparty = Counterparty.objects.all()
+    users = User.objects.all().select_related('profile')
+    fo = ""
+    global filter_cont
+
+    reports_form = ReportsContFilter(request.GET)
+
+    task_cont = Task.objects.all().order_by("-id")
+
+    if reports_form.is_valid():
+        if reports_form.cleaned_data["object_task"]:
+            task_cont = Task.objects.filter(object_task=reports_form.cleaned_data["object_task"]).order_by("-id")
+
+        filter_cont = reports_form.cleaned_data
+
+        if filter_cont != {'object_task': ''}:
+            fo = "yes"
+
+        data = {
+            "reports_form": reports_form,
+            "counterparty": counterparty,
+            "task_cont": task_cont,
+            "users": users,
+            "fo": fo
+        }
+
+        return render(request, "task/rep/counterparty.html", data)
+
+
+filter_employee = dict
+
+
+def rep_emp(request):
+    rep_emp_form = ReportsEmployFilter(request.GET)
+    work = WorkTask.objects.all()
+    start_d = ""
+    end_d = ""
+    emp = ""
+    fo = ""
+    range_days = 0
+    global filter_employee
+
+    if rep_emp_form.is_valid():
+        if rep_emp_form.cleaned_data["employee_task"]:
+            emp = rep_emp_form.cleaned_data["employee_task"]
+        if rep_emp_form.cleaned_data["start_date"] and rep_emp_form.cleaned_data["end_date"]:
+            start_d = rep_emp_form.cleaned_data["start_date"]
+            end_d = rep_emp_form.cleaned_data["end_date"]
+
+            ed = f"{end_d:%j}"
+            sd = f"{start_d:%j}"
+            range_days = int(ed) - int(sd)
+
+        filter_employee = rep_emp_form.cleaned_data
+        print(filter_employee)
+
+        start_time = ""
+        end_time = ""
+        ub_time = ""
+        res_to_obj = ""
+        res_on_obj = ""
+        best_emp = BestEmployee.objects.all().delete()
+        print("|   Дата   | Исполнитель  | Время до объекта | Время нахождения на объекте")
+        for i in range(range_days):
+            best_emp = BestEmployee()
+            ms = f"{start_d}|{emp}|"
+            best_emp.date_be = start_d
+            best_emp.employee_be = emp
+            work = work.filter(employee_work_task=emp)
+            for w in work:
+                if w.date_work_task == start_d:
+                    if w.status_work_task == "Убыл на объект":
+                        start_time = w.time_work_task
+                    elif w.status_work_task == "Прибыл на объект":
+                        end_time = w.time_work_task
+                    elif w.status_work_task == "Убыл с объекта":
+                        ub_time = w.time_work_task
+                    if (start_time != "") and (end_time != ""):
+                        res_to_obj = datetime.timedelta(
+                            hours=int(str(end_time).split(":")[0]),
+                            minutes=int(str(end_time).split(":")[1]),
+                            seconds=int(str(end_time).split(":")[2])
+                        ) - datetime.timedelta(
+                            hours=int(str(start_time).split(":")[0]),
+                            minutes=int(str(start_time).split(":")[1]),
+                            seconds=int(str(start_time).split(":")[2])
+                        )
+                        start_time = ""
+                        ub_time = ""
+                        ms += f"{res_to_obj}|"
+                        best_emp.time_do_object = res_to_obj
+                        res_to_obj = ""
+                    elif (end_time != "") and (ub_time != ""):
+                        res_on_obj = datetime.timedelta(
+                            hours=int(str(ub_time).split(":")[0]),
+                            minutes=int(str(ub_time).split(":")[1]),
+                            seconds=int(str(ub_time).split(":")[2])
+                        ) - datetime.timedelta(
+                            hours=int(str(end_time).split(":")[0]),
+                            minutes=int(str(end_time).split(":")[1]),
+                            seconds=int(str(end_time).split(":")[2])
+                        )
+                        end_time = ""
+                        ub_time = ""
+                        if len(str(ms).split("|")) == 5:
+                            r = str(ms).split("|")[3]
+                            plus_time = datetime.timedelta(
+                                hours=int(r.split(":")[0]),
+                                minutes=int(r.split(":")[1]),
+                                seconds=int(r.split(":")[2])
+                            ) + res_on_obj
+                            ms = str(ms).replace(r, str(plus_time))
+                            best_emp.time_on_object = str(ms).split("|")[3]
+                        else:
+                            ms += f"{res_on_obj}|"
+                            best_emp.time_on_object = res_on_obj
+                            res_on_obj = ""
+
+            best_emp.save()
+            print(ms)
+            ms = ""
+            one_d = datetime.timedelta(1)
+            start_d += one_d
+
+        if filter_employee != {'employee_task': '', 'start_date': None, 'end_date': None}:
+            fo = "yes"
+
+        best_emp = BestEmployee.objects.all()
+        full_time_to_obj = datetime.timedelta(hours=0, minutes=0, seconds=0)
+        full_time_on_obj = datetime.timedelta(hours=0, minutes=0, seconds=0)
+
+        for b in best_emp:
+            full_time_to_obj += datetime.timedelta(
+                hours=int(b.time_do_object.split(":")[0]),
+                minutes=int(b.time_do_object.split(":")[1]),
+                seconds=int(b.time_do_object.split(":")[2])
+            )
+            full_time_on_obj += datetime.timedelta(
+                hours=int(b.time_on_object.split(":")[0]),
+                minutes=int(b.time_on_object.split(":")[1]),
+                seconds=int(b.time_on_object.split(":")[2])
+            )
+
+        full_time_to_obj = full_time_to_obj.total_seconds() / 3600
+        full_time_on_obj = full_time_on_obj.total_seconds() / 3600
+
+        best_emp = BestEmployee()
+        best_emp.date_be = None
+        best_emp.employee_be = "Всего:"
+        best_emp.time_do_object = "%.2f" % full_time_to_obj
+        best_emp.time_on_object = "%.2f" % full_time_on_obj
+        best_emp.save()
+        best_emp = BestEmployee.objects.all()
+        data = {
+            "rep_emp_form": rep_emp_form,
+            "fo": fo,
+            "best_emp": best_emp
+        }
+
+        return render(request, "task/rep/employee.html", data)
+
+
 # Реализация экспорта данных в excel таблицы Task
-def export_excel(request):
+def export_counterparty(request):
     response = HttpResponse(content_type="applications/ms-excel")
     response["Content-Disposition"] = "attachment; filename=Task" + str(datetime.datetime.now()) + ".xls"
 
@@ -296,27 +470,55 @@ def export_excel(request):
 
     columns = [
         "#",
-        "Дата",
-        "Время",
+        "Контрагент",
+        "Тип работ",
         "Задача",
-        "Объект",
-        "Адрес",
-        "Кто поручил",
         "Исполнитель",
-        "Приоритет",
-        "Сроки выполнения",
-        "Статус задачи",
-        "Тип задачи",
-        "Отношение к командировке",
-        "Примечание",
-        "Дата изменения"
+        "Дата постановки задачи",
+        "Дата окончания задачи",
+        "Статус",
+        "Комментарий"
     ]
 
     for col_num in range(len(columns)):
         ws.write(row_num, col_num, columns[col_num], font_style)
 
-    rows = task_service.find_filter_task(filter_task)
+    rows = task_service.find_reports_cont_filter(filter_cont)
     rows = rows.order_by("-id")
+    print(rows)
+
+    for row in rows:
+        row_num += 1
+        print(row)
+        for col_num in range(len(row)):
+            ws.write(row_num, col_num, str(row[col_num]), font_style)
+
+    wb.save(response)
+
+    return response
+
+
+def export_employee(request):
+    response = HttpResponse(content_type="applications/ms-excel")
+    response["Content-Disposition"] = "attachment; filename=Task" + str(datetime.datetime.now()) + ".xls"
+
+    wb = xlwt.Workbook(encoding="utf-8")
+    ws = wb.add_sheet("report")
+    row_num = 0
+    font_style = xlwt.XFStyle()
+    font_style.font.bold = True
+
+    columns = [
+        "Дата",
+        "Исполнитель",
+        "Время до объекта",
+        "Время нахождения на объекте"
+    ]
+
+    for col_num in range(len(columns)):
+        ws.write(row_num, col_num, columns[col_num], font_style)
+
+    rows = task_service.find_reports_employee_filter(filter_employee)
 
     for row in rows:
         row_num += 1

@@ -53,6 +53,51 @@ class TaskService(Service):
         requests.post(url, data={"chat_id": chat_id, "text": msg})
         requests.post(url, data=data)
 
+    def find_reports_cont_filter(self, filter_task):
+        field_filter = (
+            filter_task["object_task"]
+        )
+
+        object_filter = field_filter
+
+        if object_filter != "":
+            rows = Task.objects.filter(
+                object_task=object_filter
+            )
+        else:
+            rows = Task.objects.all()
+
+        return rows.values_list(
+            "id",
+            "object_task",
+            "type_task",
+            "text_task",
+            "employee_task",
+            "date_task",
+            "line_task",
+            "status_task",
+            "note_task",
+        )
+
+    def find_reports_employee_filter(self, filter_task):
+        field_filter = (
+            filter_task["employee_task"],
+            filter_task["start_date"],
+            filter_task["end_date"]
+        )
+
+        employee_filter, start_filter, end_filter = field_filter
+
+        if (employee_filter != "") and start_filter and end_filter:
+            rows = BestEmployee.objects.all()
+
+        return rows.values_list(
+            "date_be",
+            "employee_be",
+            "time_do_object",
+            "time_on_object",
+        )
+
     def find_filter_task(self, filter_task):
         field_filter = (
             filter_task["employee_task"],

@@ -382,6 +382,26 @@ def rep_emp(request):
                             minutes=int(str(start_time).split(":")[1]),
                             seconds=int(str(start_time).split(":")[2])
                         )
+                        if str(res_to_obj)[0] == "-":
+                            temp_before = datetime.timedelta(
+                                hours=24,
+                                minutes=0,
+                                seconds=0
+                            ) - datetime.timedelta(
+                                hours=int(str(start_time).split(":")[0]),
+                                minutes=int(str(start_time).split(":")[1]),
+                                seconds=int(str(start_time).split(":")[2])
+                            )
+                            temp_after = datetime.timedelta(
+                                hours=0,
+                                minutes=0,
+                                seconds=0
+                            ) + datetime.timedelta(
+                                hours=int(str(end_time).split(":")[0]),
+                                minutes=int(str(end_time).split(":")[1]),
+                                seconds=int(str(end_time).split(":")[2])
+                            )
+                            res_to_obj = temp_before + temp_after
                         start_time = ""
                         ub_time = ""
                         ms += f"{res_to_obj}|"
@@ -397,6 +417,26 @@ def rep_emp(request):
                             minutes=int(str(end_time).split(":")[1]),
                             seconds=int(str(end_time).split(":")[2])
                         )
+                        if str(res_on_obj)[0] == "-":
+                            temp_before = datetime.timedelta(
+                                hours=24,
+                                minutes=0,
+                                seconds=0
+                            ) - datetime.timedelta(
+                                hours=int(str(end_time).split(":")[0]),
+                                minutes=int(str(end_time).split(":")[1]),
+                                seconds=int(str(end_time).split(":")[2])
+                            )
+                            temp_after = datetime.timedelta(
+                                hours=0,
+                                minutes=0,
+                                seconds=0
+                            ) + datetime.timedelta(
+                                hours=int(str(ub_time).split(":")[0]),
+                                minutes=int(str(ub_time).split(":")[1]),
+                                seconds=int(str(ub_time).split(":")[2])
+                            )
+                            res_on_obj = temp_before + temp_after
                         end_time = ""
                         ub_time = ""
                         if len(str(ms).split("|")) == 5:

@@ -6,10 +6,6 @@
         <div style="text-align: center;"><h1>Список задач</h1></div>
         <div class="table-responsive">
             <table id="tag" class="table table-bordered table-sm align-middle table-hover">
-                <form method="POST">
-                    <a class="btn btn-primary" href="{% url 'export-excel' %}" role="button">Экспортировать в Excel</a>
-                    <p></p>
-                </form>
                 <thead class="align-middle table-primary">
                     <tr>
                         <th scope="col">id</th>
@@ -33,7 +29,6 @@
                 {% for tasks in page_m %}
                 <tbody>
                     <tr class="{% if tasks.status_task == 'Выполнено' %}table-success{% elif tasks.status_task == 'Отдано в разработку'%}table-danger{% else %}table-warning{% endif %}">
-                        <td scope="row">{{ tasks.id }}</td>
                         <td scope="row">{{ tasks.id }}</td>
                         <td>{{ tasks.date_task }}</td>
                         <td>{{ tasks.time_task }}</td>

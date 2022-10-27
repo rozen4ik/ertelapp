@@ -34,11 +34,14 @@ def index(request):
     dispatcher_user = task_service.create_user_roles(10)
     director_tts_user = task_service.create_user_roles(15)
     manage_user = task_service.create_user_roles(4)
+    manag_sales_user = task_service.create_user_roles(9)
 
     engineering_task = Task.objects.filter(Q(author_task=eng_user) |
                                            Q(author_task=technical_user) |
                                            Q(author_task=dispatcher_user)).order_by("-id")
-    sales_task = Task.objects.filter(author_task=sales_user).order_by("-id")
+    sales_task = Task.objects.filter(Q(author_task=sales_user) |
+                                     Q(author_task=manage_user) |
+                                     Q(author_task=manag_sales_user)).order_by("-id")
     technical_task = Task.objects.filter(Q(author_task=technical_user) |
                                          Q(author_task=eng_user) |
                                          Q(author_task=storekeeper_user) |
@@ -53,7 +56,12 @@ def index(request):
                                           Q(author_task=storekeeper_user) |
                                           Q(author_task=dispatcher_user)).order_by("-id")
     director_tts_task = Task.objects.filter(author_task=director_tts_user).order_by("-id")
-    manage_task = Task.objects.filter(author_task=manage_user).order_by("-id")
+    manage_task = Task.objects.filter(Q(author_task=manage_user) |
+                                      Q(author_task=sales_user) |
+                                      Q(author_task=manag_sales_user)).order_by("-id")
+    manag_sales_task = Task.objects.filter(Q(author_task=manag_sales_user) |
+                                           Q(author_task=sales_user) |
+                                           Q(author_task=manage_user)).order_by("-id")
 
     form = TaskFilter(request.GET)
     if form.is_valid():
@@ -68,6 +76,7 @@ def index(request):
             dispatcher_task = dispatcher_task.filter(employee_task=form.cleaned_data["employee_task"])
             director_tts_task = director_tts_task.filter(employee_task=form.cleaned_data["employee_task"])
             manage_task = manage_task.filter(employee_task=form.cleaned_data["employee_task"])
+            manag_sales_task = manag_sales_task.filter(employee_task=form.cleaned_data["employee_task"])
         if form.cleaned_data["status_task"]:
             task = task.filter(status_task=form.cleaned_data["status_task"])
             engineering_task = engineering_task.filter(status_task=form.cleaned_data["status_task"])
@@ -79,6 +88,7 @@ def index(request):
             dispatcher_task = dispatcher_task.filter(status_task=form.cleaned_data["status_task"])
             director_tts_task = director_tts_task.filter(status_task=form.cleaned_data["status_task"])
             manage_task = manage_task.filter(status_task=form.cleaned_data["status_task"])
+            manag_sales_task = manag_sales_task.filter(status_task=form.cleaned_data["status_task"])
         if form.cleaned_data["type_task"]:
             task = task.filter(type_task=form.cleaned_data["type_task"])
             engineering_task = engineering_task.filter(type_task=form.cleaned_data["type_task"])
@@ -90,6 +100,7 @@ def index(request):
             dispatcher_task = dispatcher_task.filter(type_task=form.cleaned_data["type_task"])
             director_tts_task = director_tts_task.filter(type_task=form.cleaned_data["type_task"])
             manage_task = manage_task.filter(type_task=form.cleaned_data["type_task"])
+            manag_sales_task = manag_sales_task.filter(type_task=form.cleaned_data["type_task"])
         if form.cleaned_data["object_task"]:
             task = task.filter(object_task=form.cleaned_data["object_task"])
             engineering_task = engineering_task.filter(object_task=form.cleaned_data["object_task"])
@@ -101,6 +112,7 @@ def index(request):
             dispatcher_task = dispatcher_task.filter(object_task=form.cleaned_data["object_task"])
             director_tts_task = director_tts_task.filter(object_task=form.cleaned_data["object_task"])
             manage_task = manage_task.filter(object_task=form.cleaned_data["object_task"])
+            manag_sales_task = manag_sales_task.filter(object_task=form.cleaned_data["object_task"])
         if form.cleaned_data["business_trip"]:
             task = task.filter(business_trip=form.cleaned_data["business_trip"])
             engineering_task = engineering_task.filter(business_trip=form.cleaned_data["business_trip"])
@@ -112,6 +124,7 @@ def index(request):
             dispatcher_task = dispatcher_task.filter(business_trip=form.cleaned_data["business_trip"])
             director_tts_task = director_tts_task.filter(business_trip=form.cleaned_data["business_trip"])
             manage_task = manage_task.filter(business_trip=form.cleaned_data["business_trip"])
+            manag_sales_task = manag_sales_task.filter(business_trip=form.cleaned_data["business_trip"])
         if form.cleaned_data["start_date"] and form.cleaned_data["end_date"]:
             task = task.filter(date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
             engineering_task = engineering_task.filter(
@@ -131,6 +144,8 @@ def index(request):
             director_tts_task = director_tts_task.filter(
                 date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
             manage_task = manage_task.filter(
+                date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
+            manag_sales_task = manag_sales_task.filter(
                 date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
 
     global filter_task
@@ -160,7 +175,8 @@ def index(request):
             users = User.objects.filter(Q(profile__position_dep_id=3) | Q(profile__position_dep_id=5) |
                                         Q(profile__position_dep_id=6) | Q(profile__position_dep_id=7) |
                                         Q(profile__position_dep_id=10) | Q(profile__position_dep_id=12) |
-                                        Q(profile__position_dep_id=16) | Q(profile__position_dep_id=8))
+                                        Q(profile__position_dep_id=16) | Q(profile__position_dep_id=8) |
+                                        Q(profile__position_dep_id=2))
             data_task = {
                 "engineering_task": engineering_task,
                 "page_m": page_m,
@@ -171,7 +187,8 @@ def index(request):
         case sales_user.user.username:
             page_m = task_service.paginator(sales_task, page_number)
             users = User.objects.filter(Q(profile__position_dep_id=2) | Q(profile__position_dep_id=4) |
-                                        Q(profile__position_dep_id=8) | Q(profile__position_dep_id=9))
+                                        Q(profile__position_dep_id=8) | Q(profile__position_dep_id=9) |
+                                        Q(profile__position_dep_id=7) | Q(profile__position_dep_id=3))
             data_task = {
                 "sales_task": sales_task,
                 "page_m": page_m,
@@ -184,7 +201,8 @@ def index(request):
             users = User.objects.filter(Q(profile__position_dep_id=3) | Q(profile__position_dep_id=5) |
                                         Q(profile__position_dep_id=6) | Q(profile__position_dep_id=7) |
                                         Q(profile__position_dep_id=10) | Q(profile__position_dep_id=12) |
-                                        Q(profile__position_dep_id=16) | Q(profile__position_dep_id=8))
+                                        Q(profile__position_dep_id=16) | Q(profile__position_dep_id=8) |
+                                        Q(profile__position_dep_id=2))
             data_task = {
                 "technical_task": technical_task,
                 "page_m": page_m,
@@ -227,7 +245,8 @@ def index(request):
             users = User.objects.filter(Q(profile__position_dep_id=3) | Q(profile__position_dep_id=5) |
                                         Q(profile__position_dep_id=6) | Q(profile__position_dep_id=7) |
                                         Q(profile__position_dep_id=10) | Q(profile__position_dep_id=12) |
-                                        Q(profile__position_dep_id=16) | Q(profile__position_dep_id=8))
+                                        Q(profile__position_dep_id=16) | Q(profile__position_dep_id=8) |
+                                        Q(profile__position_dep_id=2))
             data_task = {
                 "dispatcher_task": dispatcher_task,
                 "page_m": page_m,
@@ -248,7 +267,8 @@ def index(request):
         case manage_user.user.username:
             page_m = task_service.paginator(manage_task, page_number)
             users = User.objects.filter(Q(profile__position_dep_id=2) | Q(profile__position_dep_id=4) |
-                                        Q(profile__position_dep_id=8) | Q(profile__position_dep_id=9))
+                                        Q(profile__position_dep_id=8) | Q(profile__position_dep_id=9) |
+                                        Q(profile__position_dep_id=7) | Q(profile__position_dep_id=3))
             data_task = {
                 "manage_task": manage_task,
                 "page_m": page_m,
@@ -256,6 +276,19 @@ def index(request):
             }
             data_task.update(dict_task)
             return render(request, "task/role/manage_task.html", data_task)
+        case manag_sales_user.user.username:
+            page_m = task_service.paginator(manag_sales_task, page_number)
+            users = User.objects.filter(Q(profile__position_dep_id=2) | Q(profile__position_dep_id=4) |
+                                        Q(profile__position_dep_id=8) | Q(profile__position_dep_id=9) |
+                                        Q(profile__position_dep_id=7) | Q(profile__position_dep_id=3))
+
+            data_task = {
+                "manag_sales_task": manag_sales_task,
+                "page_m": page_m,
+                "users": users
+            }
+            data_task.update(dict_task)
+            return render(request, "task/role/manag_sales_task.html", data_task)
         case _:
             return render(request, "task/role/no_access.html")
 

@@ -2,7 +2,7 @@
 {% load static %}
 {% load spurl %}
 {% block tasks %}
-    {% if accounting_task.count > 0 %}
+    {% if manag_sales_task.count > 0 %}
         <div style="text-align: center;"><h1>Список задач</h1></div>
         <div class="table-responsive">
             <table id="tag" class="table table-bordered table-sm align-middle table-hover">
@@ -25,7 +25,7 @@
                         <th scope="col">Дата изменения</th>
                         <th scope="col"></th>
                     </tr>
-                </thead>    
+                </thead>
                 {% for tasks in page_m %}
                 <tbody>
                     <tr class="{% if tasks.status_task == 'Выполнено' %}table-success{% elif tasks.status_task == 'Отдано в разработку'%}table-danger{% else %}table-warning{% endif %}">

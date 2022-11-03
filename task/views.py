@@ -50,7 +50,8 @@ def index(request):
     personnel_task = Task.objects.filter(author_task=personnel_user).order_by("-id")
     storekeeper_task = Task.objects.filter(Q(author_task=storekeeper_user) |
                                            Q(author_task=director_tts_user) |
-                                           Q(author_task=dispatcher_user)).order_by("-id")
+                                           Q(author_task=dispatcher_user) |
+                                           Q(employee_task=storekeeper_user)).order_by("-id")
     dispatcher_task = Task.objects.filter(Q(author_task=technical_user) |
                                           Q(author_task=eng_user) |
                                           Q(author_task=storekeeper_user) |

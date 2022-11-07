@@ -20,6 +20,8 @@ class TaskService(Service):
         task.time_task = request.POST.get("time_task")
         task.text_task = request.POST.get("text_task")
         task.object_task = request.POST.get("object_task")
+        addr = Counterparty.objects.get(name=task.object_task.split("/")[0].strip())
+        task.address_obj_task = addr.address
         task.author_task = request.user.first_name + " " + request.user.last_name
         task.employee_task = request.POST.get("employee_task")
         task.urgency_task = request.POST.get("urgency_task")

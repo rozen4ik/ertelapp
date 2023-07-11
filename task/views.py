@@ -37,12 +37,15 @@ def index(request):
     manag_sales_user = task_service.create_user_roles(9)
     marketing_user = task_service.create_user_roles(18)
     manager_user = task_service.create_user_roles(19)
+    pom_director_user = task_service.create_user_roles(20)
+    maks_user = task_service.create_user_roles(21)
 
     engineering_task = Task.objects.filter(Q(author_task=eng_user) |
                                            Q(author_task=technical_user) |
                                            Q(author_task=dispatcher_user)).order_by("-id")
     sales_task = Task.objects.filter(Q(author_task=sales_user) |
                                      Q(author_task=manage_user) |
+                                     Q(author_task=pom_director_user) |
                                      Q(author_task=manag_sales_user) |
                                      Q(author_task=manager_user)).order_by("-id")
     technical_task = Task.objects.filter(Q(author_task=technical_user) |
@@ -62,16 +65,25 @@ def index(request):
     director_tts_task = Task.objects.filter(author_task=director_tts_user).order_by("-id")
     manage_task = Task.objects.filter(Q(author_task=manage_user) |
                                       Q(author_task=sales_user) |
+                                      Q(author_task=pom_director_user) |
                                       Q(author_task=manag_sales_user) |
                                       Q(author_task=manager_user)).order_by("-id")
     manag_sales_task = Task.objects.filter(Q(author_task=manag_sales_user) |
                                            Q(author_task=sales_user) |
+                                           Q(author_task=pom_director_user) |
                                            Q(author_task=manage_user) |
                                            Q(author_task=manager_user)).order_by("-id")
     marketing_task = Task.objects.filter(Q(employee_task=marketing_user) |
+                                         Q(author_task=pom_director_user) |
                                          Q(author_task=marketing_user)).order_by("-id")
     manager_task = Task.objects.filter(Q(author_task=manag_sales_user) |
                                            Q(author_task=sales_user) |
+                                           Q(author_task=pom_director_user) |
+                                           Q(author_task=manage_user) |
+                                           Q(author_task=manager_user)).order_by("-id")
+    maks_task = Task.objects.filter(Q(author_task=manag_sales_user) |
+                                           Q(author_task=sales_user) |
+                                           Q(author_task=pom_director_user) |
                                            Q(author_task=manage_user) |
                                            Q(author_task=manager_user)).order_by("-id")
 
@@ -92,6 +104,7 @@ def index(request):
             manag_sales_task = manag_sales_task.filter(employee_task=form.cleaned_data["employee_task"])
             marketing_task = marketing_task.filter(employee_task=form.cleaned_data["employee_task"])
             manager_task = manager_task.filter(employee_task=form.cleaned_data["employee_task"])
+            maks_task = maks_task.filter(employee_task=form.cleaned_data["employee_task"])
         if form.cleaned_data["status_task"]:
             task = task.filter(status_task=form.cleaned_data["status_task"])
             engineering_task = engineering_task.filter(status_task=form.cleaned_data["status_task"])
@@ -106,6 +119,7 @@ def index(request):
             manag_sales_task = manag_sales_task.filter(status_task=form.cleaned_data["status_task"])
             marketing_task = marketing_task.filter(status_task=form.cleaned_data["status_task"])
             manager_task = manager_task.filter(status_task=form.cleaned_data["status_task"])
+            maks_task = maks_task.filter(status_task=form.cleaned_data["status_task"])
         if form.cleaned_data["type_task"]:
             task = task.filter(type_task=form.cleaned_data["type_task"])
             engineering_task = engineering_task.filter(type_task=form.cleaned_data["type_task"])
@@ -120,6 +134,7 @@ def index(request):
             manag_sales_task = manag_sales_task.filter(type_task=form.cleaned_data["type_task"])
             marketing_task = marketing_task.filter(type_task=form.cleaned_data["type_task"])
             manager_task = manager_task.filter(type_task=form.cleaned_data["type_task"])
+            maks_task = maks_task.filter(type_task=form.cleaned_data["type_task"])
         if form.cleaned_data["object_task"]:
             task = task.filter(object_task=form.cleaned_data["object_task"])
             engineering_task = engineering_task.filter(object_task=form.cleaned_data["object_task"])
@@ -134,6 +149,7 @@ def index(request):
             manag_sales_task = manag_sales_task.filter(object_task=form.cleaned_data["object_task"])
             marketing_task = marketing_task.filter(object_task=form.cleaned_data["object_task"])
             manager_task = manager_task.filter(object_task=form.cleaned_data["object_task"])
+            maks_task = maks_task.filter(object_task=form.cleaned_data["object_task"])
         if form.cleaned_data["business_trip"]:
             task = task.filter(business_trip=form.cleaned_data["business_trip"])
             engineering_task = engineering_task.filter(business_trip=form.cleaned_data["business_trip"])
@@ -148,6 +164,7 @@ def index(request):
             manag_sales_task = manag_sales_task.filter(business_trip=form.cleaned_data["business_trip"])
             marketing_task = marketing_task.filter(business_trip=form.cleaned_data["business_trip"])
             manager_task = manager_task.filter(business_trip=form.cleaned_data["business_trip"])
+            maks_task = maks_task.filter(business_trip=form.cleaned_data["business_trip"])
         if form.cleaned_data["start_date"] and form.cleaned_data["end_date"]:
             task = task.filter(date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
             engineering_task = engineering_task.filter(
@@ -174,6 +191,8 @@ def index(request):
                 date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
             manager_task = manager_task.filter(
                 date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
+            maks_task = maks_task.filter(
+                date_task__range=(form.cleaned_data["start_date"], form.cleaned_data["end_date"]))
 
     global filter_task
     filter_task = form.cleaned_data
@@ -188,6 +207,16 @@ def index(request):
     # Показ задач в зависимости от должности
     match request.user.username:
         case director_user.user.username:
+            page_m = task_service.paginator(task, page_number)
+            users = task_service.get_objects_all(User).select_related('profile')
+            data_task = {
+                "task": task,
+                "page_m": page_m,
+                "users": users,
+            }
+            data_task.update(dict_task)
+            return render(request, "task/tasks.html", data_task)
+        case pom_director_user.user.username:
             page_m = task_service.paginator(task, page_number)
             users = task_service.get_objects_all(User).select_related('profile')
             data_task = {
@@ -216,6 +245,7 @@ def index(request):
             users = User.objects.filter(Q(profile__position_dep_id=2) | Q(profile__position_dep_id=4) |
                                         Q(profile__position_dep_id=8) | Q(profile__position_dep_id=9) |
                                         Q(profile__position_dep_id=7) | Q(profile__position_dep_id=3) |
+                                        Q(profile__position_dep_id=20) | Q(profile__position_dep_id=21) |
                                         Q(profile__position_dep_id=18) | Q(profile__position_dep_id=19))
             data_task = {
                 "sales_task": sales_task,
@@ -297,7 +327,8 @@ def index(request):
             users = User.objects.filter(Q(profile__position_dep_id=2) | Q(profile__position_dep_id=4) |
                                         Q(profile__position_dep_id=8) | Q(profile__position_dep_id=9) |
                                         Q(profile__position_dep_id=7) | Q(profile__position_dep_id=3) |
-                                        Q(profile__position_dep_id=18) | Q(profile__position_dep_id=19))
+                                        Q(profile__position_dep_id=18) | Q(profile__position_dep_id=19) |
+                                        Q(profile__position_dep_id=20))
             data_task = {
                 "manage_task": manage_task,
                 "page_m": page_m,
@@ -310,7 +341,8 @@ def index(request):
             users = User.objects.filter(Q(profile__position_dep_id=2) | Q(profile__position_dep_id=4) |
                                         Q(profile__position_dep_id=8) | Q(profile__position_dep_id=9) |
                                         Q(profile__position_dep_id=7) | Q(profile__position_dep_id=3) |
-                                        Q(profile__position_dep_id=18) | Q(profile__position_dep_id=19))
+                                        Q(profile__position_dep_id=18) | Q(profile__position_dep_id=19) |
+                                        Q(profile__position_dep_id=20))
 
             data_task = {
                 "manag_sales_task": manag_sales_task,
@@ -322,7 +354,8 @@ def index(request):
         case marketing_user.user.username:
             page_m = task_service.paginator(marketing_task, page_number)
             users = User.objects.filter(Q(profile__position_dep_id=7) | Q(profile__position_dep_id=2) |
-                                        Q(profile__position_dep_id=3) | Q(profile__position_dep_id=8))
+                                        Q(profile__position_dep_id=3) | Q(profile__position_dep_id=8) |
+                                        Q(profile__position_dep_id=20))
 
             data_task = {
                 "marketing_task": marketing_task,
@@ -336,7 +369,8 @@ def index(request):
             users = User.objects.filter(Q(profile__position_dep_id=2) | Q(profile__position_dep_id=4) |
                                         Q(profile__position_dep_id=8) | Q(profile__position_dep_id=9) |
                                         Q(profile__position_dep_id=7) | Q(profile__position_dep_id=3) |
-                                        Q(profile__position_dep_id=18) | Q(profile__position_dep_id=19))
+                                        Q(profile__position_dep_id=18) | Q(profile__position_dep_id=19) |
+                                        Q(profile__position_dep_id=20))
 
             data_task = {
                 "manager_task": manager_task,
@@ -345,6 +379,21 @@ def index(request):
             }
             data_task.update(dict_task)
             return render(request, "task/role/manager_task.html", data_task)
+        case maks_user.user.username:
+            page_m = task_service.paginator(maks_task, page_number)
+            users = User.objects.filter(Q(profile__position_dep_id=2) | Q(profile__position_dep_id=4) |
+                                Q(profile__position_dep_id=8) | Q(profile__position_dep_id=9) |
+                                Q(profile__position_dep_id=7) | Q(profile__position_dep_id=3) |
+                                Q(profile__position_dep_id=18) | Q(profile__position_dep_id=19) |
+                                Q(profile__position_dep_id=20))
+
+            data_task = {
+                "maks_task": maks_task,
+                "page_m": page_m,
+                "users": users
+            }
+            data_task.update(dict_task)
+            return render(request, "task/role/maks_task.html", data_task)
         case _:
             return render(request, "task/role/no_access.html")
 
